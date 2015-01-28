@@ -1,1 +1,5 @@
-characterClassesReplacedOutputE
+  .pLiteral
+ .pNewLine
+  .pIdentifier
+ .pNewLine
+ .pEndFile
