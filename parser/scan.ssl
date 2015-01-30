@@ -77,8 +77,7 @@ Output :
 	pBreak
 	pModule
 	pExtern
-	pString
-	lastKeywordToken = pString
+	lastKeywordToken = pExtern
 
 	% Scanner tokens -
 	%   These are the tokens actually recognized by the Scanner itself.
