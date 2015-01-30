@@ -25,6 +25,10 @@ Input :
 	lDot		'.'
 	lComma		','
 	lSemicolon	';'
+	lSlash		'/'
+	lOrBar		'|'
+	lHash		'#'
+	lExclamation	'!'
 	lQuote
 	lLeftAngle	'<'
 	lRightAngle	'>'
@@ -53,26 +57,28 @@ Output :
 	pOr
 	pAnd
 	pNot
-	pThen
 	pElse
 	pOf
 	pEnd
-	pUntil
-	pDo
 	pArray
 	pFile
 	pPacked
-	pProgram
-	pConst
 	pVar
 	pType
-	pProcedure
-	pBegin
 	pIf
 	pCase
 	pWhile
-	pRepeat
-	lastKeywordToken = pRepeat
+	pLet
+	pFunc
+	pSwitch
+	pDefault
+	pElsif
+	pLoop
+	pBreak
+	pModule
+	pExtern
+	pString
+	lastKeywordToken = pString
 
 	% Scanner tokens -
 	%   These are the tokens actually recognized by the Scanner itself.
