@@ -120,35 +120,38 @@ program ScannerParser(output, stdIdentifiers, scanSsl, parseSsl, source,
 	pBreak = 22;
 	pModule = 23;
 	pExtern = 24;
-	pString = 25;
-	lastKeywordToken = 25;
-	pIdentifier = 26;
-	firstCompoundInputToken = 26;
-	pInteger = 27;
-	pLiteral = 28;
-	lastCompoundInputToken = 28;
-	pNewLine = 29;
-	pEndFile = 30;
-	pPlus = 31;
-	pMinus = 32;
-	pStar = 33;
-	pColonEquals = 34;
-	pDot = 35;
-	pComma = 36;
-	pSemicolon = 37;
-	pColon = 38;
-	pEquals = 39;
-	pNotEqual = 40;
-	pLess = 41;
-	pLessEqual = 42;
-	pGreaterEqual = 43;
-	pGreater = 44;
-	pLeftParen = 45;
-	pRightParen = 46;
-	pLeftBracket = 47;
-	pRightBracket = 48;
-	pDotDot = 49;
-	lastSyntaxToken = 49;
+	lastKeywordToken = 24;
+	pIdentifier = 25;
+	firstCompoundInputToken = 25;
+	pInteger = 26;
+	pLiteral = 27;
+	lastCompoundInputToken = 27;
+	pNewLine = 28;
+	pEndFile = 29;
+	pPlus = 30;
+	pMinus = 31;
+	pStar = 32;
+	pDot = 33;
+	pComma = 34;
+	pSemicolon = 35;
+	pColon = 36;
+	pEquals = 37;
+	pNotEqual = 38;
+	pLess = 39;
+	pLessEqual = 40;
+	pGreaterEqual = 41;
+	pGreater = 42;
+	pLeftParen = 43;
+	pRightParen = 44;
+	pLeftBracket = 45;
+	pRightBracket = 46;
+	pDotDot = 47;
+	pSlash = 48;
+	pOrBar = 49;
+	pHash = 50;
+	pDoubleColon = 51;
+	pAssign = 52;
+	lastSyntaxToken = 52;
 
 { ===== }
 
@@ -257,17 +260,18 @@ program ScannerParser(output, stdIdentifiers, scanSsl, parseSsl, source,
 	eLiteralLine = 6;
 	eLiteralEOF = 7;
 	eCommentEOF = 8;
-	eNoSeparator = 9;
-	lastScanError = 9;
+	eMissingEqualsAfterExclamation = 9;
+	eNoSeparator = 10;
+	lastScanError = 10;
 
 	{ Screener error codes - values must be bigger than scanner error codes }
-	eNullString = 10;
-	eIntegerOverflow = 11;
-	eIdentifierTooLong = 12;
-	eSyntaxError = 13;
-	eOptionsError = 14;
-	eExtraneousSource = 15;
-	lastErrorCode = 15;
+	eNullString = 11;
+	eIntegerOverflow = 12;
+	eIdentifierTooLong = 13;
+	eSyntaxError = 14;
+	eOptionsError = 15;
+	eExtraneousSource = 16;
+	lastErrorCode = 16;
 
 	{ S/SL failure codes }
 	firstFailureCode = 0;
@@ -303,7 +307,7 @@ program ScannerParser(output, stdIdentifiers, scanSsl, parseSsl, source,
 
 	{ The following value MUST match the total number of
 	  keywords and idents entered in the stdIdentifiers file. }
-	numberStdIdentifiers = 45;
+	numberStdIdentifiers = 44;
 
 	textBufferSize = 80;
 	identTableSize = 1601;	{ must be prime }
@@ -337,7 +341,7 @@ program ScannerParser(output, stdIdentifiers, scanSsl, parseSsl, source,
     type
 	IdentTextReference = 0 .. identTextSize;
 	CharClass = firstCharClass .. lastCharClass;
-	SyntaxToken = firstSyntaxToken .. lastSyntaxToken
+	SyntaxToken = firstSyntaxToken .. lastSyntaxToken;
 	FailureCodes = firstFailureCode .. lastFailureCode;
 	ErrorCodes = firstErrorCode .. lastErrorCode;
 	ScanOperation = firstTableOperation .. lastScanTableOperation;

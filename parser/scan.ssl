@@ -97,7 +97,6 @@ Output :
 	pPlus
 	pMinus
 	pStar
-	pColonEquals
 	pDot
 	pComma
 	pSemicolon
@@ -113,7 +112,12 @@ Output :
 	pLeftBracket
 	pRightBracket
 	pDotDot
-	lastSyntaxToken = pDotDot;
+	pSlash
+	pOrBar
+	pHash
+	pDoubleColon
+	pAssign
+	lastSyntaxToken = pAssign;
 
 Error :
 	eIllegalChar = 5
@@ -121,6 +125,7 @@ Error :
 	eLiteralLine
 	eLiteralEOF
 	eCommentEOF
+	eMissingEqualsAfterExclamation
 	eNoSeparator
 	lastScanError = eNoSeparator;
 
@@ -151,12 +156,7 @@ Scan :
 	    | ';':
 		.pSemicolon
 	    | '(':
-		[
-		    | '*':
-			@AlternateComment
-		    | *:
-			.pLeftParen
-		]
+		.pLeftParen
 	    | ')':
 		.pRightParen
 	    | '[':
@@ -167,8 +167,8 @@ Scan :
 		.pComma
 	    | ':':
 		[
-		    | '=':
-			.pColonEquals
+		    | ':':
+			.pDoubleColon
 		    | *:
 			.pColon
 		]
@@ -183,7 +183,12 @@ Scan :
 		    | *:
 		]
 	    | '=':
-		.pEquals
+		[
+		    | '=':
+             	       .pEquals
+		    | *:
+		       .pAssign
+		]
 	    | '+':
 		.pPlus
 	    | lQuote:
@@ -197,6 +202,13 @@ Scan :
 		    | *:
 			.pDot
 		]
+ 	    | '!':
+		[
+		   | '=':
+		      .pNotEqual
+		   | *:
+		     #eMissingEqualsAfterExclamation 
+		] 
 	    | '<':
 		[
 		    | '>':
@@ -213,8 +225,19 @@ Scan :
 		    | *:
 			.pGreater
 		]
-	    | '{':
-		@Comment
+	    | '|':
+		.pOrBar
+	    | '#':
+		.pHash
+	    | '/':
+	        [
+		   | '*':
+		      @BlockComment
+		   | '/':
+		      @EndOfLineComment
+		   | *:
+		      .pSlash
+		]
 	    | '*':
 		.pStar
 	    | lNewPage:
@@ -271,27 +294,11 @@ Literal :
 		oBufferSave
 	]};
 
-Comment :
-	% Discard the contents of a comment
-
-	{[
-	    | '}':
-		>
-	    | lNewLine:
-		.pNewLine
-	    | lEndFile:		% comment must be closed before EOF
-		#eCommentEOF
-		.pEndFile
-		>
-	    | *:	% comment may contain any other character
-		?
-	]};
-
-AlternateComment :
+BlockComment :
 	{[
 	    | '*':
 		[
-		    | ')':
+		    | '/':
 			>
 		    | *:
 		]
@@ -305,4 +312,16 @@ AlternateComment :
 		?
 	]};
 
+EndOfLineComment :
+	{[
+	    | lNewLine:
+	       .pNewLine
+	       >
+	    | lEndFile:
+    	       #eCommentEOF
+	       .pEndFile
+               >
+	    | *:
+	       ?
+	]};
 end
