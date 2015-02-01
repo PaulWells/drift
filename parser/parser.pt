@@ -1669,6 +1669,7 @@ program ScannerParser(output, stdIdentifiers, scanSsl, parseSsl, source,
     { Main program ScannerParser }
     begin
 	Initialize;
+	{ Comment out semantic phase while making changes to scanner/screener}
 	(*
 	Parser;
 	{ No sense running semantic phase if serious syntax errors found }

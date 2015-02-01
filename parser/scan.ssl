@@ -202,7 +202,7 @@ Scan :
 		    | *:
 			.pDot
 		]
- 	    | '!':
+ 	    | '!':	% If an exclamation is not part of a not equals then it is invalid
 		[
 		   | '=':
 		      .pNotEqual
@@ -229,7 +229,8 @@ Scan :
 		.pOrBar
 	    | '#':
 		.pHash
-	    | '/':
+	    | '/':  % A slash is the beginning of a block comment, end of line comment
+	    		% or it's just a slash
 	        [
 		   | '*':
 		      @BlockComment
@@ -295,6 +296,7 @@ Literal :
 	]};
 
 BlockComment :
+	% Discard the contents of a block comment
 	{[
 	    | '*':
 		[
@@ -313,6 +315,7 @@ BlockComment :
 	]};
 
 EndOfLineComment :
+	% Discard any characters on a line that come after an end of line comment
 	{[
 	    | lNewLine:
 	       .pNewLine
