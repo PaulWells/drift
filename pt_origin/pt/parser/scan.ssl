@@ -25,10 +25,6 @@ Input :
 	lDot		'.'
 	lComma		','
 	lSemicolon	';'
-	lSlash		'/'
-	lOrBar		'|'
-	lHash		'#'
-	lExclamation	'!'
 	lQuote
 	lLeftAngle	'<'
 	lRightAngle	'>'
@@ -57,27 +53,26 @@ Output :
 	pOr
 	pAnd
 	pNot
+	pThen
 	pElse
 	pOf
 	pEnd
+	pUntil
+	pDo
 	pArray
 	pFile
 	pPacked
+	pProgram
+	pConst
 	pVar
 	pType
+	pProcedure
+	pBegin
 	pIf
 	pCase
 	pWhile
-	pLet
-	pFunc
-	pSwitch
-	pDefault
-	pElsif
-	pLoop
-	pBreak
-	pModule
-	pExtern
-	lastKeywordToken = pExtern
+	pRepeat
+	lastKeywordToken = pRepeat
 
 	% Scanner tokens -
 	%   These are the tokens actually recognized by the Scanner itself.
@@ -97,6 +92,7 @@ Output :
 	pPlus
 	pMinus
 	pStar
+	pColonEquals
 	pDot
 	pComma
 	pSemicolon
@@ -112,12 +108,7 @@ Output :
 	pLeftBracket
 	pRightBracket
 	pDotDot
-	pSlash
-	pOrBar
-	pHash
-	pDoubleColon
-	pAssign
-	lastSyntaxToken = pAssign;
+	lastSyntaxToken = pDotDot;
 
 Error :
 	eIllegalChar = 5
@@ -125,7 +116,6 @@ Error :
 	eLiteralLine
 	eLiteralEOF
 	eCommentEOF
-	eMissingEqualsAfterExclamation
 	eNoSeparator
 	lastScanError = eNoSeparator;
 
@@ -156,7 +146,12 @@ Scan :
 	    | ';':
 		.pSemicolon
 	    | '(':
-		.pLeftParen
+		[
+		    | '*':
+			@AlternateComment
+		    | *:
+			.pLeftParen
+		]
 	    | ')':
 		.pRightParen
 	    | '[':
@@ -167,8 +162,8 @@ Scan :
 		.pComma
 	    | ':':
 		[
-		    | ':':
-			.pDoubleColon
+		    | '=':
+			.pColonEquals
 		    | *:
 			.pColon
 		]
@@ -183,12 +178,7 @@ Scan :
 		    | *:
 		]
 	    | '=':
-		[
-		    | '=':
-             	       .pEquals
-		    | *:
-		       .pAssign
-		]
+		.pEquals
 	    | '+':
 		.pPlus
 	    | lQuote:
@@ -202,13 +192,6 @@ Scan :
 		    | *:
 			.pDot
 		]
- 	    | '!':	% If an exclamation is not part of a not equals then it is invalid
-		[
-		   | '=':
-		      .pNotEqual
-		   | *:
-		     #eMissingEqualsAfterExclamation 
-		] 
 	    | '<':
 		[
 		    | '>':
@@ -225,20 +208,8 @@ Scan :
 		    | *:
 			.pGreater
 		]
-	    | '|':
-		.pOrBar
-	    | '#':
-		.pHash
-	    | '/':  % A slash is the beginning of a block comment, end of line comment
-	    		% or it's just a slash
-	        [
-		   | '*':
-		      @BlockComment
-		   | '/':
-		      @EndOfLineComment
-		   | *:
-		      .pSlash
-		]
+	    | '{':
+		@Comment
 	    | '*':
 		.pStar
 	    | lNewPage:
@@ -295,12 +266,27 @@ Literal :
 		oBufferSave
 	]};
 
-BlockComment :
-	% Discard the contents of a block comment
+Comment :
+	% Discard the contents of a comment
+
+	{[
+	    | '}':
+		>
+	    | lNewLine:
+		.pNewLine
+	    | lEndFile:		% comment must be closed before EOF
+		#eCommentEOF
+		.pEndFile
+		>
+	    | *:	% comment may contain any other character
+		?
+	]};
+
+AlternateComment :
 	{[
 	    | '*':
 		[
-		    | '/':
+		    | ')':
 			>
 		    | *:
 		]
@@ -314,17 +300,4 @@ BlockComment :
 		?
 	]};
 
-EndOfLineComment :
-	% Discard any characters on a line that come after an end of line comment
-	{[
-	    | lNewLine:
-	       .pNewLine
-	       >
-	    | lEndFile:
-    	       #eCommentEOF
-	       .pEndFile
-               >
-	    | *:
-	       ?
-	]};
 end

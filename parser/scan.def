@@ -13,22 +13,26 @@
 	lDot = 7;
 	lComma = 8;
 	lSemicolon = 9;
-	lQuote = 10;
-	lLeftAngle = 11;
-	lRightAngle = 12;
-	lLeftParen = 13;
-	lRightParen = 14;
-	lLeftBracket = 15;
-	lRightBracket = 16;
-	lLeftBrace = 17;
-	lRightBrace = 18;
-	lBlank = 19;
-	lIllegal = 20;
-	lNewLine = 21;
-	lTab = 22;
-	lNewPage = 23;
-	lEndFile = 24;
-	lastCharClass = 24;
+	lSlash = 10;
+	lOrBar = 11;
+	lHash = 12;
+	lExclamation = 13;
+	lQuote = 14;
+	lLeftAngle = 15;
+	lRightAngle = 16;
+	lLeftParen = 17;
+	lRightParen = 18;
+	lLeftBracket = 19;
+	lRightBracket = 20;
+	lLeftBrace = 21;
+	lRightBrace = 22;
+	lBlank = 23;
+	lIllegal = 24;
+	lNewLine = 25;
+	lTab = 26;
+	lNewPage = 27;
+	lEndFile = 28;
+	lastCharClass = 28;
 
 	{ Output Tokens }
 	pDiv = 0;
@@ -37,37 +41,37 @@
 	pOr = 2;
 	pAnd = 3;
 	pNot = 4;
-	pThen = 5;
-	pElse = 6;
-	pOf = 7;
-	pEnd = 8;
-	pUntil = 9;
-	pDo = 10;
-	pArray = 11;
-	pFile = 12;
-	pPacked = 13;
-	pProgram = 14;
-	pConst = 15;
-	pVar = 16;
-	pType = 17;
-	pProcedure = 18;
-	pBegin = 19;
-	pIf = 20;
-	pCase = 21;
-	pWhile = 22;
-	pRepeat = 23;
-	lastKeywordToken = 23;
-	pIdentifier = 24;
-	firstCompoundInputToken = 24;
-	pInteger = 25;
-	pLiteral = 26;
-	lastCompoundInputToken = 26;
-	pNewLine = 27;
-	pEndFile = 28;
-	pPlus = 29;
-	pMinus = 30;
-	pStar = 31;
-	pColonEquals = 32;
+	pElse = 5;
+	pOf = 6;
+	pEnd = 7;
+	pArray = 8;
+	pFile = 9;
+	pPacked = 10;
+	pVar = 11;
+	pType = 12;
+	pIf = 13;
+	pCase = 14;
+	pWhile = 15;
+	pLet = 16;
+	pFunc = 17;
+	pSwitch = 18;
+	pDefault = 19;
+	pElsif = 20;
+	pLoop = 21;
+	pBreak = 22;
+	pModule = 23;
+	pExtern = 24;
+	lastKeywordToken = 24;
+	pIdentifier = 25;
+	firstCompoundInputToken = 25;
+	pInteger = 26;
+	pLiteral = 27;
+	lastCompoundInputToken = 27;
+	pNewLine = 28;
+	pEndFile = 29;
+	pPlus = 30;
+	pMinus = 31;
+	pStar = 32;
 	pDot = 33;
 	pComma = 34;
 	pSemicolon = 35;
@@ -83,7 +87,12 @@
 	pLeftBracket = 45;
 	pRightBracket = 46;
 	pDotDot = 47;
-	lastSyntaxToken = 47;
+	pSlash = 48;
+	pOrBar = 49;
+	pHash = 50;
+	pDoubleColon = 51;
+	pAssign = 52;
+	lastSyntaxToken = 52;
 
 	{ Input/Output Tokens }
 
@@ -93,21 +102,22 @@
 	eLiteralLine = 6;
 	eLiteralEOF = 7;
 	eCommentEOF = 8;
-	eNoSeparator = 9;
-	lastScanError = 9;
+	eMissingEqualsAfterExclamation = 9;
+	eNoSeparator = 10;
+	lastScanError = 10;
 
 	{ Type Values }
 
 	{ S/SL Rule Table Addresses } {
 	Scan = 0;
-	Identifier = 215;
-	AlternateComment = 320;
-	Integer = 232;
-	Literal = 247;
-	Comment = 291;
+	Identifier = 257;
+	Integer = 274;
+	Literal = 289;
+	BlockComment = 333;
+	EndOfLineComment = 369;
 	}
 
 	{ S/SL Table Parameters }
-	sslTblSize = 356;
+	sslTblSize = 394;
 	minSslTableValue = -32767;
 	maxSslTableValue = 32767;
