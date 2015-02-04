@@ -1,0 +1,8 @@
+ [ (lLeftParen)
+ [ (lStar)
+ [ (lLetter)
+  [ (lStar)
+ [ (lStar)
+ [ (lRightParen)
+ [ (lNewLine)
+ [ (lEndFile)

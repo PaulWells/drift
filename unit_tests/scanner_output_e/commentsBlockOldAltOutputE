@@ -1,0 +1,7 @@
+ .pLeftParen
+ .pStar
+  .pIdentifier
+ .pStar
+ .pRightParen
+ .pNewLine
+ .pEndFile
