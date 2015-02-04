@@ -1,10 +1,8 @@
- .pIdentifier
- .pNewLine
- .pLeftParen
- .pStar
- .pIdentifier
- .pStar
- .pRightParen
- .pNewLine
- .pNewLine
- .pEndFile
+ [ (lSlash)
+ [ (lStar)
+  [ (lLetter)
+  ? (lLetter)
+  [ (lStar)
+  [ (lSlash)
+ [ (lNewLine)
+ [ (lEndFile)
