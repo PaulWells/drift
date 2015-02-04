@@ -112,7 +112,6 @@ Output :
 	pLeftBracket
 	pRightBracket
 	pDotDot
-	pSlash
 	pOrBar
 	pHash
 	pDoubleColon
@@ -126,6 +125,7 @@ Error :
 	eLiteralEOF
 	eCommentEOF
 	eMissingEqualsAfterExclamation
+	eUnexpectedSlash
 	eNoSeparator
 	lastScanError = eNoSeparator;
 
@@ -230,14 +230,14 @@ Scan :
 	    | '#':
 		.pHash
 	    | '/':  % A slash is the beginning of a block comment, end of line comment
-	    		% or it's just a slash
+	    		% or it's an error 
 	        [
 		   | '*':
 		      @BlockComment
 		   | '/':
 		      @EndOfLineComment
 		   | *:
-		      .pSlash
+		      #eUnexpectedSlash
 		]
 	    | '*':
 		.pStar

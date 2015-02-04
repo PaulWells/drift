@@ -146,12 +146,11 @@ program ScannerParser(output, stdIdentifiers, scanSsl, parseSsl, source,
 	pLeftBracket = 45;
 	pRightBracket = 46;
 	pDotDot = 47;
-	pSlash = 48;
-	pOrBar = 49;
-	pHash = 50;
-	pDoubleColon = 51;
-	pAssign = 52;
-	lastSyntaxToken = 52;
+	pOrBar = 48;
+	pHash = 49;
+	pDoubleColon = 50;
+	pAssign = 51;
+	lastSyntaxToken = 51;
 
 { ===== }
 
@@ -261,17 +260,18 @@ program ScannerParser(output, stdIdentifiers, scanSsl, parseSsl, source,
 	eLiteralEOF = 7;
 	eCommentEOF = 8;
 	eMissingEqualsAfterExclamation = 9;
-	eNoSeparator = 10;
-	lastScanError = 10;
+	eUnexpectedSlash = 10;
+	eNoSeparator = 11;
+	lastScanError = 11;
 
 	{ Screener error codes - values must be bigger than scanner error codes }
-	eNullString = 11;
-	eIntegerOverflow = 12;
-	eIdentifierTooLong = 13;
-	eSyntaxError = 14;
-	eOptionsError = 15;
-	eExtraneousSource = 16;
-	lastErrorCode = 16;
+	eNullString = 12;
+	eIntegerOverflow = 13;
+	eIdentifierTooLong = 14;
+	eSyntaxError = 15;
+	eOptionsError = 16;
+	eExtraneousSource = 17;
+	lastErrorCode = 17;
 
 	{ S/SL failure codes }
 	firstFailureCode = 0;

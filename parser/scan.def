@@ -87,12 +87,11 @@
 	pLeftBracket = 45;
 	pRightBracket = 46;
 	pDotDot = 47;
-	pSlash = 48;
-	pOrBar = 49;
-	pHash = 50;
-	pDoubleColon = 51;
-	pAssign = 52;
-	lastSyntaxToken = 52;
+	pOrBar = 48;
+	pHash = 49;
+	pDoubleColon = 50;
+	pAssign = 51;
+	lastSyntaxToken = 51;
 
 	{ Input/Output Tokens }
 
@@ -103,8 +102,9 @@
 	eLiteralEOF = 7;
 	eCommentEOF = 8;
 	eMissingEqualsAfterExclamation = 9;
-	eNoSeparator = 10;
-	lastScanError = 10;
+	eUnexpectedSlash = 10;
+	eNoSeparator = 11;
+	lastScanError = 11;
 
 	{ Type Values }
 
