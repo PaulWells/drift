@@ -47,9 +47,9 @@ RSpec.describe "Scanner Tests" do
 end
 
 def fetch_actual(test_case)
-	`ssltrace \"ptc -o1 -t1 -L lib/pt unit_tests/scanner_tests/#{test_case}.pt\" parser/scan.def -e`
+	`ssltrace \"ptc -o1 -t1 -L lib/pt unit_tests/scanner_tests/#{test_case}.pt\" parser/scan.def -e`.gsub(' ', '').chomp
 end
 
 def fetch_expected(test_case)
-	`cat unit_tests/scanner_output_e/#{test_case}OutputE`
+	`cat unit_tests/scanner_output_e/#{test_case}OutputE`.gsub(' ', '')
 end
