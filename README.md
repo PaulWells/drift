@@ -1,3 +1,8 @@
+## Group Members
+Arthur Margulies	8am28	05876927
+Harold Treen		9hwt	06209677
+Paul Wells		9prw	06198312
+
 ## Project Information
 
 PT Pascal v3.1 (c) 2011 Queen's University, (c) 1980 University of Toronto
@@ -15,6 +20,9 @@ in that directory.
 For a more challenging test, run the example programs
 in the examples subdirectory using the ptc and pti command
 scripts in that directory.
+
+## New Folders
+unit_tests - contains three folders which hold the inputs, -e outputs and -i outputs respectively
 
 ## Test Suite Setup
 
