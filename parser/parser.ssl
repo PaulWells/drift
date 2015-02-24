@@ -343,7 +343,7 @@ Statement :
 		@IfStmt
 	    | 'while':
 		@WhileStmt
-	    | 'case':
+	    | 'switch':
 		@CaseStmt
 	    | 'repeat':
 		@RepeatStmt
@@ -442,20 +442,15 @@ CaseStmt :
 	.sCaseStmt
 	@Expression
 	.sExpnEnd
-	'of'
-	@CaseAlternative
 	{[
-	    | ';':
-		% since case alternatives cannot be null, allow
-		% for the common situation of an extra semicolon
-		% at the end of the list of case alternatives.
-		[
-		    | 'end':
-			>
-		    | *:
-			@CaseAlternative
-		]
-	    | 'end':
+		| 'case':
+		@CaseAlternative
+		| 'default':
+		':'
+		.sDefault
+		.sBegin
+		@Statement
+		.sEnd
 		>
 	]}
 	.sCaseEnd;
@@ -473,7 +468,10 @@ CaseAlternative :
 	    ]
 	}
 	.sLabelEnd
-	':'  @Statement;
+	':'
+	.sBegin
+	@Statement
+	.sEnd;
 
 WhileStmt :
 	.sWhileStmt
