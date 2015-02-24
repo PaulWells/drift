@@ -3,11 +3,22 @@ RSpec.describe "Parser Tests" do
 		Dir.chdir "/cas/student/9hwt/Zdrive/cisc458/ptsrc"
 	end
 
-	it 'removesOldTokens' do
-		actual_output = fetch_actual('removesOldTokens')
-		expected_output = fetch_expected('removesOldTokens')
-		expect(actual_output).to eq(expected_output)
-	end	
+	it 'adds the extern keyword' do
+		actual_output = fetch_actual('addsExtern')
+		expect(actual_output).to match('.sExtern')
+	end
+
+	it 'adds let declarations' do
+		compare_outputs('addsLet')
+	end
+
+	it 'adds var declarations' do
+		compare_outputs('addsVar')
+	end
+
+	it 'adds type declarations' do
+		compare_outputs('addsType')
+	end
 end
 
 def fetch_actual(test_case)
@@ -15,5 +26,11 @@ def fetch_actual(test_case)
 end
 
 def fetch_expected(test_case)
-	`cat unit_tests/parser_output_e/#{test_case}OutputE`.gsub(' ', '').chomp
+	`cat unit_tests/parser_output_e/#{test_case}`.gsub(' ', '').chomp
+end
+
+def compare_outputs(test_case)
+	actual_output = fetch_actual(test_case)
+	expected_output = fetch_expected(test_case)
+	expect(actual_output).to eq(expected_output)
 end
