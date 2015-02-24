@@ -1,6 +1,6 @@
 RSpec.describe "Scanner Tests" do
 	before :all do
-		Dir.chdir "/cas/student/9hwt/Zdrive/cisc458/drift"
+		Dir.chdir "/cas/student/9hwt/Zdrive/cisc458/ptsrc"
 	end
 
 	it 'Adds character classes' do
@@ -51,5 +51,5 @@ def fetch_actual(test_case)
 end
 
 def fetch_expected(test_case)
-	`cat unit_tests/scanner_output_e/#{test_case}OutputE`.gsub(' ', '')
+	`cat unit_tests/scanner_output_e/#{test_case}OutputE`.gsub(' ', '').chomp
 end

@@ -26,7 +26,6 @@ Input :
 	lComma		','
 	lSemicolon	';'
 	lSlash		'/'
-	lOrBar		'|'
 	lHash		'#'
 	lExclamation	'!'
 	lQuote
@@ -112,7 +111,6 @@ Output :
 	pLeftBracket
 	pRightBracket
 	pDotDot
-	pOrBar
 	pHash
 	pDoubleColon
 	pAssign
@@ -225,8 +223,6 @@ Scan :
 		    | *:
 			.pGreater
 		]
-	    | '|':
-		.pOrBar
 	    | '#':
 		.pHash
 	    | '/':  % A slash is the beginning of a block comment, end of line comment

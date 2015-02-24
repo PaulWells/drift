@@ -24,26 +24,27 @@ Input :
 	pOr			'or'
 	pAnd			'and'
 	pNot			'not'
-	pThen			'then'
 	pElse			'else'
 	pOf			'of'
 	pEnd			'end'
-	pUntil			'until'
-	pDo			'do'
 	pArray			'array'
 	pFile			'file'
 	pPacked			'packed'
-	pProgram		'program'
-	pConst			'const'
 	pVar			'var'
 	pType			'type'
-	pProcedure		'procedure'
-	pBegin			'begin'
 	pIf			'if'
 	pCase			'case'
 	pWhile			'while'
-	pRepeat			'repeat'
-	lastKeywordToken = pRepeat 
+	pLet 				'let'
+	pFunc 			'func'
+	pSwitch			'switch'
+	pDefault		'default'
+	pElsif			'elsif'
+	pLoop				'loop'
+	pBreak			'break'
+	pModule			'module'
+	pExtern			'extern'
+	lastKeywordToken = pExtern
 
 	pIdentifier 
 	firstCompoundInputToken = pIdentifier
@@ -56,12 +57,11 @@ Input :
 	pPlus			'+'
 	pMinus			'-'
 	pStar			'*'
-	pColonEquals		':='
 	pDot			'.'
 	pComma			','
 	pSemicolon		';'
 	pColon			':'
-	pEquals			'='
+	pEquals			'=='
 	pNotEqual		'<>'
 	pLess			'<'
 	pLessEqual		'<='
@@ -71,8 +71,11 @@ Input :
 	pRightParen		')'
 	pLeftBracket		'['
 	pRightBracket		']'
-	pDotDot			'..'
-	lastSyntaxToken = pDotDot;
+	pDotDot				'..'
+	pHash					'#'
+	pDoubleColon	'::'
+	pAssign				'='
+	lastSyntaxToken = pAssign;
 
 Output :
 	sIdentifier 
@@ -82,7 +85,6 @@ Output :
 	sLiteral
 	lastCompoundSemanticToken = sLiteral
 
-	sProgram
 	sParmBegin
 	sParmEnd
 	sConst
@@ -109,8 +111,6 @@ Output :
 	sThen
 	sElse
 	sWhileStmt
-	sRepeatStmt
-	sRepeatEnd
 	sEq
 	sNE
 	sLT
@@ -128,7 +128,16 @@ Output :
 	sAnd
 	sNot
 	sNewLine
-	lastSemanticToken = sNewLine;
+	sPublic
+	sDefault
+	sExtern
+	sModule
+	sLoopStmt
+	sLoopBreakIf
+	sLoopEnd
+	sSubstring
+	sLength
+	lastSemanticToken = sLength;
 
 
 rules
