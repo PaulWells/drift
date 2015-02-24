@@ -162,13 +162,17 @@ Program :
 	  |*:
 		>
 	]
-	@Block  '.';
+	@Block;
 
 Block :
 	% Strictly speaking, standard Pascal requires that declarations
 	% appear only in the order consts, types, vars, procedures.
 	% We allow arbitrary intermixing of these instead to preserve
 	% programmer sanity.
+	@Declarations;
+	@Statements;
+
+Declarations :
 	{[
 	    | 'let':
 				.sConst
@@ -188,9 +192,6 @@ Block :
 	    | *:
 				>
 	]}
-	'begin'
-	@BeginStmt;
-
 
 ConstantDefinitions :
 	% Accept one or more named constant definitions
@@ -337,8 +338,6 @@ Statement :
 	[
 	    | pIdentifier:
 		@AssignmentOrCallStmt
-	    | 'begin':
-		@BeginStmt
 	    | 'if':
 		@IfStmt
 	    | 'while':
@@ -347,9 +346,22 @@ Statement :
 		@CaseStmt
 	    | 'repeat':
 		@RepeatStmt
+	    | ';':
+		.sNullStmt
 	    | *:
 		.sNullStmt
 	];
+
+Statements :
+	.sBegin
+	{
+	  @Statement
+	  [
+	      | 'end':
+ 	          >   
+	  ]
+	}
+	.sEnd;
 
 AssignmentOrCallStmt :
 	[
@@ -399,18 +411,6 @@ CallStmt :
 	    | *:	% no actual parameters
 	]
 	.sParmEnd;
-
-BeginStmt :
-	.sBegin
-	{
-	    @Statement
-	    [
-		| ';':
-		| 'end':
-		    .sEnd
-		    >
-	    ]
-	};
 
 IfStmt :
 	.sIfStmt
