@@ -350,7 +350,7 @@ Statement :
 	    | ';':
 		.sNullStmt
 	    | *:
-		>
+		>	
 	];
 
 Statements :
@@ -425,7 +425,11 @@ IfStmt :
   	    | 'elsif':
 		.sEnd
 		.sElse
+		.sBegin
 		@IfStmt
+		.sEnd
+		.sEnd
+		>
 	    | 'else':
 		.sEnd
 		.sElse
