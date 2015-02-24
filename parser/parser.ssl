@@ -169,7 +169,7 @@ Block :
 	% appear only in the order consts, types, vars, procedures.
 	% We allow arbitrary intermixing of these instead to preserve
 	% programmer sanity.
-	@Declarations;
+	@Declarations
 	@Statements;
 
 Declarations :
@@ -188,10 +188,11 @@ Declarations :
 				% procedure name
 				pIdentifier  .sIdentifier
 				@ProcedureHeading
-				@Block  ';'
+				@Block
 	    | *:
 				>
 	]};
+
 
 ConstantDefinitions :
 	% Accept one or more named constant definitions
@@ -349,7 +350,7 @@ Statement :
 	    | ';':
 		.sNullStmt
 	    | *:
-		.sNullStmt
+		>
 	];
 
 Statements :
@@ -365,7 +366,7 @@ Statements :
 
 AssignmentOrCallStmt :
 	[
-	    | ':=':
+	    | '=':
 		.sAssignmentStmt
 		.sIdentifier	% identifier accepted in the Statement rule
 		@Expression
@@ -416,14 +417,22 @@ IfStmt :
 	.sIfStmt
 	@Expression
 	.sExpnEnd
-	'then'  .sThen
+	.sThen
+	.sBegin
+	{
 	@Statement
 	[
-	    | 'else':
+  	    | 'elsif':
+		.sEnd
 		.sElse
-		@Statement
+		@IfStmt
+	    | 'else':
+		.sEnd
+		.sElse
+		@Statements
+		>
 	    | *:
-	];
+	]};
 
 CaseStmt :
 	.sCaseStmt
@@ -486,7 +495,7 @@ RepeatStmt :
 Expression :
 	@SimpleExpression
 	[
-	    | '=':
+	    | '==':
 		@SimpleExpression  .sEq
 	    | '<>':
 		@SimpleExpression  .sNE

@@ -19,6 +19,14 @@ RSpec.describe "Parser Tests" do
 	it 'adds type declarations' do
 		compare_outputs('addsType')
 	end
+
+	it 'updates the if syntax' do
+		compare_outputs('updatesIf')
+	end
+
+	it 'adds elsif syntax' do
+		compare_outputs('addsElsif')
+	end
 end
 
 def fetch_actual(test_case)
