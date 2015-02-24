@@ -1,6 +1,6 @@
 RSpec.describe "Parser Tests" do
 	before :all do
-		Dir.chdir "/cas/student/9hwt/Zdrive/cisc458/ptsrc"
+		Dir.chdir "#{ENV['HOME']}/Zdrive/cisc458/ptsrc"
 	end
 
 	it 'adds the extern keyword' do
