@@ -191,7 +191,7 @@ Declarations :
 				@Block  ';'
 	    | *:
 				>
-	]}
+	]};
 
 ConstantDefinitions :
 	% Accept one or more named constant definitions
