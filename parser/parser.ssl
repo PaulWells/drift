@@ -35,6 +35,7 @@ Input :
 	pIf			'if'
 	pCase			'case'
 	pWhile			'while'
+	% Added Tokens
 	pLet 				'let'
 	pFunc 			'func'
 	pSwitch			'switch'
@@ -71,6 +72,7 @@ Input :
 	pRightParen		')'
 	pLeftBracket		'['
 	pRightBracket		']'
+	% Added Tokens
 	pDotDot				'..'
 	pHash					'#'
 	pDoubleColon	'::'
@@ -128,6 +130,7 @@ Output :
 	sAnd
 	sNot
 	sNewLine
+	% Added tokens
 	sPublic
 	sDefault
 	sExtern
@@ -144,11 +147,12 @@ rules
 
 Program :
 	[
-          |'extern':
+	  % Extern is parsed out at the start of the program
+          |'extern': 
 	  	.sExtern
-		pIdentifier
-		% program parameters
-		'('
+		pIdentifier 
+		% extern parameters
+		'(' 
 		{
 	    	pIdentifier  .sIdentifier
 	    	[
@@ -173,6 +177,7 @@ Block :
 
 Declarations :
 	{[
+	    % Changed from const
 	    | 'let':
 				.sConst
 				@ConstantDefinitions
@@ -188,10 +193,13 @@ Declarations :
 				pIdentifier  .sIdentifier
 				@ProcedureHeading
 				@Block
+	    % Added the module declaration
 	    | 'module':
 				.sModule
+				% Module name
 				pIdentifier .sIdentifier
 				.sParmEnd
+				% Block within module
 				@Block
 	    | *:
 				>
@@ -296,6 +304,7 @@ VariableDeclarations :
 	% Accept one or more variable declarations.
 	pIdentifier  .sIdentifier
 	{[ 
+	    % Adds parsing of comma delimited variable declarations
 	    | ',':
 		.sVar
 		@VariableDeclarations
@@ -314,6 +323,7 @@ VariableDeclarations :
 ProcedureHeading :
 	% An optional * identifies public procedures
 	[  
+	    % Adds public methods using the star character
 	    | '*':
 		.sPublic
 	    | *:
@@ -334,6 +344,7 @@ ProcedureHeading :
 		    % type identifier
 		    pIdentifier  .sIdentifier
 		    [
+			% Comma delimited identifiers
 			| ',':
 			| *:
 			    >
@@ -341,7 +352,6 @@ ProcedureHeading :
 		}
 		')'
 	    | *:
-		>
 	]
 	.sParmEnd;
 
@@ -349,37 +359,49 @@ Statement :
 	[
 	    | pIdentifier:
 		@AssignmentOrCallStmt
+		% Assignment statements should look for another statement after
 		@Statement
 	    | 'if':
 		@IfStmt
+		% If statements look for a list of 
+		% statements follwed by the end keyword
 		@Statements
 	    | 'elsif':
+		% Simulates the end of the previous if
+		% And creates a new if within the else
 		.sEnd
 		.sElse
 		.sBegin
 		@IfStmt
+		% Look for an else because the new if has no matching end
 		@Statement
 		.sEnd
 	    | 'else':
 		.sEnd
 		.sElse
 		.sBegin
+		% Look for statments within else
 		@Statement
 	    | 'while':
 		@WhileStmt
+	    % Change switch syntax
 	    | 'switch':
 		@CaseStmt
 	    | 'loop':
+		% LoopStmt looks for statements until break
 		@LoopStmt
 		.sBegin
+		% Statements called to parse things after break
 		@Statements
 		.sLoopEnd
 	    | ';':
+		% Semicolon is null
 		.sNullStmt
 	    | *:
 	];
 
 Statements :
+	% Continues looking for statements within a block finished with end
 	{
 	  @Statement
 	  [
@@ -391,6 +413,7 @@ Statements :
 
 AssignmentOrCallStmt :
 	[
+	    % Updates equals syntax to not have a colon
 	    | '=':
 		.sAssignmentStmt
 		.sIdentifier	% identifier accepted in the Statement rule
@@ -402,6 +425,7 @@ AssignmentOrCallStmt :
 		.sSubscript
 		@Expression
 		.sExpnEnd
+		% No colon on equals
 		']'  '='
 		@Expression
 		.sExpnEnd
@@ -439,6 +463,7 @@ CallStmt :
 	.sParmEnd;
 
 IfStmt :
+	% Parse the if statement and it's expression
 	.sIfStmt
 	@Expression
 	.sExpnEnd
@@ -485,15 +510,17 @@ WhileStmt :
 	.sWhileStmt
 	@Expression
 	.sExpnEnd
-	'do'
 	@Statement;
 
 LoopStmt :
+	% Loop statment replaces repeat
 	.sLoopStmt
 	.sBegin
 	{
+	    % Looks for statements within loop
 	    @Statement
 	    [
+		% Stop when break is found 
 		| 'break':
 		    'if'
 		    .sLoopBreakIf
@@ -507,8 +534,10 @@ LoopStmt :
 Expression :
 	@SimpleExpression
 	[
+	    % Change = to ==
 	    | '==':
 		@SimpleExpression  .sEq
+	    % Change <> to !=
 	    | '!=':
 		@SimpleExpression  .sNE
 	    | '<':
