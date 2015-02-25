@@ -188,6 +188,11 @@ Declarations :
 				pIdentifier  .sIdentifier
 				@ProcedureHeading
 				@Block
+	    | 'module':
+				.sModule
+				pIdentifier .sIdentifier
+				.sParmEnd
+				@Block
 	    | *:
 				>
 	]};
@@ -196,11 +201,11 @@ Declarations :
 ConstantDefinitions :
 	% Accept one or more named constant definitions
 	pIdentifier  .sIdentifier
-	@ConstantValue ';'
+	@ConstantValue 
 	{[
 	    | pIdentifier:
 		.sIdentifier
-		@ConstantValue ';'
+		@ConstantValue 
 	    | *:
 		>
 	]};
@@ -340,8 +345,22 @@ Statement :
 	[
 	    | pIdentifier:
 		@AssignmentOrCallStmt
+		@Statement
 	    | 'if':
 		@IfStmt
+		@Statements
+	    | 'elsif':
+		.sEnd
+		.sElse
+		.sBegin
+		@IfStmt
+		@Statement
+		.sEnd
+	    | 'else':
+		.sEnd
+		.sElse
+		.sBegin
+		@Statement
 	    | 'while':
 		@WhileStmt
 	    | 'switch':
@@ -354,15 +373,11 @@ Statement :
 	];
 
 Statements :
-	.sBegin
 	{
+	  @Statement
 	  [
-	      | pEndFile:
-		  >
 	      | 'end':
- 	          >   
-	      | *:
-		@Statement
+ 	          >
 	  ]
 	}
 	.sEnd;
@@ -380,7 +395,7 @@ AssignmentOrCallStmt :
 		.sSubscript
 		@Expression
 		.sExpnEnd
-		']'  ':='
+		']'  '='
 		@Expression
 		.sExpnEnd
 	    | *:
@@ -422,24 +437,7 @@ IfStmt :
 	.sExpnEnd
 	.sThen
 	.sBegin
-	{
-	@Statement
-	[
-  	    | 'elsif':
-		.sEnd
-		.sElse
-		.sBegin
-		@IfStmt
-		.sEnd
-		.sEnd
-		>
-	    | 'else':
-		.sEnd
-		.sElse
-		@Statements
-		>
-	    | *:
-	]};
+	;
 
 CaseStmt :
 	.sCaseStmt

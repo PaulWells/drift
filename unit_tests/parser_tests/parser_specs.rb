@@ -46,6 +46,10 @@ RSpec.describe "Parser Tests" do
 	
 	it 'adds nested if' do
 		compare_outputs('addsNestedIf')
+	end	
+	
+	it 'adds modules' do
+		compare_outputs('addsModule')
 	end
 end
 

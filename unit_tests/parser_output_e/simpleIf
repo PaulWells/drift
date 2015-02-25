@@ -1,4 +1,3 @@
-.sBegin
 .sIfStmt
 .sIdentifier
 .sIdentifier
@@ -10,5 +9,4 @@
 .sIdentifier
 .sInteger
 .sExpnEnd
-.sEnd
 .sEnd

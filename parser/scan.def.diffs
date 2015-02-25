@@ -1,6 +1,0 @@
-c89 93
-	pHash = 48;
-	pDoubleColon = 49;
-	pAssign = 50;
-	lastSyntaxToken = 50;
-.
