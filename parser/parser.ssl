@@ -312,10 +312,14 @@ VariableDeclarations :
 	]};
 
 ProcedureHeading :
-	% Accept zero or more procedure formal parameter declarations.
-	{[
+	% An optional * identifies public procedures
+	[  
 	    | '*':
 		.sPublic
+	    | *:
+	]
+	% Accept zero or more procedure formal parameter declarations.
+	[
 	    | '(':
 		{
 		    % formal parameter identifier
@@ -338,7 +342,7 @@ ProcedureHeading :
 		')'
 	    | *:
 		>
-	]}
+	]
 	.sParmEnd;
 
 Statement :
