@@ -19,6 +19,10 @@ RSpec.describe "Parser Tests" do
 	it 'adds type declarations' do
 		compare_outputs('addsType')
 	end
+	
+	it 'tests simple if statements' do
+		compare_outputs('simpleIf')
+	end
 
 	it 'updates the if syntax' do
 		compare_outputs('updatesIf')
@@ -36,6 +40,13 @@ RSpec.describe "Parser Tests" do
 		compare_outputs('publicRoutines')
 	end
 
+	it 'adds double elsif syntax' do
+		compare_outputs('addsDoubleElsif')
+	end
+	
+	it 'adds nested if' do
+		compare_outputs('addsNestedIf')
+	end
 end
 
 def fetch_actual(test_case)
