@@ -573,6 +573,7 @@ SimpleExpression :
 
 Term :
 	@Factor
+	@Substring
 	{[
 	    | '*':
 		@Factor  .sMultiply
@@ -586,6 +587,16 @@ Term :
 		>
 	]};
 
+Substring :
+	[
+	    | '::':
+		@Expression
+		'..'
+		@Expression
+		.sSubstring
+	    | *:
+	];
+
 Factor :
 	[
 	    | pIdentifier:
@@ -598,6 +609,9 @@ Factor :
 	    | 'not':
 		@Factor
 		.sNot
+	    | '#':
+		@Expression
+		.sLength
 	    | pLiteral:
 		.sLiteral
 	    | 'file':
