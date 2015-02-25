@@ -160,7 +160,6 @@ Program :
 		')'
 		.sParmEnd
 	  |*:
-		>
 	]
 	@Block;
 
@@ -183,7 +182,7 @@ Declarations :
 	    | 'var':
 				.sVar
 				@VariableDeclarations
-	    | 'procedure':
+	    | 'func':
 				.sProcedure
 				% procedure name
 				pIdentifier  .sIdentifier
@@ -309,7 +308,9 @@ VariableDeclarations :
 
 ProcedureHeading :
 	% Accept zero or more procedure formal parameter declarations.
-	[
+	{[
+	    | '*':
+		.sPublic
 	    | '(':
 		{
 		    % formal parameter identifier
@@ -324,15 +325,15 @@ ProcedureHeading :
 		    % type identifier
 		    pIdentifier  .sIdentifier
 		    [
-			| ';':
+			| ',':
 			| *:
 			    >
 		    ]
 		}
 		')'
 	    | *:
-	]
-	';'
+		>
+	]}
 	.sParmEnd;
 
 Statement :
@@ -350,16 +351,18 @@ Statement :
 	    | ';':
 		.sNullStmt
 	    | *:
-		>	
 	];
 
 Statements :
 	.sBegin
 	{
-	  @Statement
 	  [
+	      | pEndFile:
+		  >
 	      | 'end':
  	          >   
+	      | *:
+		@Statement
 	  ]
 	}
 	.sEnd;

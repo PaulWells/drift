@@ -27,6 +27,15 @@ RSpec.describe "Parser Tests" do
 	it 'adds elsif syntax' do
 		compare_outputs('addsElsif')
 	end
+
+	it 'updates routine' do
+		compare_outputs('updatesRoutine')
+	end
+
+	it 'has public routines' do
+		compare_outputs('publicRoutines')
+	end
+
 end
 
 def fetch_actual(test_case)
