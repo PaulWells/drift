@@ -129,7 +129,7 @@
 	Program = 0;
 	Block = 35;
 	Declarations = 40;
-	Statements = 480;
+	Statements = 486;
 	ConstantDefinitions = 100;
 	TypeDefinitions = 184;
 	VariableDeclarations = 311;
@@ -140,21 +140,21 @@
 	SimpleType = 262;
 	OptionallySignedIntegerConstant = 291;
 	Statement = 408;
-	AssignmentOrCallStmt = 500;
-	IfStmt = 584;
-	WhileStmt = 659;
-	CaseStmt = 595;
-	RepeatStmt = 670;
-	Expression = 700;
-	CallStmt = 540;
-	CaseAlternative = 635;
-	SimpleExpression = 754;
-	Term = 807;
-	Factor = 851;
-	IdentifierExtension = 909;
+	AssignmentOrCallStmt = 506;
+	IfStmt = 590;
+	WhileStmt = 665;
+	CaseStmt = 601;
+	LoopStmt = 676;
+	Expression = 706;
+	CallStmt = 546;
+	CaseAlternative = 641;
+	SimpleExpression = 760;
+	Term = 813;
+	Factor = 857;
+	IdentifierExtension = 915;
 	}
 
 	{ S/SL Table Parameters }
-	sslTblSize = 939;
+	sslTblSize = 945;
 	minSslTableValue = -32767;
 	maxSslTableValue = 32767;

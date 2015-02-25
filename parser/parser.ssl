@@ -365,8 +365,11 @@ Statement :
 		@WhileStmt
 	    | 'switch':
 		@CaseStmt
-	    | 'repeat':
-		@RepeatStmt
+	    | 'loop':
+		@LoopStmt
+		.sBegin
+		@Statements
+		.sLoopEnd
 	    | ';':
 		.sNullStmt
 	    | *:
@@ -481,19 +484,21 @@ WhileStmt :
 	'do'
 	@Statement;
 
-RepeatStmt :
-	.sRepeatStmt
+LoopStmt :
+	.sLoopStmt
+	.sBegin
 	{
 	    @Statement
 	    [
-		| ';':
-		| 'until':
-		    .sRepeatEnd
+		| 'break':
+		    'if'
+		    .sLoopBreakIf
+		    @Expression
+		    .sExpnEnd
 		    >
 	    ]
 	}
-	@Expression
-	.sExpnEnd;
+	;
 
 Expression :
 	@SimpleExpression

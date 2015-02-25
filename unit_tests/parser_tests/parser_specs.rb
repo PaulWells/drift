@@ -51,6 +51,10 @@ RSpec.describe "Parser Tests" do
 	it 'adds modules' do
 		compare_outputs('addsModule')
 	end
+
+	it 'adds loops' do
+		compare_outputs('addsLoop')
+	end
 end
 
 def fetch_actual(test_case)
