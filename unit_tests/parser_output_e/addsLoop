@@ -12,6 +12,7 @@
 .sIdentifier
 .sInteger
 .sExpnEnd
+.sEnd
 .sLoopBreakIf
 .sIdentifier
 .sIdentifier

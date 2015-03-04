@@ -3,10 +3,10 @@
 .sParmEnd
 .sModule
 .sIdentifier
-.sParmEnd
 .sConst
 .sIdentifier
 .sInteger
+.sBegin
 .sIfStmt
 .sIdentifier
 .sInteger
