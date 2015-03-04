@@ -146,26 +146,21 @@ Output :
 rules
 
 Program :
-	[
-	  % Extern is parsed out at the start of the program
-          |'extern': 
-	  	.sExtern
-		pIdentifier 
-		% extern parameters
-		'(' 
-		{
-	    	pIdentifier  .sIdentifier
-	    	[
-			| ',':
-			| *:
-		    		>
-	    	]
-		}
-		')'
-		.sParmEnd
-	  |*:
-	]
-	@Block;
+  % Extern is parsed out at the start of the program
+    'extern': 
+  	.sExtern
+	% extern parameters
+	{
+    	pIdentifier  .sIdentifier
+    	[
+		| ',':
+		| *:
+	    		>
+    	]
+	}
+	.sParmEnd
+  |*:
+  @Block;
 
 Block :
 	% Strictly speaking, standard Pascal requires that declarations
@@ -180,10 +175,10 @@ Declarations :
 	    % Changed from const
 	    | 'let':
 				.sConst
-				@ConstantDefinitions
+				@ConstantDefinition
 	    | 'type':
 				.sType
-				@TypeDefinitions
+				@TypeDefinition
 	    | 'var':
 				.sVar
 				@VariableDeclarations
@@ -193,30 +188,26 @@ Declarations :
 				pIdentifier  .sIdentifier
 				@ProcedureHeading
 				@Block
+				'end'
 	    % Added the module declaration
 	    | 'module':
 				.sModule
 				% Module name
 				pIdentifier .sIdentifier
-				.sParmEnd
 				% Block within module
 				@Block
+				'end'
+		| ';':
+			% null declaration
 	    | *:
 				>
 	]};
 
 
-ConstantDefinitions :
-	% Accept one or more named constant definitions
+ConstantDefinition :
+	% Accept a constant definition
 	pIdentifier  .sIdentifier
-	@ConstantValue 
-	{[
-	    | pIdentifier:
-		.sIdentifier
-		@ConstantValue 
-	    | *:
-		>
-	]};
+	@ConstantValue;
 
 ConstantValue :
 	'='
@@ -242,17 +233,10 @@ UnsignedIntegerConstant :
 		.sInteger
 	];
 
-TypeDefinitions :
+TypeDefinition :
 	% Accept one or more named type definitions.
 	pIdentifier  .sIdentifier
-	':'  @TypeBody  
-	{[
-	    | pIdentifier:
-		.sIdentifier
-		'='  @TypeBody
-	    | *:
-		>
-	]};
+	':'  @TypeBody;
 
 TypeBody :
 	[
@@ -306,26 +290,18 @@ VariableDeclarations :
 	{[ 
 	    % Adds parsing of comma delimited variable declarations
 	    | ',':
-		.sVar
-		@VariableDeclarations
+		pIdentifier  .sVar .sIdentifier
 	    | *:
-		>
+			>
 	]}
-	':' @TypeBody 
-	{[
-	    | pIdentifier:
-		.sIdentifier
-		':'  @TypeBody
-	    | *:
-		>
-	]};
+	':' @TypeBody ;
 
 ProcedureHeading :
 	% An optional * identifies public procedures
 	[  
 	    % Adds public methods using the star character
 	    | '*':
-		.sPublic
+			.sPublic
 	    | *:
 	]
 	% Accept zero or more procedure formal parameter declarations.
@@ -334,20 +310,20 @@ ProcedureHeading :
 		{
 		    % formal parameter identifier
 		    [
-			| 'var':
-			    pIdentifier  .sIdentifier
-			    .sVar
-			| *:
-			    pIdentifier  .sIdentifier
+				| 'var':
+				    pIdentifier  .sIdentifier
+				    .sVar
+				| *:
+				    pIdentifier  .sIdentifier
 		    ]
 		    ':'
 		    % type identifier
 		    pIdentifier  .sIdentifier
 		    [
-			% Comma delimited identifiers
-			| ',':
-			| *:
-			    >
+				% Comma delimited identifiers
+				| ',':
+				| *:
+			    	>
 		    ]
 		}
 		')'
@@ -355,61 +331,28 @@ ProcedureHeading :
 	]
 	.sParmEnd;
 
-Statement :
-	[
-	    | pIdentifier:
-		@AssignmentOrCallStmt
-		% Assignment statements should look for another statement after
-		@Statement
-	    | 'if':
-		@IfStmt
-		% If statements look for a list of 
-		% statements follwed by the end keyword
-		@Statements
-	    | 'elsif':
-		% Simulates the end of the previous if
-		% And creates a new if within the else
-		.sEnd
-		.sElse
-		.sBegin
-		@IfStmt
-		% Look for an else because the new if has no matching end
-		@Statement
-		.sEnd
-	    | 'else':
-		.sEnd
-		.sElse
-		.sBegin
-		% Look for statments within else
-		@Statement
-	    | 'while':
-		@WhileStmt
-	    % Change switch syntax
-	    | 'switch':
-		@CaseStmt
-	    | 'loop':
-		% LoopStmt looks for statements until break
-		@LoopStmt
-		.sBegin
-		% Statements called to parse things after break
-		@Statements
-		.sLoopEnd
-	    | ';':
-		% Semicolon is null
-		.sNullStmt
-	    | *:
-	];
-
 Statements :
-	% Continues looking for statements within a block finished with end
-	{
-	  @Statement
-	  [
-	      | 'end':
- 	          >
-	  ]
-	}
-	.sEnd;
+    .sBegin
+    {[
+        | pIdentifier:
+            @AssignmentOrCallStmt
+        | 'if':
+            @IfStmt
+        | 'switch':
+            @CaseStmt
+        | 'while':
+            @WhileStmt
+        | 'loop':
+            @LoopStmt
+        | ';':
+            .sNullStmt
+        | *:
+            >
+    ]}
+    .sEnd;
+
+
+
 
 AssignmentOrCallStmt :
 	[
@@ -468,8 +411,18 @@ IfStmt :
 	@Expression
 	.sExpnEnd
 	.sThen
-	.sBegin
-	;
+	@Statements
+	[
+	     |'elsif'
+	         .sElse
+	         @IfStmt
+	      |'else':
+	         .sElse
+	         @Statements
+	         'end'
+	      | *:
+	      	 'end'
+	];
 
 CaseStmt :
 	.sCaseStmt
@@ -477,15 +430,18 @@ CaseStmt :
 	.sExpnEnd
 	{[
 		| 'case':
-		@CaseAlternative
-		| 'default':
-		':'
-		.sDefault
-		.sBegin
-		@Statement
-		.sEnd
-		>
+			@CaseAlternative
+		| *:
+			>
 	]}
+	[
+		| 'default':
+			':'
+			.sDefault
+			@Statements
+		| *:
+	]
+	'end'
 	.sCaseEnd;
 
 CaseAlternative :
@@ -495,41 +451,29 @@ CaseAlternative :
 	{
 	    @OptionallySignedIntegerConstant
 	    [
-		| ',':
-		| *:
-		    >
+			| ',':
+			| *:
+			    >
 	    ]
 	}
 	.sLabelEnd
 	':'
-	.sBegin
-	@Statement
-	.sEnd;
+	@Statements;
 
 WhileStmt :
 	.sWhileStmt
 	@Expression
 	.sExpnEnd
-	@Statement;
+	@Statements
+	'end';
 
 LoopStmt :
-	% Loop statment replaces repeat
 	.sLoopStmt
-	.sBegin
-	{
-	    % Looks for statements within loop
-	    @Statement
-	    [
-		% Stop when break is found 
-		| 'break':
-		    'if'
-		    .sLoopBreakIf
-		    @Expression
-		    .sExpnEnd
-		    >
-	    ]
-	}
-	;
+	@Statements
+	'break' 'if' .sLoopBreakIf @Expresssion .ExpnEnd
+	@Statements
+	.sLoopEnd
+	'end';
 
 Expression :
 	@SimpleExpression
@@ -573,12 +517,10 @@ SimpleExpression :
 
 Term :
 	@Factor
-	@Substring
 	{[
 	    | '*':
 		@Factor  .sMultiply
-	    | 'div':
-		@Factor  .sDivide
+	    | 'div		@Factor  .sDivide
 	    | 'mod':
 		@Factor  .sModulus
 	    | 'and':
@@ -587,36 +529,35 @@ Term :
 		>
 	]};
 
-Substring :
-	[
-	    | '::':
-		@Expression
-		'..'
-		@Expression
-		.sSubstring
-	    | *:
-	];
-
 Factor :
+	@SubFactor
+	{[
+		| '::':
+			@SubFactor '..' @SubFactor .sSubstring
+		| *:
+			>
+	]};
+
+SubFactor :
 	[
 	    | pIdentifier:
-		.sIdentifier
-		@IdentifierExtension
+			.sIdentifier
+			@IdentifierExtension
 	    | pInteger:
-		.sInteger
+			.sInteger
 	    | '(':
-		@Expression  ')'
+			@Expression  ')'
 	    | 'not':
-		@Factor
-		.sNot
+			@SubFactor
+			.sNot
 	    | '#':
-		@Expression
-		.sLength
+			@SubFactor
+			.sLength
 	    | pLiteral:
-		.sLiteral
+			.sLiteral
 	    | 'file':
-		.sFile '(' @Expression ')'
-		.sExpnEnd
+			.sFile '(' @Expression ')'
+			.sExpnEnd
 	];
 
 IdentifierExtension :
