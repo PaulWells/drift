@@ -1,3 +1,6 @@
+.sExtern
+.sIdentifier
+.sParmEnd
 .sProcedure
 .sIdentifier
 .sPublic
@@ -11,4 +14,7 @@
 .sVar
 .sIdentifier
 .sIdentifier
+.sBegin
+.sEnd
+.sBegin
 .sEnd

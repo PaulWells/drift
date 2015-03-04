@@ -1,3 +1,7 @@
+.sExtern
+.sIdentifier
+.sParmEnd
+.sBegin
 .sLoopStmt
 .sBegin
 .sAssignmentStmt
@@ -24,3 +28,4 @@
 .sExpnEnd
 .sEnd
 .sLoopEnd
+.sEnd

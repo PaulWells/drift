@@ -1,3 +1,8 @@
+.sExtern
+.sIdentifier
+.sParmEnd
 .sConst
 .sIdentifier
 .sInteger
+.sBegin
+.sEnd

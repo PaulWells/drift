@@ -1,3 +1,7 @@
+.sExtern
+.sIdentifier
+.sParmEnd
+.sBegin
 .sIfStmt
 .sIdentifier
 .sInteger
@@ -30,5 +34,6 @@
 .sIdentifier
 .sInteger
 .sExpnEnd
+.sEnd
 .sEnd
 .sEnd
