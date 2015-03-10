@@ -102,21 +102,17 @@ Output : 	% corresponds to coder.ssl input
 	tVarParm
 	tFetchAddress
 	tFetchInteger
-	tFetchChar
 	tFetchBoolean
 	tAssignBegin
 	tAssignAddress
 	tAssignInteger
-	tAssignChar
 	tAssignBoolean
 	tStoreParmAddress
 	tStoreParmInteger
-	tStoreParmChar
 	tStoreParmBoolean
 	tSubscriptBegin
 	tSubscriptAddress
 	tSubscriptInteger
-	tSubscriptChar
 	tSubscriptBoolean
 	tArrayDescriptor
 	tFileDescriptor
@@ -143,12 +139,14 @@ Output : 	% corresponds to coder.ssl input
 	tSubstring
 	tLength
 	tStringEqual
+	tLoopBegin
+	tLoopBreakIf
+	tCaseDefault
 
 	% Compound T-codes are those that take operands
 	tLiteralAddress 
 	firstCompoundOutputToken = tLiteralAddress
 	tLiteralInteger
-	tLiteralChar
 	tLiteralBoolean
 	tLiteralString
 	tStringDescriptor
@@ -164,6 +162,10 @@ Output : 	% corresponds to coder.ssl input
 	tSkipProc
 	tCallEnd
 	tLineNumber
+	% Added Compound T-Codes
+	tLoopTest
+	tLoopEnd
+	%%
 	tTrap
 	lastCompoundOutputToken = tTrap
 
