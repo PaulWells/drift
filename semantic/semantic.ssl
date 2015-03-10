@@ -308,6 +308,9 @@ mechanism SymbolTable :
 	% Return true if any external names (program parameters)
 	% have not yet been declared.
 
+	oSymbolTblPrintContents
+	% Print the contents of the symbol table
+
 
 
 
