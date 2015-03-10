@@ -134,6 +134,17 @@ Output : 	% corresponds to coder.ssl input
 	tTrapBegin
 	tWriteEnd
 	tReadEnd
+	% Added non-compound T-Codes
+	tFetchString
+	tAssignString
+	tStoreParmString
+	tSubscriptString
+	tConcatenate
+	tSubstring
+	tLength
+	tChr
+	tOrd
+	tStringEqual
 
 	% Compound T-codes are those that take operands
 	tLiteralAddress 
@@ -155,6 +166,8 @@ Output : 	% corresponds to coder.ssl input
 	tSkipProc
 	tCallEnd
 	tLineNumber
+	% Added tLiteralString
+	tLiteralString
 	tTrap
 	lastCompoundOutputToken = tTrap
 
