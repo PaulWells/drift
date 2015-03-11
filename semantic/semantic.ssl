@@ -308,7 +308,7 @@ mechanism SymbolTable :
 	% Return true if any external names (program parameters)
 	% have not yet been declared.
 
-	oSymbolTblPrintContents;
+    oSymbolTblPrintContents;
 	% Print the contents of the symbol table
 
 
@@ -806,7 +806,6 @@ ProgramParameter :
 	% files must be declared in the global program scope.
 
 	sIdentifier  oSymbolStkPushLocalIdentifier
-	oSymbolTblPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined:	% a new name in this scope
 		[ oSymbolStkChooseStandardFile	% based on text of symbol
