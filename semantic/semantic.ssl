@@ -304,11 +304,12 @@ mechanism SymbolTable :
 	% the scope being exited, except for formal parameters
 	% which must be retained for type checking.
 
-    oSymbolTblLookupExternal >> Boolean;
+    oSymbolTblLookupExternal >> Boolean
 	% Return true if any external names (program parameters)
 	% have not yet been declared.
 
-
+    oSymbolTblPrintContents;
+	% Prints contents of the symbol table
 
 
 
