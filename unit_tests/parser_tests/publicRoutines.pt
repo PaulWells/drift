@@ -1,3 +1,4 @@
+extern a
 func haroldRoutine * (var param:string, var param:integer)
 	var v:integer
 end
