@@ -20,7 +20,6 @@ Input :
 	firstInputToken = sIdentifier
 	sInteger
 	sLiteral
-	sProgram
 	sParmBegin
 	sParmEnd
 	sConst
@@ -47,8 +46,6 @@ Input :
 	sThen
 	sElse
 	sWhileStmt
-	sRepeatStmt
-	sRepeatEnd
 	sEq
 	sNE
 	sLT
@@ -66,6 +63,16 @@ Input :
 	sAnd
 	sNot
 	sNewLine
+	% Added tokens
+	sPublic
+	sDefault
+	sExtern
+	sModule
+	sLoopStmt
+	sLoopBreakIf
+	sLoopEnd
+	sSubstring
+	sLength
 	sEndOfFile
 	lastInputToken = sEndOfFile;
 
