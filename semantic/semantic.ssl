@@ -767,7 +767,8 @@ rules
 
 
 Program :
-	sProgram
+	% Changed sProgram to sExtern
+	sExtern	
 	% Program scope, distinct from implicit scope surrounding
 	% program which contains predefined names
 	oSymbolTblPushScope
