@@ -1768,6 +1768,12 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				end
 			end;
 
+			oSymbolTblPrintContents:
+			{Print the contents of the symbol table}
+			begin
+				write('debug: oSymbolTblPrintContents');
+			end;
+
 
 		    { ****
 		      *  *  Symbol Stack Mechanism Operations
