@@ -427,7 +427,7 @@ mechanism SymbolStack :
     oSymbolStkPop
 	% Pop the symbol stack
 
-	oSymbolStkPrintContents
+	oSymbolStkPrintContents;
 	% Print the contents of the symbol stack
 
 
