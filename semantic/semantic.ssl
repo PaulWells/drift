@@ -424,8 +424,11 @@ mechanism SymbolStack :
 	% If the top entry is a standard routine symbol, return a
 	% value indicating which routine it is, otherwise return null.
 
-    oSymbolStkPop;
+    oSymbolStkPop
 	% Pop the symbol stack
+
+	oSymbolStkPrintContents
+	% Print the contents of the symbol stack
 
 
 
@@ -814,6 +817,7 @@ ProgramParameter :
 	% files must be declared in the global program scope.
 
 	sIdentifier  oSymbolStkPushLocalIdentifier
+	oSymbolTblPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined:	% a new name in this scope
 		[ oSymbolStkChooseStandardFile	% based on text of symbol

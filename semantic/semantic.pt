@@ -1985,6 +1985,30 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			    symbolStkTop := symbolStkTop - 1
 			end;
 
+			oSymbolStkPrintContents:
+			{ Print the contents of the symbol stack}
+			begin
+				write('debug: oSymbolStkPrintContents');
+				writeln;
+				i := symbolStkTop;
+				write('debug: Value		Kind	Ident Link	Type Link	Symbol Tbl Ref');
+				writeln;
+				while i >= 1 do
+				    begin
+					write(symbolStkValue[i]);
+					write('	');
+					write(symbolStkKind[i]);
+					write('	');
+					write(symbolStkIdentLink[i]);
+					write('	');
+					write(symbolStkTypeTblLink[i]);
+					write('	');
+					write(symbolStkSymbolTblRef[i]);
+					writeln;
+					i := i - 1;
+				    end
+			end;
+
 
 		    { ****
 		      *  *  Type Table Mechanism Operations
