@@ -2026,6 +2026,28 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 					typeStkComponentLink[typeStkTop];
 			end;
 
+			oTypeTblPrintContents:
+			{Print the contents of the symbol table}
+				begin
+					write('debug: oTypeTblPrintContents');
+					writeln;
+					i := typeTblTop;
+					write('debug: Kind		LowerBound	UpperBound	Component Link');
+					writeln;
+					while i >= 1 do
+					    begin
+						write(typeTblKind[i]);
+						write('	');
+						write(typeTblLowerBound[i]);
+						write('	');
+						write(typeTblUpperBound[i]);
+						write('	');
+						write(typeTblComponentLink[i]);
+						writeln;
+						i := i - 1;
+					    end
+			end;
+
 
 		    { ****
 		      *  *  Type Stack Mechanism Operations

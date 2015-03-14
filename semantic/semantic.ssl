@@ -442,10 +442,12 @@ mechanism TypeTable :
 	% Make a new type table entry with the attributes of the 
 	% top type stack entry.
 
-    oTypeTblUpdate;
+    oTypeTblUpdate
 	% The type table entry referenced by the top entry in the
 	% type stack is given the attributes of the top type stack entry.
 
+	oTypeTblPrintContents;
+	% Prints the contents of the Type Table
 
 
 
@@ -771,10 +773,10 @@ Program :
 	% Changed sProgram to sExtern
 	sExtern
 	oSymbolTblPrintContents	
+	oTypeTblPrintContents
 	% Program scope, distinct from implicit scope surrounding
 	% program which contains predefined names
 	oSymbolTblPushScope
-	oSymbolTblPrintContents
 	% Count is used to assign file descriptors to non-standard
 	% files.  We assume that "input" has file descriptor 1,
 	% "output" has descriptor 2 and user defined files have
