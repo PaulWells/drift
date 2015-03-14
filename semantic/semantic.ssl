@@ -725,8 +725,11 @@ mechanism CountStack :
     oCountDecrement
 	% Decrement the value of the top count stack entry.
 
-    oCountChoose >> Integer;
+    oCountChoose >> Integer
 	% Return the value of the top count stack entry.
+
+	oCountPrintContents:
+	% Print the contents of the Count Stack
 
 
 

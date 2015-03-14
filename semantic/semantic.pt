@@ -502,7 +502,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	{ S/SL Table Parameters }
 	sslTblSize = 4207;
 	minSslTableValue = -32767;
-	maxSslTableValue = 32767;
+	maxSslTableValue = 32767;ssssss
 
 { ===== End of contents of semantic.def }
 
@@ -2259,6 +2259,22 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 
 		    oCountChoose:
 			resultValue := countStack[countStackTop];
+
+			oCountPrintContents:
+			{ Print the contents of the Count stack }
+				begin
+					write('debug: oCountPrintContents');
+					writeln;
+					i := countStackTop;
+					write('debug: Count');
+					writeln;
+					while i >= 1 do
+					    begin
+						write(countStack[i]);
+						writeln;
+						i := i - 1;
+					    end
+			end;
 
 
 		    { ****
