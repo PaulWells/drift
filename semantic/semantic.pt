@@ -1768,16 +1768,26 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				end
 			end;
 
-			oSymbolTblPrintContents:
+		    oSymbolTblPrintContents:
 			{Print the contents of the symbol table}
-			write('debug: oSymbolTblPrintContents');
 			begin
+				write('debug: oSymbolTblPrintContents');
+				writeln;
 				i := symbolTblTop;
-				while i >= 0
-				begin
+				write('debug: Values		Kind	Ident Link	Type Link');
+				writeln;
+				while i >= 1 do
+				    begin
 					write(symbolTblValue[i]);
+					write('	');
+					write(symbolTblKind[i]);
+					write('	');
+					write(symbolTblIdentLink[i]);
+					write('	');
+					write(symbolTblTypeTblLink[i]);
+					writeln;
 					i := i - 1;
-				end
+				    end
 			end;
 
 

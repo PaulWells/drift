@@ -769,11 +769,12 @@ rules
 Program :
 
 	% Changed sProgram to sExtern
-	sExtern	
-
+	sExtern
+	oSymbolTblPrintContents	
 	% Program scope, distinct from implicit scope surrounding
 	% program which contains predefined names
 	oSymbolTblPushScope
+	oSymbolTblPrintContents
 	% Count is used to assign file descriptors to non-standard
 	% files.  We assume that "input" has file descriptor 1,
 	% "output" has descriptor 2 and user defined files have
