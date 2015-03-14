@@ -135,14 +135,13 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	oCountIncrement = 85;
 	oCountDecrement = 86;
 	oCountChoose = 87; { >>13 }
-	oFixPushForwardBranch = 88;
-	oFixPopForwardBranch = 89;
-	oFixPushTargetAddress = 90;
-	oFixPopTargetAddress = 91;
-	oFixPopAndEnterValue = 92;
-	oFixSwap = 93;
-
-	{ Input Tokens }
+	oCountPrintContents = 88;
+	oFixPushForwardBranch = 89;
+	oFixPopForwardBranch = 90;
+	oFixPushTargetAddress = 91;
+	oFixPopTargetAddress = 92;
+	oFixPopAndEnterValue = 93;
+	oFixSwap = 94;
 	sIdentifier = 0;
 	firstInputToken = 0;
 	sInteger = 1;
@@ -502,7 +501,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	{ S/SL Table Parameters }
 	sslTblSize = 4207;
 	minSslTableValue = -32767;
-	maxSslTableValue = 32767;ssssss
+	maxSslTableValue = 32767;
 
 { ===== End of contents of semantic.def }
 

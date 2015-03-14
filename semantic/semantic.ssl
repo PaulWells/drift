@@ -728,7 +728,7 @@ mechanism CountStack :
     oCountChoose >> Integer
 	% Return the value of the top count stack entry.
 
-	oCountPrintContents:
+	oCountPrintContents;
 	% Print the contents of the Count Stack
 
 
@@ -785,6 +785,7 @@ Program :
 	% "output" has descriptor 2 and user defined files have
 	% descriptors 3,4,...,n.
 	oCountPush(three)
+	oCountPrintContents
 	{[
 	    | sParmEnd:
 		>
