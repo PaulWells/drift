@@ -1770,8 +1770,14 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 
 			oSymbolTblPrintContents:
 			{Print the contents of the symbol table}
+			write('debug: oSymbolTblPrintContents');
 			begin
-				write('debug: oSymbolTblPrintContents');
+				i := symbolTblTop;
+				while i >= 0
+				begin
+					write(symbolTblValue[i]);
+					i := i - 1;
+				end
 			end;
 
 
