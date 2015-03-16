@@ -1815,6 +1815,23 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				    end
 			end;
 
+			oSymbolTblPrintIdentTable:
+			{Print the contents of the Ident Table}
+			begin
+				write('debug: oSymbolTblPrintIdentTable');
+				writeln;
+				i := lexicLevelStackTop;
+				write('debug: SymbolTblRef');
+				writeln;
+				while i >= 1 do
+				    begin
+					write(identSymbolTblRef[i]);
+					write('	');
+					i := i - 1;
+				    end
+			end;
+
+
 
 		    { ****
 		      *  *  Symbol Stack Mechanism Operations

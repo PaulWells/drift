@@ -311,8 +311,11 @@ mechanism SymbolTable :
     oSymbolTblPrintContents
 	% Prints contents of the symbol table
 
-	oSymbolTblPrintLexicalLevelStack;
+    oSymbolTblPrintLexicalLevelStack
 	% Prints the contents of the Lexical Level Stack
+	
+    oSymbolTblPrintIdentTable;
+	% Prints the contents of the Ident Table
 
 
 
@@ -1447,7 +1450,9 @@ ProcedureDefinition :
 	oTypeStkSetRecursionFlag(no)
 	oTypeTblUpdate
 	oTypeStkPop
-	oSymbolTblPopScope;
+	oSymbolTblPrintIdentTable
+	oSymbolTblPopScope
+	oSymbolTblPrintIdentTable;
 
 
 ProcedureHeading :
