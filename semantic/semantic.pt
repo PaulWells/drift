@@ -1793,6 +1793,24 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				    end
 			end;
 
+			oSymbolTblPrintLexicalLevelStack:
+			{Print the contents of the LexicalLevel Stack}
+			begin
+				write('debug: oSymbolTblPrintLexicalLevelStack');
+				writeln;
+				i := symbolTblTop;
+				write('debug: SymbolTbl Display		TypeTbl Display');
+				writeln;
+				while i >= 1 do
+				    begin
+					write(symbolTblDisplay[i]);
+					write('	');
+					write(typeTblDisplay[i]);
+					writeln;
+					i := i - 1;
+				    end
+			end;
+
 
 		    { ****
 		      *  *  Symbol Stack Mechanism Operations
@@ -2002,7 +2020,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 					write('	');
 					write(symbolStkKind[i]);
 					write('	');
-					write(symbolStkIdentLink[i]);
+					write(symbolStkIdentTblRef[i]);
 					write('	');
 					write(symbolStkTypeTblLink[i]);
 					write('	');
@@ -2054,7 +2072,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			end;
 
 			oTypeTblPrintContents:
-			{Print the contents of the symbol table}
+			{Print the contents of the type table}
 				begin
 					write('debug: oTypeTblPrintContents');
 					writeln;
@@ -2240,6 +2258,30 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			begin
 			    Assert((typeStkTop > 0), assert17);
 			    typeStkTop := typeStkTop -1
+			end;
+
+			oTypeStkPrintContents:
+			{Print the contents of the type table}
+				begin
+					write('debug: oTypeStkPrintContents');
+					writeln;
+					i := typeTblTop;
+					write('debug: TypeTblRef	Kind		LowerBound	UpperBound	Component Link');
+					writeln;
+					while i >= 1 do
+					    begin
+						write(typeStkKind[i]);
+						write('	');
+						write(typeStkLowerBound[i]);
+						write('	');
+						write(typeStkUpperBound[i]);
+						write('	');
+						write(typeStkComponentLink[i]);
+						write('	');
+						write(typeStkTypeTblRef[i]);
+						writeln;
+						i := i - 1;
+					    end
 			end;
 
 
@@ -2450,6 +2492,21 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			    valueStackTop := valueStackTop - 1;
 			end;
 
+			oValuePrintContents:
+			{ Print the contents of the Value stack }
+				begin
+					write('debug: oValuePrintContents');
+					writeln;
+					i := valueStackTop;
+					write('debug: Value');
+					writeln;
+					while i >= 1 do
+					    begin
+						write(valueStack[i]);
+						writeln;
+						i := i - 1;
+					    end
+
 
 		    { ****
 		      *  *  Allocator Mechanism Operations
@@ -2557,6 +2614,22 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 					    i := caseStackTop	{ exit }
 					end
 				end
+			end;
+
+			oCasePrintContents:
+			{ Print the contents of the Case stack }
+				begin
+					write('debug: oCasePrintContents');
+					writeln;
+					i := caseStackTop;
+					write('debug: Display');
+					writeln;
+					while i >= 1 do
+					begin
+						write(caseStack[i]);
+						writeln;
+						i := i - 1;
+					end
 			end;
 
 

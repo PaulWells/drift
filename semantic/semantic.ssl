@@ -308,8 +308,11 @@ mechanism SymbolTable :
 	% Return true if any external names (program parameters)
 	% have not yet been declared.
 
-    oSymbolTblPrintContents;
+    oSymbolTblPrintContents
 	% Prints contents of the symbol table
+
+	oSymbolTblPrintLexicalLevelStack;
+	% Prints the contents of the Lexical Level Stack
 
 
 
@@ -556,8 +559,11 @@ mechanism TypeStack :
     oTypeStkSwap
 	% Swap the top two entries
 
-    oTypeStkPop;
+    oTypeStkPop
 	% Pop the type stack
+
+	oTypeStkPrintContents;
+	% Print the contents of the Type Stack
 
 
 
@@ -672,8 +678,11 @@ mechanism ValueStack :
     oValueChoose >> Integer
 	% Return the value of the top entry.
 
-    oValuePop;
+    oValuePop
 	% Pop the value stack.
+
+	oValuePrintContents;
+	% Print the contents of the Value Stack
 
 
 
@@ -699,11 +708,14 @@ mechanism CaseStack :
 	% label in the current-case-statement section (as indicated
 	% by the case display) of the label stack.
 
-    oCasePushLabel;
+    oCasePushLabel
 	% Push the top value stack entry onto the case label stack and
 	% push the address of the next instruction to be emitted to the
 	% code area which will be the case statement alternative
 	% corresponding to the just-pushed label.
+
+	oCasePrintContents;
+	% Print the contents of the Case Stack
 
 
 
@@ -780,6 +792,10 @@ Program :
 	sExtern
 	oSymbolTblPrintContents	
 	oTypeTblPrintContents
+	oTypeStkPrintContents
+	oValuePrintContents
+	oCasePrintContents
+	oSymbolTblPrintLexicalLevelStack
 	% Program scope, distinct from implicit scope surrounding
 	% program which contains predefined names
 	oSymbolTblPushScope
