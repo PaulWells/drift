@@ -325,10 +325,12 @@ type SymbolKind :
 	syVariable
 	syVarParameter
 	syProcedure
+	syPublicProcedure
 	syFunction
 	syExternal
 	syExpression
-	syUndefined;
+	syUndefined
+	syModule;
 
 type StdRoutine :
 	rtReset = 1
@@ -790,12 +792,6 @@ Program :
 
 	% Changed sProgram to sExtern
 	sExtern
-	oSymbolTblPrintContents	
-	oTypeTblPrintContents
-	oTypeStkPrintContents
-	oValuePrintContents
-	oCasePrintContents
-	oSymbolTblPrintLexicalLevelStack
 	% Program scope, distinct from implicit scope surrounding
 	% program which contains predefined names
 	oSymbolTblPushScope
@@ -804,7 +800,6 @@ Program :
 	% "output" has descriptor 2 and user defined files have
 	% descriptors 3,4,...,n.
 	oCountPush(three)
-	oCountPrintContents
 	{[
 	    | sParmEnd:
 		>
@@ -833,7 +828,6 @@ ProgramParameter :
 	% files must be declared in the global program scope.
 
 	sIdentifier  oSymbolStkPushLocalIdentifier
-	oSymbolTblPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined:	% a new name in this scope
 		[ oSymbolStkChooseStandardFile	% based on text of symbol
@@ -842,6 +836,7 @@ ProgramParameter :
 			% the program header are automatically declared.
 			oSymbolStkSetKind(syVariable)
 			oSymbolStkLinkToStandardType(stdText)
+			oSymbolStkPrintContents
 			oTypeStkPushSymbol
 			% set up a file descriptor for the allocate mechanism
 			oValuePush(one)	% Standard input file descriptor is 1
@@ -863,6 +858,8 @@ ProgramParameter :
 		% stack entry to the code area as a file descriptor.
 		@AllocateVar
 		oSymbolTblEnter
+		oSymbolTblPrintContents
+
 	    | *:
 		#eDuplicateName
 	]
@@ -1070,6 +1067,7 @@ TypeBody :
 				oTypeStkPushComponent
 			    | *:
 				oTypeStkPush(tpNull)	% dummy component type
+				oTypeStkPrintContents
 			]
 			oSymbolStkPop
 		    | *:	% subrange specification
@@ -1269,6 +1267,7 @@ VariableDeclarations :
 
 VariableAttributes :
 	oSymbolStkPushLocalIdentifier
+	oSymbolStkPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined, syExternal:
 	    | *:
@@ -3262,7 +3261,8 @@ SymbolStkPushCharConstant :
 
 SymbolStkPushIntegerType :
 	oSymbolStkPush(syType)
-	oSymbolStkLinkToStandardType(stdInteger);
+	oSymbolStkLinkToStandardType(stdInteger)
+	oSymbolStkPrintContents;
 
 
 SymbolStkPushIntegerVariable :

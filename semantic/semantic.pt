@@ -1808,7 +1808,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				while i >= 1 do
 				    begin
 					write(symbolTblDisplay[i]);
-					write('	');
+					write('			');
 					write(typeTblDisplay[i]);
 					writeln;
 					i := i - 1;
@@ -2269,8 +2269,8 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				begin
 					write('debug: oTypeStkPrintContents');
 					writeln;
-					i := typeTblTop;
-					write('debug: TypeTblRef	Kind		LowerBound	UpperBound	Component Link');
+					i := typeStkTop;
+					write('debug:Kind	LowerBound	UpperBound	Component Link	TypeTblRef');
 					writeln;
 					while i >= 1 do
 					    begin
