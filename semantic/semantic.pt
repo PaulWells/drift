@@ -1802,7 +1802,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			begin
 				write('debug: oSymbolTblPrintLexicalLevelStack');
 				writeln;
-				i := symbolTblTop;
+				i := lexicLevelStackTop;
 				write('debug: SymbolTbl Display		TypeTbl Display');
 				writeln;
 				while i >= 1 do
@@ -2510,6 +2510,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 						writeln;
 						i := i - 1;
 					    end
+			end;
 
 
 		    { ****
@@ -2626,11 +2627,12 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 					write('debug: oCasePrintContents');
 					writeln;
 					i := caseStackTop;
-					write('debug: Display');
+					write('debug: Label	Address');
 					writeln;
 					while i >= 1 do
 					begin
-						write(caseStack[i]);
+						write(caseLabelStack[i]);
+						write(caseAddressStack[i]);
 						writeln;
 						i := i - 1;
 					end
