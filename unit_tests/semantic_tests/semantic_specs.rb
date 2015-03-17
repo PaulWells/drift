@@ -17,8 +17,8 @@ RSpec.describe "Semantic Tests" do
 	end
 
 	it 'recognizes switch statements' do
-		actual = fetch_actual('bust')
-		expected = fetch_expected('bustSwitch')
+		actual = fetch_actual('simpleSwitch')
+		expected = fetch_expected('simpleSwitch')
 
 		expect(actual).to match(expected)
 	end
