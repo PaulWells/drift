@@ -1305,7 +1305,8 @@ VariableAttributes :
 	% Count the number of identifiers
 	oCountPush(one)
 	{[
-		| sIdentifier:
+		| sVar:
+		sIdentifier
 		oSymbolStkPushLocalIdentifier
 		oCountIncrement
 		| *:
@@ -1322,7 +1323,7 @@ VariableAttributes :
 	]
 
 	% Repeat for the number of identifiers
-	{[ oCountChoose:
+	{[ oCountChoose
 		| zero:
 			>
 		| *:
