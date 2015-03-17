@@ -1792,7 +1792,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			    while i > symbolTblTop do
 				begin
 
-					if(symbolTblKind[i] <> syPublicProcedure)
+					if(symbolTblKind[i] <> syPublicProcedure) then
 					begin
 					    link := symbolTblIdentLink[i];
 
