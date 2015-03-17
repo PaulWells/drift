@@ -308,6 +308,13 @@ mechanism SymbolTable :
 	% Return true if any external names (program parameters)
 	% have not yet been declared.
 
+    oSymbolTblStripScope
+	% Make all symbols in current scope hidden except for
+	% public procedures
+
+    oSymbolTblMergeScope
+	% Merge current scope with previous scope
+
     oSymbolTblPrintContents
 	% Prints contents of the symbol table
 
@@ -893,11 +900,14 @@ Block :
 
 ModuleDeclaration :
 	% Require module name
-	sIdentifer
+	[
+	    | sIdentifier:
+	    | *:
+		#eUndefinedIdentifier
+	]
 
-	% Add module name to symbol table
 	oSymbolStkPushLocalIdentifier
-	oSybmolStkSetKind(syModule)
+	oSymbolStkSetKind(syModule)
 	oSymbolTblEnter
 	oSymbolStkPop
 
@@ -905,7 +915,7 @@ ModuleDeclaration :
 	@Block
 
 	% Pop module scope, leaving public procedures
-	  visible
+	%  visible
 	oSymbolTblStripScope
 	oSymbolTblMergeScope;
 

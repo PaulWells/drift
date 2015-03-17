@@ -1781,7 +1781,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				end
 			end;
 
-			oSymbolTblStripScope:
+		    t soSymbolTblStripScope:
 			{  }
 
 			begin
