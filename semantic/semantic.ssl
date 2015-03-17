@@ -138,6 +138,9 @@ Output : 	% corresponds to coder.ssl input
 	tConcatenate
 	tSubstring
 	tLength
+	tChr
+	tOrd
+	tStringEqual
 	tStringEqual
 	tLoopBegin
 	tLoopBreakIf
@@ -571,9 +574,9 @@ type TrapKind :
 	trWriteln = 6
 	trWriteString = 7
 	trWriteInteger = 8
-	trWriteString = 9
+	trWriteString = 108
 	trReadInteger = 10
-	trReadString = 11
+	trReadString = 107
 	trAssign = 12;
 
 
