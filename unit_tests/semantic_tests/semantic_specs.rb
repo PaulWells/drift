@@ -15,6 +15,13 @@ RSpec.describe "Semantic Tests" do
 	it 'parses bubble.pt' do
 		compare_outputs('bubble')
 	end
+
+	it 'recognizes switch statements' do
+		actual = fetch_actual('bust.pt')
+		expected = fetch_expected('bustSwitch')
+
+		expect(actual).to match(expected)
+	end
 end
 
 def fetch_actual(test_case)
