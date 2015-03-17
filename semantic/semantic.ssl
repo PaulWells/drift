@@ -1450,9 +1450,6 @@ AllocateVar :
 	];
 
 ProcedureDefinition :
-	oSymbolTblPrintContents
-	oSymbolTblPrintIdentTable
-	oSymbolTblPrintLexicalLevelStack
 	sIdentifier  oSymbolStkPushLocalIdentifier	% procedure name
 	[ oSymbolStkChooseKind
 	    | syUndefined:
@@ -1466,7 +1463,12 @@ ProcedureDefinition :
 	.tSkipProc	% Branch around the procedure definition
 	oFixPushForwardBranch
 	oEmitNullAddress
-	oSymbolStkSetKind(syProcedure)
+	[ 
+	    | sPublic:
+		oSymbolStkSetKind(syPublicProcedure)
+	    | *:
+		oSymbolStkSetKind(syProcedure)
+	]
 	oSymbolStkEnterCodeAddress
 	oTypeStkPush(tpNull)
 	oTypeStkSetRecursionFlag(yes)
@@ -1483,13 +1485,7 @@ ProcedureDefinition :
 	oTypeStkSetRecursionFlag(no)
 	oTypeTblUpdate
 	oTypeStkPop
-	oSymbolTblPrintContents
-	oSymbolTblPrintIdentTable
-	oSymbolTblPrintLexicalLevelStack
-	oSymbolTblPopScope
-	oSymbolTblPrintContents
-	oSymbolTblPrintLexicalLevelStack
-	oSymbolTblPrintIdentTable;
+	oSymbolTblPopScope;
 
 
 ProcedureHeading :
@@ -1735,7 +1731,7 @@ CallProcedure :
 		oEmitValue	% procedure code area address
 		oValuePop
 		oTypeStkPop
-	]
+	];
 
 ActualParameters :
 	oCountPush(zero)		% actual parameters count

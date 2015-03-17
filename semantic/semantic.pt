@@ -1986,8 +1986,9 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			  procedure's i'th formal parameter where i
 			  is the value of the top count stack entry. }
 			begin
+			    { Now public procedure is also acceptable }
 			    Assert((symbolStkKind[symbolStkTop] =
-				syProcedure), assert24);
+				syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure), assert24);
 			    SymbolStkPushIdentifier(symbolStkSymbolTblRef
 				[symbolStkTop] + countStack[countStackTop]);
 			end;
