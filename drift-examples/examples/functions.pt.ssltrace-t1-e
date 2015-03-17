@@ -1,0 +1,42 @@
+  .pIdentifier (screened to pExtern)
+  .pIdentifier
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pFunc)
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pReturn)
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pFunc)
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pReturn)
+  .pLiteral
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+ .pNewLine
+  .pIdentifier
+ .pLeftParen
+  .pIdentifier
+ .pRightParen
+ .pSemicolon
+  .pIdentifier
+ .pNewLine
+ .pNewLine
+  .pIdentifier
+ .pLeftParen
+  .pIdentifier
+ .pRightParen
+ .pSemicolon
+  .pIdentifier
+ .pNewLine
+ .pEndFile

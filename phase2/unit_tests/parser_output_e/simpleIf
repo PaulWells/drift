@@ -1,0 +1,12 @@
+.sIfStmt
+.sIdentifier
+.sIdentifier
+.sEq
+.sExpnEnd
+.sThen
+.sBegin
+.sAssignmentStmt
+.sIdentifier
+.sInteger
+.sExpnEnd
+.sEnd

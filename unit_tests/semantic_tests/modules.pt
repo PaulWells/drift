@@ -1,0 +1,18 @@
+extern input
+var a: integer
+
+module M
+
+    func c (var b: integer)
+	b = b + 1
+    end
+
+    func d * (var f: integer)
+	f = f + 1
+    end
+
+end
+
+a = a + 1
+d(a)
+
