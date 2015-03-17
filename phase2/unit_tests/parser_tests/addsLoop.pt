@@ -1,0 +1,7 @@
+loop
+	x = 6
+	y = 7
+	break if x == y
+	z = 8
+	a = 3
+end
