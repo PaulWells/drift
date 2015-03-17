@@ -883,11 +883,32 @@ Block :
 		@TypeDefinitions
 	    | sVar:
 		@VariableDeclarations
+		| sModule:
+		@ModuleDeclaration % Added module declaration
 	    | *:
 		>
 	]}
 	sBegin
 	@BeginStmt;
+
+ModuleDeclaration :
+	% Require module name
+	sIdentifer
+
+	% Add module name to symbol table
+	oSymbolStkPushLocalIdentifier
+	oSybmolStkSetKind(syModule)
+	oSymbolTblEnter
+	oSymbolStkPop
+
+	oSymbolTblPushScope
+	@Block
+
+	% Pop module scope, leaving public procedures
+	  visible
+	oSymbolTblStripScope
+	oSymbolTblMergeScope;
+
 
 ConstantDefinitions :		% Process named constant definitions
 	{[
@@ -1270,7 +1291,6 @@ VariableDeclarations :
 
 VariableAttributes :
 	oSymbolStkPushLocalIdentifier
-	oSymbolStkPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined, syExternal:
 	    | *:
