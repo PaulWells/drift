@@ -308,8 +308,21 @@ mechanism SymbolTable :
 	% Return true if any external names (program parameters)
 	% have not yet been declared.
 
-    oSymbolTblPrintContents;
+    oSymbolTblStripScope
+	% Make all symbols in current scope hidden except for
+	% public procedures
+
+    oSymbolTblMergeScope
+	% Merge current scope with previous scope
+
+    oSymbolTblPrintContents
 	% Prints contents of the symbol table
+
+    oSymbolTblPrintLexicalLevelStack
+	% Prints the contents of the Lexical Level Stack
+	
+    oSymbolTblPrintIdentTable;
+	% Prints the contents of the Ident Table
 
 
 
@@ -322,10 +335,12 @@ type SymbolKind :
 	syVariable
 	syVarParameter
 	syProcedure
+	syPublicProcedure
 	syFunction
 	syExternal
 	syExpression
-	syUndefined;
+	syUndefined
+	syModule;
 
 type StdRoutine :
 	rtReset = 1
@@ -424,8 +439,11 @@ mechanism SymbolStack :
 	% If the top entry is a standard routine symbol, return a
 	% value indicating which routine it is, otherwise return null.
 
-    oSymbolStkPop;
+    oSymbolStkPop
 	% Pop the symbol stack
+
+	oSymbolStkPrintContents;
+	% Print the contents of the symbol stack
 
 
 
@@ -442,10 +460,12 @@ mechanism TypeTable :
 	% Make a new type table entry with the attributes of the 
 	% top type stack entry.
 
-    oTypeTblUpdate;
+    oTypeTblUpdate
 	% The type table entry referenced by the top entry in the
 	% type stack is given the attributes of the top type stack entry.
 
+	oTypeTblPrintContents;
+	% Prints the contents of the Type Table
 
 
 
@@ -551,8 +571,11 @@ mechanism TypeStack :
     oTypeStkSwap
 	% Swap the top two entries
 
-    oTypeStkPop;
+    oTypeStkPop
 	% Pop the type stack
+
+	oTypeStkPrintContents;
+	% Print the contents of the Type Stack
 
 
 
@@ -667,8 +690,11 @@ mechanism ValueStack :
     oValueChoose >> Integer
 	% Return the value of the top entry.
 
-    oValuePop;
+    oValuePop
 	% Pop the value stack.
+
+	oValuePrintContents;
+	% Print the contents of the Value Stack
 
 
 
@@ -694,11 +720,14 @@ mechanism CaseStack :
 	% label in the current-case-statement section (as indicated
 	% by the case display) of the label stack.
 
-    oCasePushLabel;
+    oCasePushLabel
 	% Push the top value stack entry onto the case label stack and
 	% push the address of the next instruction to be emitted to the
 	% code area which will be the case statement alternative
 	% corresponding to the just-pushed label.
+
+	oCasePrintContents;
+	% Print the contents of the Case Stack
 
 
 
@@ -723,8 +752,11 @@ mechanism CountStack :
     oCountDecrement
 	% Decrement the value of the top count stack entry.
 
-    oCountChoose >> Integer;
+    oCountChoose >> Integer
 	% Return the value of the top count stack entry.
+
+	oCountPrintContents;
+	% Print the contents of the Count Stack
 
 
 
@@ -767,8 +799,9 @@ rules
 
 
 Program :
+
 	% Changed sProgram to sExtern
-	sExtern	
+	sExtern
 	% Program scope, distinct from implicit scope surrounding
 	% program which contains predefined names
 	oSymbolTblPushScope
@@ -813,6 +846,7 @@ ProgramParameter :
 			% the program header are automatically declared.
 			oSymbolStkSetKind(syVariable)
 			oSymbolStkLinkToStandardType(stdText)
+			oSymbolStkPrintContents
 			oTypeStkPushSymbol
 			% set up a file descriptor for the allocate mechanism
 			oValuePush(one)	% Standard input file descriptor is 1
@@ -834,6 +868,8 @@ ProgramParameter :
 		% stack entry to the code area as a file descriptor.
 		@AllocateVar
 		oSymbolTblEnter
+		oSymbolTblPrintContents
+
 	    | *:
 		#eDuplicateName
 	]
@@ -854,11 +890,35 @@ Block :
 		@TypeDefinitions
 	    | sVar:
 		@VariableDeclarations
+		| sModule:
+		@ModuleDeclaration % Added module declaration
 	    | *:
 		>
 	]}
 	sBegin
 	@BeginStmt;
+
+ModuleDeclaration :
+	% Require module name
+	[
+	    | sIdentifier:
+	    | *:
+		#eUndefinedIdentifier
+	]
+
+	oSymbolStkPushLocalIdentifier
+	oSymbolStkSetKind(syModule)
+	oSymbolTblEnter
+	oSymbolStkPop
+
+	oSymbolTblPushScope
+	@Block
+
+	% Pop module scope, leaving public procedures
+	%  visible
+	oSymbolTblStripScope
+	oSymbolTblMergeScope;
+
 
 ConstantDefinitions :		% Process named constant definitions
 	{[
@@ -1041,6 +1101,7 @@ TypeBody :
 				oTypeStkPushComponent
 			    | *:
 				oTypeStkPush(tpNull)	% dummy component type
+				oTypeStkPrintContents
 			]
 			oSymbolStkPop
 		    | *:	% subrange specification
@@ -1389,6 +1450,9 @@ AllocateVar :
 	];
 
 ProcedureDefinition :
+	oSymbolTblPrintContents
+	oSymbolTblPrintIdentTable
+	oSymbolTblPrintLexicalLevelStack
 	sIdentifier  oSymbolStkPushLocalIdentifier	% procedure name
 	[ oSymbolStkChooseKind
 	    | syUndefined:
@@ -1419,7 +1483,13 @@ ProcedureDefinition :
 	oTypeStkSetRecursionFlag(no)
 	oTypeTblUpdate
 	oTypeStkPop
-	oSymbolTblPopScope;
+	oSymbolTblPrintContents
+	oSymbolTblPrintIdentTable
+	oSymbolTblPrintLexicalLevelStack
+	oSymbolTblPopScope
+	oSymbolTblPrintContents
+	oSymbolTblPrintLexicalLevelStack
+	oSymbolTblPrintIdentTable;
 
 
 ProcedureHeading :
@@ -1608,59 +1678,64 @@ CallStmt :
 	    | *:
 	]
 	[ oSymbolStkChooseKind
+		| syPublicProcedure:
+			@CallProcedure
 	    | syProcedure:
-		[ oSymbolStkChooseStandardRoutine
-		    | rtReset:
-			.tTrapBegin
-			@OpenProcedure
-			.tTrap
-			oEmitTrapKind(trReset)
-		    | rtRewrite:
-			.tTrapBegin
-			@OpenProcedure
-			.tTrap
-			oEmitTrapKind(trRewrite)
-		    | rtAssign:
-			.tTrapBegin
-			@AssignProcedure
-			.tTrap
-			oEmitTrapKind(trAssign)
-		    | rtWrite:
-			.tWriteBegin
-			@WriteProcedure
-		    | rtWriteln:
-			.tTrapBegin
-			@WritelnProcedure
-			.tTrap
-			oEmitTrapKind(trWriteln)
-		    | rtRead:
-			.tReadBegin
-			@ReadProcedure
-		    | rtReadln:
-			.tTrapBegin
-			@ReadlnProcedure
-			.tTrap
-			oEmitTrapKind(trReadln)
-		    | *:		% call to a user defined procedure
-			.tCallBegin
-			oTypeStkPushSymbol
-			[ oTypeStkChooseRecursionFlag
-			    | yes:
-				#eRecursiveCall
-			    | *:
-			]
-			@ActualParameters
-			.tCallEnd
-			oValuePushSymbol
-			oEmitValue	% procedure code area address
-			oValuePop
-			oTypeStkPop
-		]
+			@CallProcedure
 	    | *:
 		#eProcedureReqd
 		@FlushActuals
 	]
 	oSymbolStkPop;
+
+CallProcedure :
+	[ oSymbolStkChooseStandardRoutine
+	    | rtReset:
+		.tTrapBegin
+		@OpenProcedure
+		.tTrap
+		oEmitTrapKind(trReset)
+	    | rtRewrite:
+		.tTrapBegin
+		@OpenProcedure
+		.tTrap
+		oEmitTrapKind(trRewrite)
+	    | rtAssign:
+		.tTrapBegin
+		@AssignProcedure
+		.tTrap
+		oEmitTrapKind(trAssign)
+	    | rtWrite:
+		.tWriteBegin
+		@WriteProcedure
+	    | rtWriteln:
+		.tTrapBegin
+		@WritelnProcedure
+		.tTrap
+		oEmitTrapKind(trWriteln)
+	    | rtRead:
+		.tReadBegin
+		@ReadProcedure
+	    | rtReadln:
+		.tTrapBegin
+		@ReadlnProcedure
+		.tTrap
+		oEmitTrapKind(trReadln)
+	    | *:		% call to a user defined procedure
+		.tCallBegin
+		oTypeStkPushSymbol
+		[ oTypeStkChooseRecursionFlag
+		    | yes:
+			#eRecursiveCall
+		    | *:
+		]
+		@ActualParameters
+		.tCallEnd
+		oValuePushSymbol
+		oEmitValue	% procedure code area address
+		oValuePop
+		oTypeStkPop
+	]
 
 ActualParameters :
 	oCountPush(zero)		% actual parameters count
@@ -3233,7 +3308,8 @@ SymbolStkPushCharConstant :
 
 SymbolStkPushIntegerType :
 	oSymbolStkPush(syType)
-	oSymbolStkLinkToStandardType(stdInteger);
+	oSymbolStkLinkToStandardType(stdInteger)
+	oSymbolStkPrintContents;
 
 
 SymbolStkPushIntegerVariable :
