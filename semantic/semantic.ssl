@@ -1923,14 +1923,14 @@ CaseStmt :
 		@CaseAlternative
 	]}
 	.tCaseEnd
+	% oFixPopForwardBranch
+	oEmitCaseBranchTable
 	[
 		| sDefault:
 			.tCaseElse
 			@CaseAlternative
 		| *:
 	]
-	oFixPopForwardBranch
-	oEmitCaseBranchTable
 	% emit merge branches for case alternatives
 	{[ oCountChoose		% number of case alternatives
 	    | zero:
