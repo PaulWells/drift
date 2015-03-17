@@ -1784,7 +1784,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				end
 			end;
 
-		    t soSymbolTblStripScope:
+		    oSymbolTblStripScope:
 			{  }
 
 			begin
@@ -2257,9 +2257,8 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			{ Set the top entry's parameter count field
 			  from the top count.			  }
 			begin
-
-			    Assert((symbolStkKind[symbolStkTop] = syProcedure),
-				assert28);
+			    { Now procedures can be public procedures as well}
+			    Assert(((symbolStkKind[symbolStkTop] = syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure)),assert28);
 			    typeStkLowerBound[typeStkTop] :=
 				countStack[countStackTop];
 			end;
@@ -2268,7 +2267,9 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			{ Return yes if the parameter count field matches
 			  the top count, otherwise return no.		 }
 			begin
-			    Assert((symbolStkKind[symbolStkTop] = syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure),assert29);
+			    { Now can accept procedure or public procedure }
+			    Assert((symbolStkKind[symbolStkTop] = syProcedure) or (symbolStkKind[SymbolStkTop] = syPublicProcedure),
+				assert29);
 			    if typeStkLowerBound[typeStkTop] =
 				    countStack[countStackTop] then
 				resultValue := yes
