@@ -18,15 +18,8 @@
                    oEmitValue
                    .tFetchAddress
                    .tFetchInteger
-                   .tLiteralAddress
-                   oEmitValue
-                   .tFetchAddress
-                    .tSubscriptBegin
-                       .tLiteralAddress
-                       oEmitValue
-                       .tFetchInteger
-                    .tSubscriptInteger
-                   .tFetchInteger
+                  .tLiteralInteger
+                  oEmitValue
                   .tAdd
                 .tAssignInteger
             .tCaseMerge
@@ -38,16 +31,6 @@
                    .tLiteralAddress
                    oEmitValue
                    .tFetchAddress
-                   .tFetchInteger
-                  .tLiteralInteger
-                  oEmitValue
-                  .tAdd
-                .tAssignInteger
-                .tAssignBegin
-                 .tLiteralAddress
-                 oEmitValue
-                   .tLiteralAddress
-                   oEmitValue
                    .tFetchInteger
                   .tLiteralInteger
                   oEmitValue
