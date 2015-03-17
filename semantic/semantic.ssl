@@ -1553,8 +1553,8 @@ Statement :
 		@WhileStmt
 	    | sCaseStmt:
 		@CaseStmt
-	    | sRepeatStmt:
-		@RepeatStmt
+	    | sLoopStmt:
+		@LoopStmt
 	    | sNullStmt:
 	];
 
@@ -1778,19 +1778,20 @@ WhileStmt :
 	oFixPopTargetAddress
 	oFixPopForwardBranch;
 
-RepeatStmt :
-	.tRepeatBegin
+LoopStmt :
+	.tLoopBegin
 	oFixPushTargetAddress		% top-of-loop branch target
-	{[
-	    | sRepeatEnd:
-		>
-	    | *:
-		@Statement
-	]}
-	.tRepeatControl
+	oFixPushForwardBranch
+	oEmitNullAddress
+	oFixSwap
+	@Statement
+	.sLoopBreakIf
 	@BooleanControlExpression
-	.tRepeatTest
-	oFixPopTargetAddress;
+	.tLoopTest
+	@Statement
+	.tLoopEnd
+	oFixPopTargetAddress
+	oFixPopForwardBranch;
 
 CaseStmt :
 	.tCaseBegin
