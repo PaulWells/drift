@@ -1784,12 +1784,22 @@ LoopStmt :
 	oFixPushForwardBranch
 	oEmitNullAddress
 	oFixSwap
-	@Statement
-	.sLoopBreakIf
+	{[
+		| sLoopBreakIf:
+			.tLoopBreakIf
+			>
+		| *:
+			@Statement
+	]}
 	@BooleanControlExpression
 	.tLoopTest
-	@Statement
-	.tLoopEnd
+	{[
+			| sLoopEnd:
+				.tLoopEnd
+				>
+			| *:
+				@Statement
+	]}
 	oFixPopTargetAddress
 	oFixPopForwardBranch;
 
