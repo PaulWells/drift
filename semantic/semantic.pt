@@ -1824,13 +1824,14 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			begin
 				write('debug: oSymbolTblPrintIdentTable');
 				writeln;
-				i := lexicLevelStackTop;
+				i := symbolTblTop;
 				write('debug: SymbolTblRef');
 				writeln;
 				while i >= 1 do
 				    begin
 					write(identSymbolTblRef[i]);
 					write('	');
+				        writeln;	
 					i := i - 1;
 				    end
 			end;

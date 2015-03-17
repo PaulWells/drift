@@ -1420,6 +1420,9 @@ AllocateVar :
 	];
 
 ProcedureDefinition :
+	oSymbolTblPrintContents
+	oSymbolTblPrintIdentTable
+	oSymbolTblPrintLexicalLevelStack
 	sIdentifier  oSymbolStkPushLocalIdentifier	% procedure name
 	[ oSymbolStkChooseKind
 	    | syUndefined:
@@ -1450,8 +1453,12 @@ ProcedureDefinition :
 	oTypeStkSetRecursionFlag(no)
 	oTypeTblUpdate
 	oTypeStkPop
+	oSymbolTblPrintContents
 	oSymbolTblPrintIdentTable
+	oSymbolTblPrintLexicalLevelStack
 	oSymbolTblPopScope
+	oSymbolTblPrintContents
+	oSymbolTblPrintLexicalLevelStack
 	oSymbolTblPrintIdentTable;
 
 
