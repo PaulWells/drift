@@ -1,0 +1,22 @@
+  .pIdentifier (screened to pLet)
+ .pNewLine
+  .pIdentifier (screened to pFunc)
+ .pNewLine
+  .pIdentifier (screened to pSwitch)
+ .pNewLine
+  .pIdentifier (screened to pDefault)
+ .pNewLine
+  .pIdentifier (screened to pElsif)
+ .pNewLine
+  .pIdentifier (screened to pLoop)
+ .pNewLine
+  .pIdentifier (screened to pBreak)
+ .pNewLine
+  .pIdentifier (screened to pModule)
+ .pNewLine
+  .pIdentifier (screened to pExtern)
+ .pNewLine
+ .pNewLine
+  .pIdentifier
+ .pNewLine
+ .pEndFile
