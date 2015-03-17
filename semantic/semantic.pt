@@ -2066,7 +2066,8 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			  defined routines by their negative value fields }
 			begin
 			    Assert((symbolStkKind[symbolStkTop] = syProcedure) or
-				   (symbolStkKind[symbolStkTop] = syFunction),
+				   (symbolStkKind[symbolStkTop] = syFunction) or
+				   (symbolStkKind[symbolStkTop] = syPublicProcedure),
 					assert27);
 			    if symbolStkValue[symbolStkTop] < 0 then
 				resultValue := -symbolStkValue[symbolStkTop]
@@ -2256,6 +2257,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			{ Set the top entry's parameter count field
 			  from the top count.			  }
 			begin
+
 			    Assert((symbolStkKind[symbolStkTop] = syProcedure),
 				assert28);
 			    typeStkLowerBound[typeStkTop] :=
@@ -2266,8 +2268,7 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			{ Return yes if the parameter count field matches
 			  the top count, otherwise return no.		 }
 			begin
-			    Assert((symbolStkKind[symbolStkTop] = syProcedure),
-				assert29);
+			    Assert((symbolStkKind[symbolStkTop] = syProcedure) or (symbolStkKind[symbolStkTop] = syPublicProcedure),assert29);
 			    if typeStkLowerBound[typeStkTop] =
 				    countStack[countStackTop] then
 				resultValue := yes
