@@ -11,6 +11,10 @@ RSpec.describe "Semantic Tests" do
 		expect(actual).to match('tLoopTest')
 		compare_outputs('loopSyntax')
 	end
+
+	it 'parses bubble.pt' do
+		compare_outputs('bubble')
+	end
 end
 
 def fetch_actual(test_case)
