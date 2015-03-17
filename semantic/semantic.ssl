@@ -1678,59 +1678,64 @@ CallStmt :
 	    | *:
 	]
 	[ oSymbolStkChooseKind
+		| syPublicProcedure:
+			@CallProcedure
 	    | syProcedure:
-		[ oSymbolStkChooseStandardRoutine
-		    | rtReset:
-			.tTrapBegin
-			@OpenProcedure
-			.tTrap
-			oEmitTrapKind(trReset)
-		    | rtRewrite:
-			.tTrapBegin
-			@OpenProcedure
-			.tTrap
-			oEmitTrapKind(trRewrite)
-		    | rtAssign:
-			.tTrapBegin
-			@AssignProcedure
-			.tTrap
-			oEmitTrapKind(trAssign)
-		    | rtWrite:
-			.tWriteBegin
-			@WriteProcedure
-		    | rtWriteln:
-			.tTrapBegin
-			@WritelnProcedure
-			.tTrap
-			oEmitTrapKind(trWriteln)
-		    | rtRead:
-			.tReadBegin
-			@ReadProcedure
-		    | rtReadln:
-			.tTrapBegin
-			@ReadlnProcedure
-			.tTrap
-			oEmitTrapKind(trReadln)
-		    | *:		% call to a user defined procedure
-			.tCallBegin
-			oTypeStkPushSymbol
-			[ oTypeStkChooseRecursionFlag
-			    | yes:
-				#eRecursiveCall
-			    | *:
-			]
-			@ActualParameters
-			.tCallEnd
-			oValuePushSymbol
-			oEmitValue	% procedure code area address
-			oValuePop
-			oTypeStkPop
-		]
+			@CallProcedure
 	    | *:
 		#eProcedureReqd
 		@FlushActuals
 	]
 	oSymbolStkPop;
+
+CallProcedure :
+	[ oSymbolStkChooseStandardRoutine
+	    | rtReset:
+		.tTrapBegin
+		@OpenProcedure
+		.tTrap
+		oEmitTrapKind(trReset)
+	    | rtRewrite:
+		.tTrapBegin
+		@OpenProcedure
+		.tTrap
+		oEmitTrapKind(trRewrite)
+	    | rtAssign:
+		.tTrapBegin
+		@AssignProcedure
+		.tTrap
+		oEmitTrapKind(trAssign)
+	    | rtWrite:
+		.tWriteBegin
+		@WriteProcedure
+	    | rtWriteln:
+		.tTrapBegin
+		@WritelnProcedure
+		.tTrap
+		oEmitTrapKind(trWriteln)
+	    | rtRead:
+		.tReadBegin
+		@ReadProcedure
+	    | rtReadln:
+		.tTrapBegin
+		@ReadlnProcedure
+		.tTrap
+		oEmitTrapKind(trReadln)
+	    | *:		% call to a user defined procedure
+		.tCallBegin
+		oTypeStkPushSymbol
+		[ oTypeStkChooseRecursionFlag
+		    | yes:
+			#eRecursiveCall
+		    | *:
+		]
+		@ActualParameters
+		.tCallEnd
+		oValuePushSymbol
+		oEmitValue	% procedure code area address
+		oValuePop
+		oTypeStkPop
+	]
 
 ActualParameters :
 	oCountPush(zero)		% actual parameters count
