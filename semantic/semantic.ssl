@@ -1735,7 +1735,7 @@ CallProcedure :
 		oEmitValue	% procedure code area address
 		oValuePop
 		oTypeStkPop
-	]
+	];
 
 ActualParameters :
 	oCountPush(zero)		% actual parameters count
@@ -1882,6 +1882,12 @@ CaseStmt :
 		@CaseAlternative
 	]}
 	.tCaseEnd
+	[
+		| sDefault:
+			.tCaseElse
+			@CaseAlternative
+		| *:
+	]
 	oFixPopForwardBranch
 	oEmitCaseBranchTable
 	% emit merge branches for case alternatives
