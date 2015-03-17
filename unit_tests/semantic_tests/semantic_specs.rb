@@ -5,10 +5,11 @@ RSpec.describe "Semantic Tests" do
 
 	it 'recognize loop syntax' do
 		actual = fetch_actual('loopSyntax')
-
+		
 		expect(actual).to match('tLoopEnd')
 		expect(actual).to match('tLoopBegin')
 		expect(actual).to match('tLoopTest')
+		compare_outputs('loopSyntax')
 	end
 end
 
