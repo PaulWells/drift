@@ -30,6 +30,12 @@ RSpec.describe "Semantic Tests" do
 	it 'analyzes the double.pt program' do
 		compare_outputs('double')
 	end
+
+	it 'no longer parses pt programs' do
+		actual = fetch_actual('primes-pt')
+
+		expect(actual).to eq('')
+	end
 end
 
 def fetch_actual(test_case)
