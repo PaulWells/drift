@@ -1917,20 +1917,19 @@ CaseStmt :
 	oFixPushForwardBranch
 	oEmitNullAddress		% address of case branch table
 	{[
+	    | sDefault:
+	    	.tCaseEnd
+	    	oEmitCaseBranchTable
+	    	.tCaseElse
+	    	@CaseAlternative
+	    	>
 	    | sCaseEnd:
-		>
+	    	.tCaseEnd
+	    	oEmitCaseBranchTable
+				>
 	    | *:
-		@CaseAlternative
+				@CaseAlternative
 	]}
-	.tCaseEnd
-	% oFixPopForwardBranch
-	oEmitCaseBranchTable
-	[
-		| sDefault:
-			.tCaseElse
-			@CaseAlternative
-		| *:
-	]
 	% emit merge branches for case alternatives
 	{[ oCountChoose		% number of case alternatives
 	    | zero:
