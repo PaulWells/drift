@@ -138,8 +138,6 @@ Output : 	% corresponds to coder.ssl input
 	tConcatenate
 	tSubstring
 	tLength
-	tChr
-	tOrd
 	tStringEqual
 	tLoopBegin
 	tLoopBreakIf
