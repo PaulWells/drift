@@ -16,7 +16,6 @@
                  .tFetchAddress
                    .tLiteralAddress
                    oEmitValue
-                   .tFetchAddress
                    .tFetchInteger
                   .tLiteralInteger
                   oEmitValue
@@ -30,7 +29,6 @@
                  .tFetchAddress
                    .tLiteralAddress
                    oEmitValue
-                   .tFetchAddress
                    .tFetchInteger
                   .tLiteralInteger
                   oEmitValue
@@ -47,7 +45,6 @@
                  .tFetchAddress
                    .tLiteralAddress
                    oEmitValue
-                   .tFetchAddress
                    .tFetchInteger
                   .tLiteralInteger
                   oEmitValue
