@@ -141,7 +141,6 @@ Output : 	% corresponds to coder.ssl input
 	tChr
 	tOrd
 	tStringEqual
-	tStringEqual
 	tLoopBegin
 	tLoopBreakIf
 	tCaseDefault
@@ -596,7 +595,6 @@ type TrapKind :
 	trReadln = 4
 	trWrite = 5
 	trWriteln = 6
-	trWriteString = 7
 	trWriteInteger = 8
 	trWriteString = 108
 	trReadInteger = 10
