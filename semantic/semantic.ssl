@@ -1651,7 +1651,7 @@ Statement :
 		@WhileStmt
 	    | sCaseStmt:
 		@CaseStmt
-	    | sLoopStmt:
+	    | sLoopStmt: % Loops added and repeat removed
 		@LoopStmt
 	    | sNullStmt:
 	];
@@ -1882,28 +1882,28 @@ WhileStmt :
 	oFixPopForwardBranch;
 
 LoopStmt :
-	.tLoopBegin
+	.tLoopBegin % Begin of loop
 	oFixPushTargetAddress		% top-of-loop branch target
-	{[
+	{[ % Find statements up until the break if
 		| sLoopBreakIf:
 			.tLoopBreakIf
 			>
 		| *:
 			@Statement
 	]}
-	@BooleanControlExpression
-	.tLoopTest
-	oFixPushForwardBranch
+	@BooleanControlExpression % Look at the control expression
+	.tLoopTest % End of the break test
+	oFixPushForwardBranch % Push the forward branch to take if a break occurs
 	oEmitNullAddress
 	oFixSwap
-	{[
+	{[ % Find remaining statements
 			| sLoopEnd:
 				.tLoopEnd
 				>
 			| *:
 				@Statement
 	]}
-	oFixPopTargetAddress
+	oFixPopTargetAddress % End of loop where branch ends up
 	oFixPopForwardBranch;
 
 CaseStmt :
