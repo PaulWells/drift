@@ -20,7 +20,7 @@ RSpec.describe "Semantic Tests" do
 		actual = fetch_actual('simpleSwitch')
 		expected = fetch_expected('simpleSwitch')
 
-		expect(actual).to include(expected)
+		expect(expected).to eq(actual)
 	end
 end
 

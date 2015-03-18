@@ -1,19 +1,23 @@
-           .tCaseBegin
-               .tLiteralAddress
-               oEmitValue
-               .tFetchAddress
-                .tSubscriptBegin
+.tLiteralInteger
+   oEmitValue
+   .tLiteralAddress
+   oEmitDataAddress
+   .tFileDescriptor
+     .tAssignBegin
+      .tLiteralAddress
+      oEmitValue
+       .tLiteralInteger
+       oEmitValue
+     .tAssignInteger           
+.tCaseBegin
                    .tLiteralAddress
                    oEmitValue
                    .tFetchInteger
-                .tSubscriptInteger
-               .tFetchInteger
            .tCaseSelect
            oEmitNullAddress
                 .tAssignBegin
                  .tLiteralAddress
                  oEmitValue
-                 .tFetchAddress
                    .tLiteralAddress
                    oEmitValue
                    .tFetchInteger
@@ -26,7 +30,6 @@
                 .tAssignBegin
                  .tLiteralAddress
                  oEmitValue
-                 .tFetchAddress
                    .tLiteralAddress
                    oEmitValue
                    .tFetchInteger
@@ -42,7 +45,6 @@
                 .tAssignBegin
                  .tLiteralAddress
                  oEmitValue
-                 .tFetchAddress
                    .tLiteralAddress
                    oEmitValue
                    .tFetchInteger
