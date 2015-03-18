@@ -2119,7 +2119,13 @@ BinaryOperator :
 				]
 				@CompareRelationalOperandTypes
 	    | sNE:
-		.tNE
+				[ oTypeStkChooseKind
+					| tpInteger:
+						.tNE
+					| tpString:
+						.tStringEqual
+						.tNot
+				]
 		@CompareRelationalOperandTypes
 	    | sGT:
 		.tGT
