@@ -1790,11 +1790,11 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			begin
 			    Assert((lexicLevelStackTop >= 1), assert31);
 			    i := symbolTblTop;
-			    symbolTblTop := symbolTblDisplay[lexicLevelStackTop];
+			    {symbolTblTop := symbolTblDisplay[lexicLevelStackTop];}
 			    { Set the identifier table pointer to the identifier
 			      entry in the closest enclosing scope if there is 
 			      one }
-			    while i > symbolTblTop do
+			    while i > symbolTblDisplay[lexicLevelStackTop] do
 				begin
 
 					if(symbolTblKind[i] <> syPublicProcedure) then

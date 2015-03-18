@@ -916,8 +916,12 @@ ModuleDeclaration :
 
 	% Pop module scope, leaving public procedures
 	%  visible
+	oSymbolTblPrintContents
+	oSymbolTblPrintIdentTable
 	oSymbolTblStripScope
-	oSymbolTblMergeScope;
+	oSymbolTblMergeScope
+	oSymbolTblPrintContents
+	oSymbolTblPrintIdentTable;
 
 
 ConstantDefinitions :		% Process named constant definitions
@@ -1660,7 +1664,11 @@ Statement :
 
 AssignmentStmt :
 	% Assignment is permitted to scalar variables only.
+	oSymbolStkPrintContents
+	oSymbolTblPrintContents
 	sIdentifier  oSymbolStkPushIdentifier
+	oSymbolStkPrintContents
+	oSymbolTblPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined:
 		#eUndefinedIdentifier
@@ -1701,7 +1709,11 @@ BeginStmt :
 	]};
 
 CallStmt :
+	oSymbolStkPrintContents
+	oSymbolTblPrintContents
 	sIdentifier  oSymbolStkPushIdentifier	% Procedure being called
+	oSymbolStkPrintContents
+	oSymbolTblPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined:
 		#eUndefinedIdentifier
