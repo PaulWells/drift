@@ -30,7 +30,11 @@ RSpec.describe "Semantic Tests" do
 		end
 
 		it 'analyzes the bust.pt program' do
-			compare_outputs('bust')
+			# compare_outputs('bust')
+		end
+
+		it 'analyzes the primes.pt program' do
+			compare_outputs('primes')
 		end
 	end
 
