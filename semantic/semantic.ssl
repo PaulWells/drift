@@ -1922,7 +1922,12 @@ CaseStmt :
 	    	.tCaseEnd
 	    	oEmitCaseBranchTable
 	    	.tCaseElse
-	    	@CaseAlternative
+	    	@Statement
+				.tCaseMerge
+				oFixPushForwardBranch
+				oEmitNullAddress		% merge branch at end of statement
+				oFixSwap			% keep case select branch on top
+				oCountIncrement
 	    	>
 	    | sCaseEnd:
 	    	.tCaseEnd
