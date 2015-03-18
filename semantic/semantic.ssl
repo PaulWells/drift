@@ -847,7 +847,6 @@ ProgramParameter :
 			% the program header are automatically declared.
 			oSymbolStkSetKind(syVariable)
 			oSymbolStkLinkToStandardType(stdText)
-			oSymbolStkPrintContents
 			oTypeStkPushSymbol
 			% set up a file descriptor for the allocate mechanism
 			oValuePush(one)	% Standard input file descriptor is 1
@@ -869,7 +868,6 @@ ProgramParameter :
 		% stack entry to the code area as a file descriptor.
 		@AllocateVar
 		oSymbolTblEnter
-		oSymbolTblPrintContents
 
 	    | *:
 		#eDuplicateName
@@ -918,7 +916,7 @@ ModuleDeclaration :
 	% Pop module scope, leaving public procedures
 	%  visible
 	oSymbolTblStripScope
-	oSymbolTblMergeScope
+	oSymbolTblMergeScope;
 
 
 ConstantDefinitions :		% Process named constant definitions
@@ -927,7 +925,6 @@ ConstantDefinitions :		% Process named constant definitions
 	    | sIdentifier:
 		@ConstantValue
 	    | *:
-		>
 	];
 
 ConstantValue :		% An identifier token has just been accepted
@@ -1073,7 +1070,6 @@ TypeDefinitions :	% process named type definitions
 		oTypeStkPop
 		oTypeStkPop
 	    | *:
-		>
 	];
 
 TypeBody :
@@ -1104,7 +1100,6 @@ TypeBody :
 				oTypeStkPushComponent
 			    | *:
 				oTypeStkPush(tpNull)	% dummy component type
-				oTypeStkPrintContents
 			]
 			oSymbolStkPop
 		    | *:	% subrange specification
@@ -1663,11 +1658,7 @@ Statement :
 
 AssignmentStmt :
 	% Assignment is permitted to scalar variables only.
-	oSymbolStkPrintContents
-	oSymbolTblPrintContents
 	sIdentifier  oSymbolStkPushIdentifier
-	oSymbolStkPrintContents
-	oSymbolTblPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined:
 		#eUndefinedIdentifier
@@ -1708,11 +1699,7 @@ BeginStmt :
 	]};
 
 CallStmt :
-	oSymbolStkPrintContents
-	oSymbolTblPrintContents
 	sIdentifier  oSymbolStkPushIdentifier	% Procedure being called
-	oSymbolStkPrintContents
-	oSymbolTblPrintContents
 	[ oSymbolStkChooseKind
 	    | syUndefined:
 		#eUndefinedIdentifier
@@ -3371,8 +3358,7 @@ SymbolStkPushCharConstant :
 
 SymbolStkPushIntegerType :
 	oSymbolStkPush(syType)
-	oSymbolStkLinkToStandardType(stdInteger)
-	oSymbolStkPrintContents;
+	oSymbolStkLinkToStandardType(stdInteger);
 
 
 SymbolStkPushIntegerVariable :
