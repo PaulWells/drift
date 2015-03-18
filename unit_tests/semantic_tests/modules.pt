@@ -1,5 +1,5 @@
-extern input
-var a: integer
+extern output 
+var a,z,nelements: integer
 
 module M
 
@@ -7,12 +7,21 @@ module M
 	b = b + 1
     end
 
-    func d * (var f: integer)
-	f = f + 1
+    func d * (var f: integer, y: integer)
+	f = f + y 
     end
 
 end
 
-a = a + 1
-d(a)
+func sort    
+    var i,j: integer
+    i = 1
+    j = 1
+    d(a,z)
+    d(i,j)
+end
 
+a = 1
+z = 2
+nelements=4
+sort
