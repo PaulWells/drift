@@ -2043,53 +2043,46 @@ Expression :
 Operand :
 	[
 	    | sIdentifier:
-		oSymbolStkPushIdentifier
-		[ oSymbolStkChooseKind
-		    | syUndefined:
-			#eUndefinedIdentifier
-		    | *:
-		]
-		[ oSymbolStkChooseKind
-		    | syConstant:
-			@ConstantOperand
-		    | syVariable, syVarParameter:
-			@Variable
-			@VariableOperand
-		    | syFunction:
-			@FunctionOperand
-		    | *:
-			#eExpnOperandReqd
-			oSymbolStkPop
-			@SymbolStkPushIntegerVariable
-			oTypeStkPushSymbol
-		]
+				oSymbolStkPushIdentifier
+				[ oSymbolStkChooseKind
+		    	| syUndefined:
+						#eUndefinedIdentifier
+		    	| *:
+				]
+				[ oSymbolStkChooseKind
+		    	| syConstant:
+						@ConstantOperand
+		    	| syVariable, syVarParameter:
+						@Variable
+						@VariableOperand
+		    	| syFunction:
+						@FunctionOperand
+		    	| *:
+						#eExpnOperandReqd
+						oSymbolStkPop
+						@SymbolStkPushIntegerVariable
+						oTypeStkPushSymbol
+				]
 	    | sInteger:
-		oValuePushInteger
-		oSymbolStkPush(syExpression)
-		oTypeStkPush(tpInteger)
-		.tLiteralInteger
-		oEmitValue
-		oValuePop
+				oValuePushInteger
+				oSymbolStkPush(syExpression)
+				oTypeStkPush(tpInteger)
+				.tLiteralInteger
+				oEmitValue
+				oValuePop
 	    | sLiteral:
-		oValuePush(one)	% implicit lower bound of string index type
-		oValuePushStringLength
-		[ oValueChoose
-		    | zero:
-			#eNullString
-			oSymbolStkPush(syExpression)
-			oTypeStkPush(tpString)
-		    | *:
-			oSymbolStkPush(syExpression)
-			oTypeStkPush(tpString)
-			.tLiteralString
-			oEmitValue % string length
-			oEmitString
-		]
-		oValuePop
-		oValuePop
+				oValuePush(one)	% implicit lower bound of string index type
+				oValuePushStringLength
+				oSymbolStkPush(syExpression)
+				oTypeStkPush(tpString)
+				.tLiteralString
+				oEmitValue % string length
+				oEmitString
+				oValuePop
+				oValuePop
 	    | sFile:
-		@Expression
-		@FileOperand
+				@Expression
+				@FileOperand
 	    | *:
 	];
 
