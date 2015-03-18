@@ -26,6 +26,10 @@ RSpec.describe "Semantic Tests" do
 	it 'analyzes the stars.pt program' do
 		compare_outputs('stars')
 	end
+
+	it 'analyzes the double.pt program' do
+		compare_outputs('double')
+	end
 end
 
 def fetch_actual(test_case)
