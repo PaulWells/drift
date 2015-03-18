@@ -1899,9 +1899,6 @@ WhileStmt :
 LoopStmt :
 	.tLoopBegin
 	oFixPushTargetAddress		% top-of-loop branch target
-	oFixPushForwardBranch
-	oEmitNullAddress
-	oFixSwap
 	{[
 		| sLoopBreakIf:
 			.tLoopBreakIf
@@ -1911,7 +1908,9 @@ LoopStmt :
 	]}
 	@BooleanControlExpression
 	.tLoopTest
+	oFixPushForwardBranch
 	oEmitNullAddress
+	oFixSwap
 	{[
 			| sLoopEnd:
 				.tLoopEnd
