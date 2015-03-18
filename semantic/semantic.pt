@@ -1785,18 +1785,18 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 			end;
 
 		    oSymbolTblStripScope:
-			{  }
+			{ Hide all symbols in current scope except for public procedures }
 
 			begin
 			    Assert((lexicLevelStackTop >= 1), assert31);
 			    i := symbolTblTop;
-			    {symbolTblTop := symbolTblDisplay[lexicLevelStackTop];}
 			    { Set the identifier table pointer to the identifier
 			      entry in the closest enclosing scope if there is 
 			      one }
+			    { Iterate through every symbol in current scope }
 			    while i > symbolTblDisplay[lexicLevelStackTop] do
 				begin
-
+					{ Don't hide public procedures }
 					if(symbolTblKind[i] <> syPublicProcedure) then
 					begin
 					    link := symbolTblIdentLink[i];
