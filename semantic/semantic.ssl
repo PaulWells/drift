@@ -1935,6 +1935,7 @@ CaseStmt :
 	    	oEmitCaseBranchTable
 	    	.tCaseElse
 	    	@Statement
+		sCaseEnd
 				.tCaseMerge
 				oFixPushForwardBranch
 				oEmitNullAddress		% merge branch at end of statement
