@@ -36,6 +36,10 @@ RSpec.describe "Semantic Tests" do
 		it 'analyzes the primes.pt program' do
 			compare_outputs('primes')
 		end
+
+		it 'analyzes the pascal.pt program' do
+			compare_outputs('pascal')
+		end
 	end
 
 	it 'recognizes switch statements' do
