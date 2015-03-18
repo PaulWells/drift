@@ -22,6 +22,10 @@ RSpec.describe "Semantic Tests" do
 
 		expect(expected).to eq(actual)
 	end
+
+	it 'analyzes the stars.pt program' do
+		compare_outputs('stars')
+	end
 end
 
 def fetch_actual(test_case)
