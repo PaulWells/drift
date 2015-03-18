@@ -298,9 +298,9 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 	tLoopTest = 81;
 	tLoopEnd = 82;
 	tTrap = 83;
-	lastCompoundOutputToken = 84;
-	tEndOfFile = 85;
-	lastOutputToken = 85;
+	lastCompoundOutputToken = 83;
+	tEndOfFile = 84;
+	lastOutputToken = 84;
 
 	{ Input/Output Tokens }
 
