@@ -156,6 +156,7 @@ Output : 	% corresponds to coder.ssl input
 	tCaseSelect
 	tCaseMerge
 	tCaseEnd
+	tCaseElse
 	tWhileTest
 	tWhileEnd
 	tRepeatTest

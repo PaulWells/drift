@@ -226,18 +226,19 @@
 	tCaseSelect = 71;
 	tCaseMerge = 72;
 	tCaseEnd = 73;
-	tWhileTest = 74;
-	tWhileEnd = 75;
-	tRepeatTest = 76;
-	tSkipProc = 77;
-	tCallEnd = 78;
-	tLineNumber = 79;
-	tLoopTest = 80;
-	tLoopEnd = 81;
-	tTrap = 82;
-	lastCompoundOutputToken = 82;
-	tEndOfFile = 83;
-	lastOutputToken = 83;
+	tCaseElse = 74;
+	tWhileTest = 75;
+	tWhileEnd = 76;
+	tRepeatTest = 77;
+	tSkipProc = 78;
+	tCallEnd = 79;
+	tLineNumber = 80;
+	tLoopTest = 81;
+	tLoopEnd = 82;
+	tTrap = 83;
+	lastCompoundOutputToken = 84;
+	tEndOfFile = 85;
+	lastOutputToken = 85;
 
 	{ Input/Output Tokens }
 
