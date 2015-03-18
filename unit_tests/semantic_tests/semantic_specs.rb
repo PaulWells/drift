@@ -40,6 +40,10 @@ RSpec.describe "Semantic Tests" do
 		it 'analyzes the pascal.pt program' do
 			compare_outputs('pascal')
 		end
+
+		it 'analyzes the lunch.pt program' do
+			compare_outputs('lunch')
+		end
 	end
 
 	it 'recognizes switch statements' do
