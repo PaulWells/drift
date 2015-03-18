@@ -12,8 +12,22 @@ RSpec.describe "Semantic Tests" do
 		compare_outputs('loopSyntax')
 	end
 
-	it 'parses bubble.pt' do
-		compare_outputs('bubble')
+	describe "Example Programs" do
+		it 'analyzes bubble.pt' do
+			compare_outputs('bubble')
+		end
+
+		it 'analyzes the double.pt program' do
+			compare_outputs('double')
+		end
+
+		it 'analyzes the stars.pt program' do
+			compare_outputs('stars')
+		end
+
+		it 'analyzes the boxes.pt program' do
+			compare_outputs('boxes')
+		end
 	end
 
 	it 'recognizes switch statements' do
@@ -21,14 +35,6 @@ RSpec.describe "Semantic Tests" do
 		expected = fetch_expected('simpleSwitch')
 
 		expect(expected).to eq(actual)
-	end
-
-	it 'analyzes the stars.pt program' do
-		compare_outputs('stars')
-	end
-
-	it 'analyzes the double.pt program' do
-		compare_outputs('double')
 	end
 
 	it 'no longer parses pt programs' do
