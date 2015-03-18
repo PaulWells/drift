@@ -2134,8 +2134,13 @@ BinaryOperator :
 		oTypeStkPush(tpBoolean)
 		@CompareOperandAndResultTypes
 	    | sEq:
-		.tEq
-		@CompareRelationalOperandTypes
+				[ oTypeStkChooseKind
+					| tpInteger:
+						.tEq
+					| tpString
+						.tStringEqual
+				]
+				@CompareRelationalOperandTypes
 	    | sNE:
 		.tNE
 		@CompareRelationalOperandTypes
