@@ -1915,24 +1915,24 @@ CaseStmt :
 	oFixPushForwardBranch
 	oEmitNullAddress		% address of case branch table
 	{[
-	    | sDefault:
+	    | sDefault: % Loop until a default
 	    	.tCaseEnd
-	    	oEmitCaseBranchTable
-	    	.tCaseElse
-	    	@Statement
-		sCaseEnd
-				.tCaseMerge
-				oFixPushForwardBranch
+	    	oEmitCaseBranchTable % Emit branch table
+	    	.tCaseElse % Mark the start of the default block
+	    	@Statement % Collect statements
+				sCaseEnd  % Consume the case end token
+				.tCaseMerge  % Merge within case block
+				oFixPushForwardBranch % Mark end of case block
 				oEmitNullAddress		% merge branch at end of statement
 				oFixSwap			% keep case select branch on top
-				oCountIncrement
+				oCountIncrement % Increment number of blocks
 	    	>
-	    | sCaseEnd:
-	    	.tCaseEnd
+	    | sCaseEnd: % No default, end case as before
+	    	.tCaseEnd 
 	    	oEmitCaseBranchTable
 				>
-	    | *:
-				@CaseAlternative
+	    | *: % Look for the next case block
+				@CaseAlternative 
 	]}
 	% emit merge branches for case alternatives
 	{[ oCountChoose		% number of case alternatives
