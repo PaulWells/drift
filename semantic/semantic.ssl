@@ -2137,7 +2137,7 @@ BinaryOperator :
 				[ oTypeStkChooseKind
 					| tpInteger:
 						.tEq
-					| tpString
+					| tpString:
 						.tStringEqual
 				]
 				@CompareRelationalOperandTypes
