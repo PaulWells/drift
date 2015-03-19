@@ -44,6 +44,10 @@ RSpec.describe "Semantic Tests" do
 		it 'analyzes the lunch.pt program' do
 			compare_outputs('lunch')
 		end
+
+		it 'analyzes the francais.pt program' do
+			compare_outputs('francais')
+		end
 	end
 
 	it 'recognizes switch statements' do
