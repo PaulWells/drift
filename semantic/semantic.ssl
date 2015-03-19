@@ -2069,8 +2069,10 @@ TernaryOperator:
 [
 	| sSubstring:
 		.tSubstring
+		oTypeStkPush(tpInteger)
+		@CompareOperandAndResultTypes
 	| *:
-]
+];
 
 UnaryOperator :
 	[
@@ -2080,6 +2082,9 @@ UnaryOperator :
 	    | sNot:
 		.tNot
 		oTypeStkPush(tpBoolean)
+	    | sLength:
+		.tLength
+		oTypeStkPush(tpString)
 	    | *:
 		>>		% bypass type check
 	]
