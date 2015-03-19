@@ -62,6 +62,10 @@ RSpec.describe "Semantic Tests" do
 
 		expect(actual).to eq('')
 	end
+
+	it 'handles substrings and lengths' do
+		compare_outputs('francais-reduced')
+	end
 end
 
 def fetch_actual(test_case)
