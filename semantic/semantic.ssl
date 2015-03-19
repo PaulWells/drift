@@ -2072,7 +2072,7 @@ TernaryOperator:
 	| sSubstring:
 		.tSubstring
 		oTypeStkPush(tpString)
-		@CompareOperandAndResultTypes
+		@CompareTernaryOperandAndResultTypes
 	| *:
 ];
 
@@ -2240,7 +2240,7 @@ CompareTernaryOperandAndResultTypes :
     |tpString :
     	oTypeStkSwap
     	[ oTypeStkChooseKind
-    	    |tpString :
+    	    |tpInteger :
     	        oTypeStkPop
     	        oTypeStkSwap
     	        [oTypeStkChooseKind
@@ -2248,21 +2248,24 @@ CompareTernaryOperandAndResultTypes :
     	        		oTypeStkPop
     	        		oTypeStkSwap
     	        		[oTypeStkChooseKind
-    	        			|tpInteger:
+    	        			|tpString:
     	        			oTypeStkPop
     	        			|*:
-    	        			eOperandOperatorTypeMismatch
+    	        			#eOperandOperatorTypeMismatch
     	        		]
     	        	|*:
-    	        		eOperandOperatorTypeMismatch
+    	        		#eOperandOperatorTypeMismatch
     	        ]
     	    |* :
-    	    eOperandOperatorTypeMismatch
+    	    #eOperandOperatorTypeMismatch
     	]
     |* :
     	#eOperandOperatorTypeMismatch
 
 ]
+oSymbolStkPop
+oSymbolStkPop
+oSymbolStkSetKind(syExpression);
 
 CompareRelationalOperandTypes :
 	% Verify that the types of the two operands are assignment
