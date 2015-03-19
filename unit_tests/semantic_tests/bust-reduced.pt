@@ -16,9 +16,10 @@ module carddeck
 			card = 1
 	
 			loop
+				break if false
 	    	randint (card, 13)
 	    	loop
-					break if cardcount [card] != 4
+					break if true 
 					randint (card, 13)
 	    	end
 			end
