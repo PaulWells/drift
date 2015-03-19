@@ -989,27 +989,19 @@ ConstantValue :		% An identifier token has just been accepted
 		    | zero:
 			#eNullString
 			@SymbolStkPushStringConstant
-		    | one:
-			oSymbolStkLinkToStandardType(stdString)
-			oSymbolStkEnterStringValue
 		    | *:
-			% Emit a branch around the string since
-			% it is stored in the code area
-			.tSkipString
-			oFixPushForwardBranch
-			oEmitNullAddress
+			.tAssignBegin
+			oSymbolStkLinkToStandardType(stdString)
+			oTypeStkPushSymbol
+			oAllocateAlignWord
+			oSymbolStkEnterDataAddress
+			oAllocateVariable
+			.tLiteralAddress
+			oEmitDataAddress
 			.tLiteralString
-			oEmitValue	% string length
-			% The string "address" is the location (offset)
-			% of the first character of the string
-			oSymbolStkEnterCodeAddress
+			oEmitValue
 			oEmitString
-			oFixPopForwardBranch
-			oTypeStkPush(tpPackedArray)	% means literal string
-			oTypeStkEnterBounds
-			oTypeStkLinkToStandardComponentType(stdString)
-			oTypeTblEnter
-			oSymbolStkEnterTypeReference
+			.tAssignString
 			oTypeStkPop
 		]
 		oValuePop	% Upper bound
