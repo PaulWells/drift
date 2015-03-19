@@ -414,7 +414,6 @@ IfStmt :
 	[
 	     |'elsif':
 	         .sElse
-	        .sBegin 
 		@IfStmt
 	      |'else':
 	         .sElse
