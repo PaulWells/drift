@@ -1,27 +1,13 @@
 // Blackjack Simulation Program                 
 extern input, output
-
-module random
+module m
   func randint * (var reslt : integer, modulus : integer) 
   	reslt = reslt + 1
   end
 end
-
-module carddeck
-    var nextcard : integer
-
-    func shuffle *
-
-			var card : integer
-			card = 1
-	
-			loop
-				break if false
-	    	randint (card, 13)
-	    	loop
-					break if true 
-					randint (card, 13)
-	    	end
-			end
-    end
-end
+	func doit 
+			
+		var x:integer
+		x = 1
+	    			randint (x, 13)
+	end
