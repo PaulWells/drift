@@ -63,8 +63,12 @@ RSpec.describe "Semantic Tests" do
 		expect(actual).to eq('')
 	end
 
-	it 'handles substrings and lengths' do
-		compare_outputs('francais-reduced')
+	it 'handles string assignment' do
+		compare_outputs('string-assign')
+	end
+
+	it 'handles string length' do
+		compare_outputs('string-length')
 	end
 end
 
