@@ -2005,15 +2005,16 @@ Expression :
 
 	{
 	    @Operand
+	    @TernaryOperator
 	    @UnaryOperator
 	    @BinaryOperator
 	    [
-		| sExpnEnd:
-		    >
-		| sParmBegin, sSubscript:
-		    #eInvalidExpn
-		    @FlushExpn
-		| *:
+				| sExpnEnd:
+		    	>
+				| sParmBegin, sSubscript:
+		    	#eInvalidExpn
+		    	@FlushExpn
+				| *:
 	    ]
 	};
 
@@ -2062,6 +2063,14 @@ Operand :
 				@FileOperand
 	    | *:
 	];
+
+
+TernaryOperator:
+[
+	| sSubstring:
+		.tSubstring
+	| *:
+]
 
 UnaryOperator :
 	[
