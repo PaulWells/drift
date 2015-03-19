@@ -1909,6 +1909,7 @@ CaseStmt :
 	{[
 	    | sDefault: % Loop until a default
 	    	.tCaseEnd
+		oFixPopForwardBranch
 	    	oEmitCaseBranchTable % Emit branch table
 	    	.tCaseElse % Mark the start of the default block
 	    	@Statement % Collect statements
