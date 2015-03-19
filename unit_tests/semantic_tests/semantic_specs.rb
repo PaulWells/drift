@@ -66,6 +66,10 @@ RSpec.describe "Semantic Tests" do
 	it 'handles string assignment' do
 		compare_outputs('string-assign')
 	end
+
+	it 'handles string length' do
+		compare_outputs('string-length')
+	end
 end
 
 def fetch_actual(test_case)

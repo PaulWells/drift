@@ -1,0 +1,6 @@
+extern input
+var infinitive : string
+var length : integer
+
+infinitive = "hello"
+length = #infinitive
