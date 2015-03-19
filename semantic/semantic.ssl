@@ -2071,10 +2071,12 @@ TernaryOperator:
 [
 	| sSubstring:
 		.tSubstring
-		oTypeStkPush(tpInteger)
+		oTypeStkPush(tpString)
 		@CompareOperandAndResultTypes
 	| *:
 ];
+
+
 
 UnaryOperator :
 	[
@@ -2105,9 +2107,9 @@ BinaryOperator :
 	    		| tpInteger:
 	    			.tAdd
 						oTypeStkPush(tpInteger)	% result type
-					| tpString:
-						.tConcatenate
-						oTypeStkPush(tpString)
+				| tpString:
+					.tConcatenate
+					oTypeStkPush(tpString)
 	    	]
 				@CompareOperandAndResultTypes
 	    | sSubtract:
@@ -2225,13 +2227,42 @@ CompareOperandAndResultTypes :
 	% Compare the two operand types and the result type for assignment
 	% compatibility.  Pop the operand symbol and type stack entries
 	% leaving the result symbol and type stack entries.
-
+	
 	@CompareAndSwapTypes
 	oTypeStkPop
 	@CompareAndSwapTypes
 	oTypeStkPop		% only result type remains
 	oSymbolStkPop
 	oSymbolStkSetKind(syExpression);
+
+CompareTernaryOperandAndResultTypes :
+[ oTypeStkChooseKind
+    |tpString :
+    	oTypeStkSwap
+    	[ oTypeStkChooseKind
+    	    |tpString :
+    	        oTypeStkPop
+    	        oTypeStkSwap
+    	        [oTypeStkChooseKind
+    	        	|tpInteger:
+    	        		oTypeStkPop
+    	        		oTypeStkSwap
+    	        		[oTypeStkChooseKind
+    	        			|tpInteger:
+    	        			oTypeStkPop
+    	        			|*:
+    	        			eOperandOperatorTypeMismatch
+    	        		]
+    	        	|*:
+    	        		eOperandOperatorTypeMismatch
+    	        ]
+    	    |* :
+    	    eOperandOperatorTypeMismatch
+    	]
+    |* :
+    	#eOperandOperatorTypeMismatch
+
+]
 
 CompareRelationalOperandTypes :
 	% Verify that the types of the two operands are assignment
