@@ -1667,6 +1667,8 @@ AssignmentStmt :
 	]
 
 	@Expression	% Push symbol and type stack entries for an expression
+
+	oTypeStkPrintContents
 	@CompareAndSwapTypes
 
 	% Emit code to perform the assignment
@@ -2071,8 +2073,6 @@ TernaryOperator:
 [
 	| sSubstring:
 		.tSubstring
-		oTypeStkPop
-		oTypeStkPop
 		oTypeStkPush(tpString)
 		@CompareOperandAndResultTypes
 	| *:
@@ -2083,19 +2083,25 @@ UnaryOperator :
 	    | sNegate:
 		.tNegate
 		oTypeStkPush(tpInteger)	% result type
+		@CompareAndSwapTypes
 	    | sNot:
 		.tNot
 		oTypeStkPush(tpBoolean)
+		@CompareAndSwapTypes
 	    | sLength:
 		.tLength
-		oTypeStkPop
-		oTypeStkPush(tpInteger)
+		[ oTypeStkChooseKind
+			| tpString:
+				oTypeStkPush(tpInteger)
+				@CompareAndSwapTypesLength
+			| *: 
+				#eTypeMismatch
+		]
 	    | *:
 		>>		% bypass type check
 	]
 	% If an operator is present the result is an expression
 	oSymbolStkSetKind(syExpression)
-	@CompareAndSwapTypes
 	oTypeStkPop;
 
 BinaryOperator :
@@ -2172,6 +2178,19 @@ BinaryOperator :
 		@CompareOperandAndResultTypes
 	    | *:
 	];
+
+CompareAndSwapTypesLength :
+[ oTypeStkChooseKind
+    |tpInteger:
+	oTypeStkSwap
+	[oTypeStkChooseKind
+	    |tpString:
+	    |*:
+		#eTypeMismatch
+	]
+    |* :
+	#eTypeMismatch
+];
 
 CompareAndSwapTypes :
 	% Compare the top two type stack entries for assignment
