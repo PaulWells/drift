@@ -993,7 +993,7 @@ ConstantValue :		% An identifier token has just been accepted
 			.tAssignBegin
 			oSymbolStkLinkToStandardType(stdString)
 			oTypeStkPushSymbol
-			oAllocateAlignWord
+			oAllocateAlignOnWord
 			oSymbolStkEnterDataAddress
 			oAllocateVariable
 			.tLiteralAddress
@@ -1920,7 +1920,8 @@ CaseStmt :
 				oCountIncrement % Increment number of blocks
 	    	>
 	    | sCaseEnd: % No default, end case as before
-	    	.tCaseEnd 
+	    	.tCaseEnd
+		oFixPopForwardBranch 
 	    	oEmitCaseBranchTable
 				>
 	    | *: % Look for the next case block
