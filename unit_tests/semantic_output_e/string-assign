@@ -10,3 +10,6 @@
        oEmitValue
        oEmitString
         .tAssignString
+.tTrapBegin
+ .tTrap
+ oEmitTrapKind(trHalt)
