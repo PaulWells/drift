@@ -8,6 +8,13 @@
    .tLiteralAddress
    oEmitDataAddress
    .tFileDescriptor
+    .tAssignBegin
+      .tLiteralAddress
+      oEmitValue
+       .tLiteralString
+       oEmitValue
+       oEmitString
+        .tAssignString
          .tAssignBegin
           .tLiteralAddress
           oEmitValue
