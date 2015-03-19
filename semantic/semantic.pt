@@ -1824,7 +1824,6 @@ program SemanticAnalysis (output, semanticSsl, parseStream, temp, tCode, options
 				{ No local type definitions need be saved since
 			      parameters must be declared with global type 
 			      names. }
-			    typeTblTop := typeTblDisplay[lexicLevelStackTop];
 			    lexicLevelStackTop := lexicLevelStackTop - 1;
 			end;
 
