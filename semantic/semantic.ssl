@@ -2009,7 +2009,7 @@ Expression :
 
 	{
 	    @Operand
-	    @TernaryOperator
+	    @TernaryOperator   % Rule for analysing substrings
 	    @UnaryOperator
 	    @BinaryOperator
 	    [
@@ -2052,7 +2052,7 @@ Operand :
 				.tLiteralInteger
 				oEmitValue
 				oValuePop
-	    | sLiteral:
+	    | sLiteral: % Handling of string literals added
 				oValuePush(one)	% implicit lower bound of string index type
 				oValuePushStringLength
 				oSymbolStkPush(syExpression)
@@ -2073,8 +2073,8 @@ TernaryOperator:
 [
 	| sSubstring:
 		.tSubstring
-		oTypeStkPush(tpString)
-		@CompareTernaryOperandAndResultTypes
+		oTypeStkPush(tpString) % Push substring
+		@CompareTernaryOperandAndResultTypes % Verify results
 	| *:
 ];
 
@@ -2090,12 +2090,12 @@ UnaryOperator :
 		.tNot
 		oTypeStkPush(tpBoolean)
 		@CompareAndSwapTypes
-	    | sLength:
-		.tLength
+	    | sLength: % Unary operator for string length
+		.tLength % Token for length operator
 		[ oTypeStkChooseKind
-			| tpString:
+			| tpString:  % Next token should be a string
 				oTypeStkPush(tpInteger)
-				@CompareAndSwapTypesLength
+				@CompareAndSwapTypesLength % Output should be integer
 			| *: 
 				#eTypeMismatch
 		]
@@ -2181,7 +2181,7 @@ BinaryOperator :
 	    | *:
 	];
 
-CompareAndSwapTypesLength :
+CompareAndSwapTypesLength : % Verify output is a integer
 [ oTypeStkChooseKind
     |tpInteger:
 	oTypeStkSwap
@@ -2259,21 +2259,21 @@ CompareOperandAndResultTypes :
 
 CompareTernaryOperandAndResultTypes :
 [ oTypeStkChooseKind
-    |tpString :
+    |tpString : % String
     	oTypeStkSwap
     	[ oTypeStkChooseKind
-    	    |tpInteger :
+    	    |tpInteger :  % Lower bound
     	        oTypeStkPop
     	        oTypeStkSwap
     	        [oTypeStkChooseKind
-    	        	|tpInteger:
+    	        	|tpInteger: % Upper bound
     	        		oTypeStkPop
     	        		oTypeStkSwap
     	        		[oTypeStkChooseKind
     	        			|tpString:
     	        			oTypeStkPop
     	        			|*:
-    	        			#eOperandOperatorTypeMismatch
+    	        			#eOperandOperatorTypeMismatch % Errors if structure is not correct
     	        		]
     	        	|*:
     	        		#eOperandOperatorTypeMismatch
