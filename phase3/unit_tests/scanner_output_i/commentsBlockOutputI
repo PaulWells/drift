@@ -1,0 +1,8 @@
+ [ (lSlash)
+ [ (lStar)
+  [ (lLetter)
+  ? (lLetter)
+  [ (lStar)
+  [ (lSlash)
+ [ (lNewLine)
+ [ (lEndFile)

@@ -1,0 +1,4 @@
+extern input
+var infinitive : string
+
+infinitive = "hello"
