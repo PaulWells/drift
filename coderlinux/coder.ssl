@@ -29,8 +29,8 @@
 
 
 Input:		% corresponds to semantic.ssl output
-    tMultiply
-    firstInputToken = tMultiply
+    tMultiply 
+    firstOutputToken = tMultiply
     tDivide
     tModulus
     tAdd
@@ -54,21 +54,17 @@ Input:		% corresponds to semantic.ssl output
     tVarParm
     tFetchAddress
     tFetchInteger
-    tFetchChar
     tFetchBoolean
     tAssignBegin
     tAssignAddress
     tAssignInteger
-    tAssignChar
     tAssignBoolean
     tStoreParmAddress
     tStoreParmInteger
-    tStoreParmChar
     tStoreParmBoolean
     tSubscriptBegin
     tSubscriptAddress
     tSubscriptInteger
-    tSubscriptChar
     tSubscriptBoolean
     tArrayDescriptor
     tFileDescriptor
@@ -86,12 +82,23 @@ Input:		% corresponds to semantic.ssl output
     tTrapBegin
     tWriteEnd
     tReadEnd
+    % Added non-compound T-Codes
+    tFetchString
+    tAssignString
+    tStoreParmString
+    tSubscriptString
+    tConcatenate
+    tSubstring
+    tLength
+    tStringEqual
+    tLoopBegin
+    tLoopBreakIf
+    tCaseDefault
 
     % Compound T-codes are those that take operands
-    tLiteralAddress
-    firstCompoundToken = tLiteralAddress
+    tLiteralAddress 
+    firstCompoundOutputToken = tLiteralAddress
     tLiteralInteger
-    tLiteralChar
     tLiteralBoolean
     tLiteralString
     tStringDescriptor
@@ -101,14 +108,19 @@ Input:		% corresponds to semantic.ssl output
     tCaseSelect
     tCaseMerge
     tCaseEnd
+    tCaseElse
     tWhileTest
     tWhileEnd
     tRepeatTest
     tSkipProc
     tCallEnd
     tLineNumber
+    % Added Compound T-Codes
+    tLoopTest
+    tLoopEnd
+    %%
     tTrap
-    lastCompoundToken = tTrap
+    lastCompoundOutputToken = tTrap
 
     tEndOfFile
     lastInputToken = tEndOfFile;
@@ -145,20 +157,26 @@ type Integer:
     trReadln = 4
     trWrite = 5
     trWriteln = 6
-    trWriteString = 7
     trWriteInteger = 8
-    trWriteChar = 9
+    trWriteString = 108
     trReadInteger = 10
-    trReadChar = 11
+    trReadString = 107
     trAssign = 12
     trSubscriptAbort = 13
     trCaseAbort = 14
     trEoln = 15
     trEof = 16
+    trAssignString = 101
+    trChrString = 102
+    trConcatenate = 103
+    trSubstring = 104
+    trLength = 105
+    trStringEqual = 106
 
     % Data kinds
     byte = 1
     word = 2;	% 4 bytes on x86
+    string =3;
 
 
 type Boolean:
@@ -257,11 +275,7 @@ mechanism OperandStack:
 
     oOperandPushInteger
 	% Push an entry with the value of the last accepted integer
-	% (tLiteralInteger tcode), length word and manifest addressing mode.
-
-    oOperandPushChar
-	% Push an entry with the value of the last accepted character
-	% (tLiteralChar tcode), length byte and manifest addressing mode.
+	% (tLiteralInteger tcode), length word and manifest addressing mode.x
 
     oOperandPushBoolean
 	% Push an entry with the value of the last accepted Boolean
@@ -274,7 +288,7 @@ mechanism OperandStack:
     oOperandChooseJumpCondition >> JumpCondition
 	% Return the top entry's jump condition (kind field)
 
-    oOperandPushStringDescriptor
+    oOperandPushString
 	% Push an entry with addressing mode manifest, length word and
 	% a value set to the data area address of the string referenced
 	% by the last accepted tStringDescriptor tcode.
@@ -1454,12 +1468,10 @@ OperandPushExpression:
 	    @OperandPushVariable
 	| tLiteralInteger:
 	    oOperandPushInteger
-	| tLiteralChar:
-	    oOperandPushChar
 	| tLiteralBoolean:
 	    oOperandPushBoolean
 	| tStringDescriptor:
-	    oOperandPushStringDescriptor
+	    oOperandPushString
 	    % Get a string literal's address
 	    @EmitStringDescriptor		%	lea	sNNN, %T
 	| tSkipString:
@@ -1471,7 +1483,7 @@ OperandPushExpression:
 	    oEmitNone(iText)			%	.text
 	    % Get the string literal's address
 	    tStringDescriptor
-	    oOperandPushStringDescriptor
+	    oOperandPushString
 	    @EmitStringDescriptor		%	lea	sNNN, %T
 	| tNegate:
 	    @OperandNegate
@@ -1941,8 +1953,6 @@ OperandPushExpressionAssignPopPop:
 	    @OperandPushVariable
 	| tLiteralInteger:
 	    oOperandPushInteger
-	| tLiteralChar:
-	    oOperandPushChar
 	| tLiteralBoolean:
 	    oOperandPushBoolean
 	| tAssignInteger:
