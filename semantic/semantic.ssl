@@ -1668,7 +1668,6 @@ AssignmentStmt :
 
 	@Expression	% Push symbol and type stack entries for an expression
 
-	oTypeStkPrintContents
 	@CompareAndSwapTypes
 
 	% Emit code to perform the assignment

@@ -749,7 +749,6 @@ Block:
 		    oEmitDouble(iMov)		% 	movl	ub, desc+4
 		    tArrayDescriptor
 		| tFileDescriptor:
-        |*:
 	    ]
 	    oOperandPop				% ... desc
 	    oOperandPop				% ...
@@ -776,8 +775,8 @@ Block:
         @IfStmt
     | tWhileBegin:
         @WhileStmt
-    | tRepeatBegin:
-        @RepeatStmt
+    | tLoopBegin:
+        @LoopStmt
     | tCaseBegin:
         @CaseStmt
     | tWriteBegin:
@@ -869,8 +868,8 @@ Statements:
 	    @IfStmt
 	| tWhileBegin:
 	    @WhileStmt
-	| tRepeatBegin:
-	    @RepeatStmt
+    | tLoopBegin:
+        @LoopStmt
 	| tCaseBegin:
 	    @CaseStmt
 	| tWriteBegin:
@@ -1087,6 +1086,55 @@ WhileStmt:
     oFixAndFreeShuntList			% fNNN:
     oOperandPop;
 
+LoopStmt:
+    % Save the target address for the top-of-loop branch
+    oFixPushAddress             % bNNN:
+    oEmitMergeSourceCoordinate
+
+    % Added Statements before break condition
+    @Statements
+
+    % Require break if
+    tLoopBreakIF
+
+    @OperandPushBooleanControlExpression    % ... cond
+    % Changed from tWhileTest to tLoopTest
+    tLoopTest
+    oOperandComplementJumpCondition     % ... !cond
+
+    % Optimize if the condition is know at compile time
+    [ oOperandChooseJumpCondition
+    | iJnever:
+            % Exit condition is always false (while true) - an infinite loop.
+            % emit no conditional branch, just fall into loop body
+            oFixAndFreeFalseBranches
+
+    | iJalways:
+        % Exit condition is always true (while false) - a nop.
+        % flush the loop body
+        oFixAndFreeFalseBranches
+        @SkipToEndWhile
+        oFixPopAddress
+        oFixAndFreeShuntList            % fNN:, just in case
+        oOperandPop
+        >>
+
+    | *:
+        % Emit a conditional forward branch to exit the loop.
+        % True (inverted false) branches follow the conditional
+        % exit path, false branches fall through to the loop body.
+        @OperandInfixOr         %   j!cond  fNNN
+    ]
+
+    @Statements                 % loop body
+
+    % Changed from tWhileEnd to tLoopEnd
+    tLoopEnd
+    
+    oEmitUnconditionalBackwardBranch        %   jmp bNNN
+    oFixPopAddress
+    oFixAndFreeShuntList            % fNNN:
+    oOperandPop;
 
 SkipToEndWhile:
     {[
@@ -1097,42 +1145,6 @@ SkipToEndWhile:
         | *:
             ?                          	% accept and ignore anything else
     ]};
-
-
-RepeatStmt:
-    % Save the target address for the top-of-loop branch
-    oFixPushAddress				% bNNN:
-    oEmitMergeSourceCoordinate
-    @Statements					% loop body
-    tRepeatControl
-    @OperandPushBooleanControlExpression 	% ... cond
-    tRepeatTest
-
-    % Optimize if loop condition is known at compile time
-    [ oOperandChooseJumpCondition
-	| iJnever:
-            % Exit condition is always false (until false) - an infinite loop.
-            % false branches fall through to top-of-loop backward branch
-            oFixAndFreeFalseBranches
-            oEmitUnconditionalBackwardBranch 	%  jmp      bNN
-
-        | iJalways:
-            % Exit condition is always true (until true) - loop never repeats.
-            % fall through without backward branch
-            oFixAndFreeFalseBranches
-
-	| *:
-	    % Emit a conditional forward branch to exit the loop.
-	    % True branches follow the conditional exit path, false
-	    % branches fall through to the top-of-loop branch.
-	    @OperandInfixOr			%	jcond	fNNN
-	    oEmitUnconditionalBackwardBranch	% 	jmp	bNNN
-    ]
-
-    oFixPopAddress
-    % Fix the true branches exiting the statement
-    oFixAndFreeShuntList			% fNNN:
-    oOperandPop;
 
 
 CaseStmt:
