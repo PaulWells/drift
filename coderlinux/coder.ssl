@@ -727,12 +727,6 @@ Block:
     % array bounds and file descriptors which are emitted as assignment
     % statements, nested procedure definitions and finally statements.
     {[
-	| tSkipString:
-            % Emit a string constant to the data area
-            oEmitNone(iData)                    %       .data
-            tLiteralString
-            oEmitString                         % sNN:  .asciz  "SSSSS"
-            oEmitNone(iText)                    %       .text
 	| tLiteralInteger:
 	    % initialize an array or file descriptor
 	    oOperandPushInteger			% ... lower bound / file number
@@ -755,6 +749,7 @@ Block:
 		    oEmitDouble(iMov)		% 	movl	ub, desc+4
 		    tArrayDescriptor
 		| tFileDescriptor:
+        |*:
 	    ]
 	    oOperandPop				% ... desc
 	    oOperandPop				% ...
@@ -827,7 +822,7 @@ Routine:
 		    @OperandPopAndFreeTemp	% ... 8(%ebp), formal
 		    @OperandPopAndFreeTemp	% ... 8(%ebp)
 
-		| tStoreParmChar, tStoreParmBoolean:
+		| tStoreParmBoolean:
 		    oOperandSwap		% ... formal, 8(%ebp)
 		    oOperandPushCopy		% ... formal, 8(%ebp), 8(%ebp)
 		    oOperandSwapLeftAndDest	% ... 8(%ebp), formal, 8(%ebp)
@@ -835,6 +830,9 @@ Routine:
 		    @EmitMove			%	movl	8(%ebp),formal
 		    @OperandPopAndFreeTemp	% ... 8(%ebp), formal
 		    @OperandPopAndFreeTemp	% ... 8(%ebp)
+         %removed tStoreParmChar from choice above and added tStoreParmString choice below
+        | tStoreParmString:
+            % TODO add logic
 		| tParmEnd:	  
 		    >
 	    ]}
@@ -1482,23 +1480,11 @@ OperandPushExpression:
 	    @OperandPushVariable
 	| tLiteralInteger:
 	    oOperandPushInteger
+    % Added choice for tLiteralString
+    | tLiteralString:
+        % TODO: Add logic
 	| tLiteralBoolean:
 	    oOperandPushBoolean
-	| tStringDescriptor:
-	    oOperandPushString
-	    % Get a string literal's address
-	    @EmitStringDescriptor		%	lea	sNNN, %T
-	| tSkipString:
-	    % Emit string literal to data area
-	    oEmitNone(iData)			%	.data
-	    % Emit the string
-	    tLiteralString
-	    oEmitString				% sNNN:	.asciz	"SSSSS"
-	    oEmitNone(iText)			%	.text
-	    % Get the string literal's address
-	    tStringDescriptor
-	    oOperandPushString
-	    @EmitStringDescriptor		%	lea	sNNN, %T
 	| tNegate:
 	    @OperandNegate
 	| tAdd:
@@ -1576,8 +1562,6 @@ OperandPushVariable:
 	    [
 		| tSubscriptInteger:
 		    @OperandSubscriptIntegerPop
-		| tSubscriptChar:
-		    @OperandSubscriptCharPop
 		| tSubscriptBoolean:
 		    @OperandSubscriptBooleanPop
 	    ]
@@ -1967,13 +1951,14 @@ OperandPushExpressionAssignPopPop:
 	    @OperandPushVariable
 	| tLiteralInteger:
 	    oOperandPushInteger
+
+    % Added choice for tLiteralString
+    | tLiteralString:
+        % TODO add handling for tLiteralString
 	| tLiteralBoolean:
 	    oOperandPushBoolean
 	| tAssignInteger:
 	    @OperandAssignIntegerPopPop
-	    >
-	| tAssignChar:
-	    @OperandAssignCharPopPop
 	    >
 	| tAssignBoolean:
 	    @OperandAssignBooleanPopPop
@@ -2055,13 +2040,7 @@ OperandPushExpressionAssignPopPop:
 	    @OperandGreaterPop
 	    @OperandNot
 	| tChr:
-	    [
-		| tAssignChar:
-		    @OperandChrAssignPopPop
-		    >
-		| *:
-		    @OperandChr
-	    ]
+		@OperandChr
 	| tOrd:
 	    [
 		| tAssignInteger:

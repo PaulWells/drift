@@ -1571,9 +1571,9 @@ program Coder (output, coderSsl, tCode, object, options);
     procedure OperandPushString;
 	{ Push an operand stack entry for the string descriptor }
 	begin
-	    Assert ( (compoundToken = tStringDescriptor), assert28);
+	    Assert ( (compoundToken = tLiteralString), assert28);
 	    OperandPush (mString, compoundTokenValue, undefined, word);
-	end { OperandPushStringDescriptor };
+	end { OperandPushString };
 
 
     procedure OperandPushArrayLowerBound;
@@ -1866,8 +1866,8 @@ program Coder (output, coderSsl, tCode, object, options);
 		    nextTCodeAddress := nextTCodeAddress + 1;
 
 		    case compoundToken of
-			tLiteralAddress, tLiteralInteger, tLiteralChar,
-			tLiteralBoolean, tStringDescriptor, tSkipString,
+			tLiteralAddress, tLiteralInteger,
+			tLiteralBoolean,
 			tWhileTest, tWhileEnd, tRepeatTest, tCallEnd,
 			tLineNumber, tTrap, tIfThen, tIfMerge, tSkipProc,
 			tCaseSelect, tCaseMerge:
