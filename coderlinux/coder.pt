@@ -198,7 +198,7 @@ program Coder (output, coderSsl, tCode, object, options);
 	tLoopBreakIf = 61;
 	tCaseDefault = 62;
 	tLiteralAddress = 63;
-	firstCompoundInputToken = 63;
+	firstCompoundToken = 63;
 	tLiteralInteger = 64;
 	tLiteralBoolean = 65;
 	tLiteralString = 66;
@@ -219,7 +219,7 @@ program Coder (output, coderSsl, tCode, object, options);
 	tLoopTest = 81;
 	tLoopEnd = 82;
 	tTrap = 83;
-	lastCompoundInputToken = 83;
+	lastCompoundToken = 83;
 	tEndOfFile = 84;
 	lastInputToken = 84;
 
@@ -1568,7 +1568,7 @@ program Coder (output, coderSsl, tCode, object, options);
 	end { OperandPushProcedure };
 
 
-    procedure OperandPushStringDescriptor;
+    procedure OperandPushString;
 	{ Push an operand stack entry for the string descriptor }
 	begin
 	    Assert ( (compoundToken = tStringDescriptor), assert28);
@@ -2264,13 +2264,6 @@ program Coder (output, coderSsl, tCode, object, options);
 				undefined, word)
 			end;
 
-		    oOperandPushChar:
-			begin
-			    Assert ( (compoundToken = tLiteralChar), assert19);
-			    OperandPush (mManifest, compoundTokenValue,
-				undefined, byte)
-			end;
-
 		    oOperandPushBoolean:
 			begin
 			    Assert ( (compoundToken = tLiteralBoolean), assert20);
@@ -2321,8 +2314,8 @@ program Coder (output, coderSsl, tCode, object, options);
 		    oOperandPushProcedure:
 			OperandPushProcedure;
 
-		    oOperandPushStringDescriptor:
-			OperandPushStringDescriptor;
+		    oOperandPushString:
+			OperandPushString;
 
 		    oOperandPushTrap:
 			begin

@@ -142,7 +142,7 @@
 	tLoopBreakIf = 61;
 	tCaseDefault = 62;
 	tLiteralAddress = 63;
-	firstCompoundInputToken = 63;
+	firstCompoundToken = 63;
 	tLiteralInteger = 64;
 	tLiteralBoolean = 65;
 	tLiteralString = 66;
@@ -163,7 +163,7 @@
 	tLoopTest = 81;
 	tLoopEnd = 82;
 	tTrap = 83;
-	lastCompoundInputToken = 83;
+	lastCompoundToken = 83;
 	tEndOfFile = 84;
 	lastInputToken = 84;
 
