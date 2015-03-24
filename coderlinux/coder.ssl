@@ -758,28 +758,42 @@ Block:
 	    ]
 	    oOperandPop				% ... desc
 	    oOperandPop				% ...
+    | tSkipProc:
+        % Branch around procedure definitions.
+        oEmitUnconditionalForwardBranch
+        oFixPushLastAddress
+
+        @Routine
+        {[
+        | tSkipProc:
+            @Routine
+        | *:
+            >
+        ]}
+
+        oFixForwardBranch   % Branch around procedure defn's
+        oFixPopAddress
+    | tAssignBegin:
+        @AssignStmt
+    | tCallBegin:
+        @CallStmt
+    | tIfBegin:
+        @IfStmt
+    | tWhileBegin:
+        @WhileStmt
+    | tRepeatBegin:
+        @RepeatStmt
+    | tCaseBegin:
+        @CaseStmt
+    | tWriteBegin:
+        @WriteProc
+    | tReadBegin:
+        @ReadProc
+    | tTrapBegin:
+        @TrapStmt
 	| *:
 	    >
-    ]}
-    [
-	| tSkipProc:
-	    % Branch around procedure definitions.
-	    oEmitUnconditionalForwardBranch
-	    oFixPushLastAddress
-
-	    @Routine
-	    {[
-		| tSkipProc:
-		    @Routine
-		| *:
-		    >
-	    ]}
-
-	    oFixForwardBranch	% Branch around procedure defn's
-	    oFixPopAddress
-	| *:
-    ]
-    @Statements;
+    ]};
 
 
 Routine:
