@@ -1855,7 +1855,8 @@ program Coder (output, coderSsl, tCode, object, options);
 	    { Accept Token }
 	    acceptedToken := nextInputToken;
 	    tCodeAddress := nextTCodeAddress;
-
+	    write('debug');
+	    write(acceptedToken);
 	    { If the token is a compound token,
 	      read its associated value	    	}
 	    if (acceptedToken >= firstCompoundToken) and 
@@ -1869,7 +1870,7 @@ program Coder (output, coderSsl, tCode, object, options);
 			tLiteralBoolean, tLoopTest, tLoopEnd,
 			tWhileTest, tWhileEnd, tCallEnd,
 			tLineNumber, tTrap, tIfThen, tIfMerge, tSkipProc,
-			tCaseSelect, tCaseMerge:
+			tCaseSelect, tCaseElse, tCaseMerge:
 			    ;	{ Do nothing }
 			tCaseEnd:
 			    { Read the lowest and highest label values
