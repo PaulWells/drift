@@ -1231,13 +1231,23 @@ EmitDefaultCaseAbort:
     oOperandSetLength(word)
     @OperandForceToStack		%	pushl	n
     oOperandPop				% ...
-    oOperandPushMode(mTrap)
-    oOperandSetValue(trCaseAbort)
-    oEmitSingle(iCall)			% 	call  caseAbort
-    oOperandPop;
+
+    % Emit code for else or case abort 
+    [
+        |tCaseElse:
+            @Statements
+            tCaseMerge
+            % Merge branch to exit the case statement
+            oEmitCaseMergeBranch;       %   jmp mNNN
+        |*:
+            oOperandPushMode(mTrap)
+            oOperandSetValue(trCaseAbort)
+            oEmitSingle(iCall)          %   call  caseAbort
+            oOperandPop;
+    ]
 
 
-EmitCaseSubscriptJump:
+Emit;CaseSubscriptJump:
     % Emit code to calculate the address of the selected alternative
     % statement, check that the selector is in range and branch to
     % the selected alternative.  The selector expression is on the
