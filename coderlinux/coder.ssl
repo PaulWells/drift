@@ -1218,6 +1218,22 @@ CaseEnd:
 
 
 EmitDefaultCaseAbort:
+
+    % Emit a case abort alternative to handle selector values
+    % which do not match a label.
+
+    oCaseEnterAbortAddress          % aNNN:
+    % Save the abort address for use by the selector out-of-range error
+    % checks in the EmitCaseSubscriptJump rule.
+    oFixPushAddress                 % bNNN:     (label for abort)
+    oFixSwapAddresses               % (keep branch around case body on top)
+    oEmitMergeSourceCoordinate
+    oOperandPushMode(mLineNum)      % ... n
+    oOperandSetLength(word)
+    @OperandForceToStack            %   pushl   n
+    oOperandPop                     % ...
+
+    
     
     % Emit code for else or case abort 
     [
@@ -1226,28 +1242,14 @@ EmitDefaultCaseAbort:
             tCaseMerge
             % Merge branch to exit the case statement
             oEmitCaseMergeBranch      %   jmp mNNN
-        |*:
-            % Emit a case abort alternative to handle selector values
-            % which do not match a label.
-
-            oCaseEnterAbortAddress      % aNNN:
-            % Save the abort address for use by the selector out-of-range error
-            % checks in the EmitCaseSubscriptJump rule.
-            oFixPushAddress         % bNNN:     (label for abort)
-            oFixSwapAddresses           % (keep branch around case body on top)
-            oEmitMergeSourceCoordinate
-            oOperandPushMode(mLineNum)      % ... n
-            oOperandSetLength(word)
-            @OperandForceToStack        %   pushl   n
-            oOperandPop             % ...
+        |*;
             oOperandPushMode(mTrap)
             oOperandSetValue(trCaseAbort)
-            oEmitSingle(iCall)          %   call  caseAbort
-            oOperandPop
+            oEmitSingle(iCall)              %   call  caseAbort
+            oOperandPop;   
     ];
 
-
-Emit;CaseSubscriptJump:
+EmitCaseSubscriptJump:
     % Emit code to calculate the address of the selected alternative
     % statement, check that the selector is in range and branch to
     % the selected alternative.  The selector expression is on the
