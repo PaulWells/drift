@@ -1130,7 +1130,7 @@ LoopStmt:
 
     % Changed from tWhileEnd to tLoopEnd
     tLoopEnd
-    
+
     oEmitUnconditionalBackwardBranch        %   jmp bNNN
     oFixPopAddress
     oFixAndFreeShuntList            % fNNN:
@@ -1494,7 +1494,16 @@ OperandPushExpression:
 	    oOperandPushInteger
     % Added choice for tLiteralString
     | tLiteralString:
-        % TODO: Add logic
+        % Logic is the same except no tStringDescriptor accepted
+        % Emit string literal to data area
+        oEmitNone(iData)            %   .data
+        % Emit the string
+        tLiteralString
+        oEmitString             % sNNN: .asciz  "SSSSS"
+        oEmitNone(iText)            %   .text
+        % Get the string literal's address
+        oOperandPushString
+        @EmitStringDescriptor       %   lea sNNN, %T
 	| tLiteralBoolean:
 	    oOperandPushBoolean
 	| tNegate:
@@ -1967,7 +1976,16 @@ OperandPushExpressionAssignPopPop:
 
     % Added choice for tLiteralString
     | tLiteralString:
-        % TODO add handling for tLiteralString
+        % Logic is the same except no tStringDescriptor accepted
+        % Emit string literal to data area
+        oEmitNone(iData)            %   .data
+        % Emit the string
+        tLiteralString
+        oEmitString             % sNNN: .asciz  "SSSSS"
+        oEmitNone(iText)            %   .text
+        % Get the string literal's address
+        oOperandPushString
+        @EmitStringDescriptor       %   lea sNNN, %T
 	| tLiteralBoolean:
 	    oOperandPushBoolean
 	| tAssignInteger:
@@ -1976,6 +1994,10 @@ OperandPushExpressionAssignPopPop:
 	| tAssignBoolean:
 	    @OperandAssignBooleanPopPop
 	    >
+    % Add tAssignString
+    | tAssignString:
+        % TODO add logic
+        >
 	| tNegate:
 	    [
 		| tAssignInteger:
@@ -2584,17 +2606,6 @@ OperandModPop:
 
     % finally, the result goes to a free temporary
     @OperandForceIntoTemp;              % ... %T
-
-
-OperandChrAssignPopPop:
-    % Assume operand's value is in range
-    % x := y;  x byte, y word
-    @OperandForceIntoTemp	%	movl	y, %T
-    oOperandSetLength(byte)	% (treat word in reg as byte to get
-				%  the low order byte of the word)
-    oEmitDouble(iMov)		% 	movb	%T, x
-    @OperandPopAndFreeTemp
-    @OperandPopAndFreeTemp;
 
 
 OperandChr:

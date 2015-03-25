@@ -1573,7 +1573,7 @@ program Coder (output, coderSsl, tCode, object, options);
 	begin
 	    Assert ( (compoundToken = tLiteralString), assert28);
 	    OperandPush (mString, compoundTokenValue, undefined, word);
-	end { OperandPushString };
+	end { OperandPushStringDescriptor };
 
 
     procedure OperandPushArrayLowerBound;
@@ -2214,7 +2214,6 @@ program Coder (output, coderSsl, tCode, object, options);
 			begin
 			    lastEmittedLineNumber := undefined;
 			    OptionallyEmitSourceCoordinate;
-			    AssertTempsAreAllFree
 			end;
 
 		    oEmitCaseMergeBranch:
