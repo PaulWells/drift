@@ -1864,11 +1864,10 @@ program Coder (output, coderSsl, tCode, object, options);
 		    compoundToken := acceptedToken;
 		    read (tCode, compoundTokenValue);
 		    nextTCodeAddress := nextTCodeAddress + 1;
-
 		    case compoundToken of
 			tLiteralAddress, tLiteralInteger,
-			tLiteralBoolean,
-			tWhileTest, tWhileEnd, tRepeatTest, tCallEnd,
+			tLiteralBoolean, tLoopTest, tLoopEnd,
+			tWhileTest, tWhileEnd, tCallEnd,
 			tLineNumber, tTrap, tIfThen, tIfMerge, tSkipProc,
 			tCaseSelect, tCaseMerge:
 			    ;	{ Do nothing }

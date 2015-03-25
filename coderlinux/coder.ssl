@@ -1100,7 +1100,7 @@ LoopStmt:
     @OperandPushBooleanControlExpression    % ... cond
     % Changed from tWhileTest to tLoopTest
     tLoopTest
-    oOperandComplementJumpCondition     % ... !cond
+    %oOperandComplementJumpCondition     % ... !cond
 
     % Optimize if the condition is know at compile time
     [ oOperandChooseJumpCondition
@@ -1582,8 +1582,9 @@ OperandPushVariable:
     ]
     [
 	| tFetchInteger:
-	| tFetchChar, tFetchBoolean:
+	| tFetchBoolean:
  	    oOperandSetLength(byte)
+	| tFetchString:
 	| *: 
 	    % Value is not to be loaded
     ] ;
