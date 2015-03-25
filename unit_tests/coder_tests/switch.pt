@@ -1,0 +1,11 @@
+extern input
+var a: integer
+
+switch a
+    case 1:
+	a = 2
+    case 2:
+	a = 3
+    default:
+	a = 4
+end
