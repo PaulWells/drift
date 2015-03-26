@@ -142,7 +142,7 @@ Output : 	% corresponds to coder.ssl input
 	tLoopBegin
 	tLoopBreakIf
 	tCaseDefault
-
+	tCaseElse
 	% Compound T-codes are those that take operands
 	tLiteralAddress 
 	firstCompoundOutputToken = tLiteralAddress
@@ -156,7 +156,6 @@ Output : 	% corresponds to coder.ssl input
 	tCaseSelect
 	tCaseMerge
 	tCaseEnd
-	tCaseElse
 	tWhileTest
 	tWhileEnd
 	tRepeatTest
