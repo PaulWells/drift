@@ -94,7 +94,7 @@ Input:		% corresponds to semantic.ssl output
     tLoopBegin
     tLoopBreakIf
     tCaseDefault
-
+    tCaseElse
     % Compound T-codes are those that take operands
     tLiteralAddress 
     firstCompoundToken = tLiteralAddress
@@ -108,7 +108,6 @@ Input:		% corresponds to semantic.ssl output
     tCaseSelect
     tCaseMerge
     tCaseEnd
-    tCaseElse
     tWhileTest
     tWhileEnd
     tRepeatTest
@@ -1218,22 +1217,6 @@ CaseEnd:
 
 
 EmitDefaultCaseAbort:
-
-    % Emit a case abort alternative to handle selector values
-    % which do not match a label.
-
-    oCaseEnterAbortAddress          % aNNN:
-    % Save the abort address for use by the selector out-of-range error
-    % checks in the EmitCaseSubscriptJump rule.
-    oFixPushAddress                 % bNNN:     (label for abort)
-    oFixSwapAddresses               % (keep branch around case body on top)
-    oEmitMergeSourceCoordinate
-    oOperandPushMode(mLineNum)      % ... n
-    oOperandSetLength(word)
-    @OperandForceToStack            %   pushl   n
-    oOperandPop                     % ...
-
-    
     
     % Emit code for else or case abort 
     [
@@ -1242,7 +1225,19 @@ EmitDefaultCaseAbort:
             tCaseMerge
             % Merge branch to exit the case statement
             oEmitCaseMergeBranch      %   jmp mNNN
-        |*;
+        |*:
+            % Emit a case abort alternative to handle selector values
+            % which do not match a label.
+            oCaseEnterAbortAddress          % aNNN:
+            % Save the abort address for use by the selector out-of-range error
+            % checks in the EmitCaseSubscriptJump rule.
+            oFixPushAddress                 % bNNN:     (label for abort)
+            oFixSwapAddresses               % (keep branch around case body on top)
+            oEmitMergeSourceCoordinate
+            oOperandPushMode(mLineNum)      % ... n
+            oOperandSetLength(word)
+            @OperandForceToStack            %   pushl   n
+            oOperandPop                     % ...
             oOperandPushMode(mTrap)
             oOperandSetValue(trCaseAbort)
             oEmitSingle(iCall)              %   call  caseAbort
