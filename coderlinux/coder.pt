@@ -1855,8 +1855,6 @@ program Coder (output, coderSsl, tCode, object, options);
 	    { Accept Token }
 	    acceptedToken := nextInputToken;
 	    tCodeAddress := nextTCodeAddress;
-	    write('debug');
-	    write(acceptedToken);
 	    { If the token is a compound token,
 	      read its associated value	    	}
 	    if (acceptedToken >= firstCompoundToken) and 
@@ -2076,7 +2074,12 @@ program Coder (output, coderSsl, tCode, object, options);
 			    if nextInputToken = sslTable[sslPointer] then
 				AcceptInputToken
 			    else
-				SslSyntaxError;
+				begin
+				    writeln;
+				    write(nextInputToken);
+				    writeln;
+				    SslSyntaxError;
+				end;
 			    sslPointer := sslPointer + 1
 			end;
 
