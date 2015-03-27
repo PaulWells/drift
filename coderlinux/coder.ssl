@@ -1505,7 +1505,6 @@ OperandPushExpression:
         % Emit string literal to data area
         oEmitNone(iData)            %   .data
         % Emit the string
-        tLiteralString
         oEmitString             % sNNN: .asciz  "SSSSS"
         oEmitNone(iText)            %   .text
         % Get the string literal's address
@@ -1601,6 +1600,7 @@ OperandPushVariable:
 	| tFetchBoolean:
  	    oOperandSetLength(byte)
 	| tFetchString:
+	    oOperandSetMode(mString)
 	| *: 
 	    % Value is not to be loaded
     ] ;
@@ -1987,7 +1987,6 @@ OperandPushExpressionAssignPopPop:
         % Emit string literal to data area
         oEmitNone(iData)            %   .data
         % Emit the string
-        tLiteralString
         oEmitString             % sNNN: .asciz  "SSSSS"
         oEmitNone(iText)            %   .text
         % Get the string literal's address
@@ -2877,11 +2876,12 @@ OperandAssignStringPopPop:
     % Generate code to assign the right (top) operand's value to
     % the left (second) operand and pop both operands.  For String
     @SaveTempRegsToStack
-
-    EmitStringDescriptor %lea s2, %T
-    OperandForceToStack  %pushl %T
-    EmitStringDescriptor %lea s1,  %T
-    OperandForceToStack %pushl, %T
+    @EmitStringDescriptor %lea s2, %T
+    @OperandForceToStack  %pushl %T
+    @OperandPopAndFreeTemp
+    @EmitStringDescriptor %lea s1,  %T
+    @OperandForceToStack %pushl, %T
+    @OperandPopAndFreeTemp
 
     % Make trap call
     oOperandPushMode(mTrap)
@@ -2900,7 +2900,7 @@ OperandAssignStringPopPop:
     oOperandPop                     
     oOperandPop                     
 
-    @RestoreTempRegsFromStack
+    @RestoreTempRegsFromStack;
 
 OperandPopAndFreeTemp:
     % If the top operand has a temporary in it, free it. 
