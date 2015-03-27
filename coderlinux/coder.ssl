@@ -1218,14 +1218,6 @@ CaseEnd:
 
 EmitDefaultCaseAbort:
     
-    % Emit code for else or case abort 
-    [
-        |tCaseElse:
-            @Statements
-            tCaseMerge
-            % Merge branch to exit the case statement
-            oEmitCaseMergeBranch      %   jmp mNNN
-        |*:
             % Emit a case abort alternative to handle selector values
             % which do not match a label.
             oCaseEnterAbortAddress          % aNNN:
@@ -1240,9 +1232,17 @@ EmitDefaultCaseAbort:
             oOperandPop                     % ...
             oOperandPushMode(mTrap)
             oOperandSetValue(trCaseAbort)
+    % Emit code for else or case abort 
+    [
+        |tCaseElse:
+            @Statements
+            tCaseMerge
+            % Merge branch to exit the case statement
+            oEmitCaseMergeBranch      %   jmp mNNN
+        |*:
             oEmitSingle(iCall)              %   call  caseAbort
-            oOperandPop   
-    ];
+    ]
+    oOperandPop;   
 
 EmitCaseSubscriptJump:
     % Emit code to calculate the address of the selected alternative
