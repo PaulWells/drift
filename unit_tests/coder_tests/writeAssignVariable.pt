@@ -1,0 +1,7 @@
+extern output
+var s : string
+
+s = "This works!"
+
+write(s)
+writeln
