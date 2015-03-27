@@ -1,0 +1,3 @@
+extern output 
+write("enter box width and height:")
+writeln

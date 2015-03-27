@@ -830,7 +830,11 @@ Routine:
 		    @OperandPopAndFreeTemp	% ... 8(%ebp)
          %removed tStoreParmChar from choice above and added tStoreParmString choice below
         | tStoreParmString:
-            % TODO add logic
+		   oOperandSwap		% ... formal, 8(%ebp)
+		   oOperandPushCopy		% ... formal, 8(%ebp), 8(%ebp)
+		   oOperandSwapLeftAndDest	% ... 8(%ebp), formal, 8(%ebp)
+		   oOperandSetLength(string)
+		   @OperandAssignStringPopPop
 		| tParmEnd:	  
 		    >
 	    ]}
