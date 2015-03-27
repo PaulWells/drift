@@ -2003,7 +2003,7 @@ OperandPushExpressionAssignPopPop:
 	    >
     % Add tAssignString
     | tAssignString:
-        % TODO add logic
+        @OperandAssignStringPopPop
         >
 	| tNegate:
 	    [
@@ -2872,6 +2872,35 @@ OperandAssignBooleanPopPop:
     @OperandConvertJumpConditionToData
     @OperandAssignCharPopPop;
 
+
+OperandAssignStringPopPop:
+    % Generate code to assign the right (top) operand's value to
+    % the left (second) operand and pop both operands.  For String
+    @SaveTempRegsToStack
+
+    EmitStringDescriptor %lea s2, %T
+    OperandForceToStack  %pushl %T
+    EmitStringDescriptor %lea s1,  %T
+    OperandForceToStack %pushl, %T
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trAssignString)
+    oOperandSetLength(word)
+    oEmitSingle(iCall)
+    oOperandPop
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(eight)
+    oEmitDouble(iAdd)                   
+    oOperandPop                     
+    oOperandPop                     
+
+    @RestoreTempRegsFromStack
 
 OperandPopAndFreeTemp:
     % If the top operand has a temporary in it, free it. 
