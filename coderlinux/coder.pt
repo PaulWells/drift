@@ -504,6 +504,7 @@ program Coder (output, coderSsl, tCode, object, options);
 
 	{ Machine word size }
 	wordSize = 4;		{ longword (4 bytes) on SUN }
+	stringSize = 256;
 
 	{ Temporary regs - %ebx, %ecx, %esi, %edi }
 	firstTempReg = 1;	
@@ -1571,7 +1572,7 @@ program Coder (output, coderSsl, tCode, object, options);
 	begin
 	    Assert ( (compoundToken = tLiteralString), assert28);
 	    OperandPush (mString, compoundTokenValue, undefined, word);
-	end { OperandPushStringDescriptor };
+	end { OperandPushString };
 
 
     procedure OperandPushArrayLowerBound;
@@ -1803,14 +1804,17 @@ program Coder (output, coderSsl, tCode, object, options);
 		    subscript := subscript - lowerBound;
 		    if operandStkLength[operandStkTop-1] = word then
 			{ Convert a byte offset to a word offset }
-			subscript := subscript * wordSize;
+				subscript := subscript * wordSize;
+			elif operandStkLength[operandStkTop-1] = string then
+				{ Convert a byte offset to a string offset}
+				subscript := subscript * stringSize
+
 		    { Set the subscripted varable's address.  Note that
 		      the array variable's address points to the base of
 		      a 2 word descriptor (lower, upper bounds).	}
-		    operandStkValue[operandStkTop-1] := 
-			operandStkValue[operandStkTop-1] +
-			subscript + 2 * wordSize;  { size of 2 word descriptor }
-		end;
+		    operandStkValue[operandStkTop-1] := operandStkValue[operandStkTop-1] + subscript + 2 * wordSize;  
+		    { size of 2 word descriptor }
+			end;
 	end { OperandFoldManifestSubscript };
 
 
