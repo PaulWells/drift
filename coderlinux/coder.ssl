@@ -1549,6 +1549,8 @@ OperandPushExpression:
 	    @OperandInfixOr
 	| tEQ:
 	    @OperandEqualPop
+    | tStringEqual:
+        @OperandStringEqualPop
 	| tNE:
 	    @OperandEqualPop
 	    @OperandNot
@@ -2376,10 +2378,7 @@ OperandConcatenatePop:
     @RestoreTempRegsFromStack
 
     % Move result to temp
-    oOperandPushMode(mScratchReg1)      % ... %S1       
-    oOperandSetLength(word)
-    oEmitDouble(iMov)
-    oOperandPop;
+    @ResultToTemp;
 
 OperandLength:
     @SaveTempRegsToStack
@@ -2410,10 +2409,7 @@ OperandLength:
     @RestoreTempRegsFromStack
 
     % Move result to temp
-    oOperandPushMode(mScratchReg1)      % ... %S1       
-    oOperandSetLength(word)
-    oEmitDouble(iMov)
-    oOperandPop;
+    @ResultToTemp;
 
 OperandAddPop:
     % Add the right (top) operand's value to the left (second)
@@ -2875,10 +2871,7 @@ OperandChr:
     @RestoreTempRegsFromStack
 
     % Force result into temp
-    oOperandPushMode(mScratchReg1)      % ... %S1       
-    oOperandSetLength(word)
-    oEmitDouble(iMov)
-    oOperandPop
+    @ResultToTemp
     ;
 
 OperandOrdAssignPopPop:
@@ -3204,10 +3197,7 @@ OperandSubstringPopPop:
 
     @RestoreTempRegsFromStack
 
-    oOperandPushMode(mScratchReg1)      % ... %S1       
-    oOperandSetLength(word)
-    oEmitDouble(iMov)
-    oOperandPop
+    @ResultToTemp
     ;
 
 
@@ -3335,6 +3325,42 @@ OperandEqualPop:
 		    ]
 	    ]
     ];
+
+OperandStringEqualPop:
+    % Generate code to compare string equality
+
+    @SaveTempRegsToStack
+    @EmitStringDescriptor %lea s2, %T
+    @OperandForceToStack  %pushl %T
+    @OperandPopAndFreeTemp
+    @EmitStringDescriptor %lea s1,  %T
+    @OperandForceToStack %pushl, %T
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trStringEqual) % call pttrap106
+    oOperandSetLength(word)
+    oEmitSingle(iCall)
+    oOperandPop
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(eight)
+    oEmitDouble(iAdd)                   
+    oOperandPop                     
+    oOperandPop                 
+
+    % Save result
+    @SaveResult % movl eax, esi    
+
+    @RestoreTempRegsFromStack
+
+    % Move result into temp
+    @ResultToTemp;
 
 
 OperandGreaterPop:
@@ -3612,7 +3638,11 @@ SaveResult: % movl %eax,%esi
     oEmitDouble(iMov)                   %       movl    %eax, %S1
     oOperandPop;
 
-
+ResultToTemp:
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oEmitDouble(iMov)
+    oOperandPop;
 
 EmitAdd:
     % On the x86, at least one operand must be a register.
