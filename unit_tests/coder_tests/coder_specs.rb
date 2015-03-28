@@ -2,6 +2,10 @@ RSpec.describe "Coder Tests" do
 	before :all do
 		Dir.chdir "#{ENV['HOME']}/Zdrive/cisc458/ptsrc"
 	end
+	
+	after :all do
+		Dir.foreach(Dir.pwd) { |file| File.delete(file) if File.extname(file) == ".out" }	
+	end
 
 	it 'writes substrings' do
 		compare_outputs('writeSubstring')
@@ -48,5 +52,5 @@ end
 def compare_outputs(test_case)
 	actual = actual_output(test_case)
 	expected = expected_output(test_case)
-	expect(actual_output).to eq(expected_output)
+	expect(actual).to eq(expected)
 end
