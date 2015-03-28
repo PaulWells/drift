@@ -2898,17 +2898,21 @@ OperandOrdAssignPopPop:
 
 
 OperandOrd:
-    % Byte operand is on top of operand stack
+    @EmitStringDescriptor %lea s1, %T
+
+    % Move false into temp
+    @OperandPushTempByte
     oOperandPushMode(mManifest)
     oOperandSetValue(zero)
     oOperandSetLength(word)
-    @OperandForceIntoTemp	% 	movl	$0, %T
-    oOperandSetLength(byte)
-    oOperandSwap
-    oEmitDouble(iMov)		% 	movb 	y, %T
-    @OperandPopAndFreeTemp
-    oOperandSetLength(word);
+    oEmitDouble(iMov)           %   movl    $0, %T
+    oOperandPop
 
+    % Move result into temp
+    oOperandPushMode(mTempIndirect)
+    oOperandSetLength(word)
+    oEmitDouble(iMov)
+    oOperandPop;
 
 OperandEolnFunction:
     % First save the temp registers, since we are called in an
