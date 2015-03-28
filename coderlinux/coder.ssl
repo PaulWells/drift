@@ -1516,8 +1516,6 @@ OperandPushExpression:
         @EmitStringDescriptor       %   lea sNNN, %T
 	| tLiteralBoolean:
 	    oOperandPushBoolean
-	| tSubstring:
-	    @OperandSubscriptStringPop
 	| tNegate:
 	    @OperandNegate
 	| tAdd:
@@ -2177,6 +2175,8 @@ OperandPushExpressionAssignPopPop:
     | tAssignString:
         @OperandAssignStringPopPop
         >
+    | tSubstring:
+        @OperandSubstringPopPop
 	| tNegate:
 	    [
 		| tAssignInteger:
@@ -2655,11 +2655,6 @@ OperandDividePop:
             % but we're using those for temps, so we have to spill them
 
             % begin by getting our dividend and divisor in scratch regs
-            oOperandPushMode(mScratchReg1)      % ... x, y, %S1
-            oOperandSetLength(word)
-            oOperandSwap                        % ... x, %S1, y
-            @EmitMove                           %       movl    y, %S1
-            @OperandPopAndFreeTemp              % ... x, %S1
             oOperandSwap                        % ... %S1, x
             oOperandPushMode(mScratchReg2)      % ... %S1, x, %S2
             oOperandSetLength(word)
@@ -3074,6 +3069,55 @@ OperandAssignStringPopPop:
     oOperandPop                     
 
     @RestoreTempRegsFromStack;
+
+OperanSubstringPopPop:
+
+    % Grab indexes and string
+    @SaveTempRegsToStack
+
+    @OperandForceToStack
+    @OperandPopAndFreeTemp
+
+    @OperandForceToStack
+    @OperandPopAndFreeTemp
+
+    @EmitStringDescriptor
+    @OperandForceToStack
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trSubstring)
+    oOperandSetLength(word)
+    oEmitSingle(iCall)
+    oOperandPop
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(twelve)
+    oEmitDouble(iAdd)                   
+    oOperandPop                     
+    oOperandPop  
+
+    % Save result
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oOperandPushMode(mResultReg)        % ... %S1, %eax 
+    oOperandSetLength(word)
+    oEmitDouble(iMov)                   %       movl    %eax, %S1
+    oOperandPop 
+
+    @RestoreTempRegsFromStack
+
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oEmitDouble(iMov)
+    oOperandPop
+    ;
+
 
 OperandPopAndFreeTemp:
     % If the top operand has a temporary in it, free it. 
