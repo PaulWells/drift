@@ -1516,6 +1516,8 @@ OperandPushExpression:
         @EmitStringDescriptor       %   lea sNNN, %T
 	| tLiteralBoolean:
 	    oOperandPushBoolean
+	| tSubstring:
+	    @OperandSubscriptStringPop
 	| tNegate:
 	    @OperandNegate
 	| tAdd:
@@ -1624,7 +1626,7 @@ OperandSubscriptStringPop:
             oOperandSwap
             @OperandSubscriptNonManifestStringPop
         | *:
-            oOperandSetLength(word);
+            oOperandSetLength(string)
             oOperandSwap        % ... array, subscript
             oOperandFoldManifestSubscript
             oOperandPop         % ... array[subscript]
