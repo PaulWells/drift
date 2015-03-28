@@ -1,0 +1,8 @@
+extern output
+
+var s: string
+
+s = "Hello World! Not!"
+
+write(s::1..12)
+writeln

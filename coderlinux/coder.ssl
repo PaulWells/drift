@@ -1514,6 +1514,8 @@ OperandPushExpression:
         % Get the string literal's address
         oOperandPushString
         @EmitStringDescriptor       %   lea sNNN, %T
+    	| tSubstring:
+        	@OperandSubstringPopPop
 	| tLiteralBoolean:
 	    oOperandPushBoolean
 	| tNegate:
@@ -2175,8 +2177,6 @@ OperandPushExpressionAssignPopPop:
     | tAssignString:
         @OperandAssignStringPopPop
         >
-    | tSubstring:
-        @OperandSubstringPopPop
 	| tNegate:
 	    [
 		| tAssignInteger:
@@ -3070,7 +3070,7 @@ OperandAssignStringPopPop:
 
     @RestoreTempRegsFromStack;
 
-OperanSubstringPopPop:
+OperandSubstringPopPop:
 
     % Grab indexes and string
     @SaveTempRegsToStack
