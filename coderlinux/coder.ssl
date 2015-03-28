@@ -2857,10 +2857,39 @@ OperandModPop:
 
 
 OperandChr:
-    % Assume operand's value is in range
-    @OperandForceIntoTemp	
-    oOperandSetLength(byte);	% see comments above
+    @SaveTempRegsToStack
 
+    @OperandForceToStack % pushl i1
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trChrString) % call pttrap102
+    oOperandSetLength(word)
+    oEmitSingle(iCall)
+    oOperandPop
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(four)   
+    oEmitDouble(iAdd)        % addl $4, %esp           
+    oOperandPop                     
+    oOperandPop
+
+    % Save Result 
+    @SaveResult
+
+    @RestoreTempRegsFromStack
+
+    % Force result into temp
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oEmitDouble(iMov)
+    oOperandPop
+    ;
 
 OperandOrdAssignPopPop:
     % x := y;  x word, y byte

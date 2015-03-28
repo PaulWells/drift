@@ -1,0 +1,4 @@
+extern output
+
+write(chr(72) + chr(105))
+writeln
