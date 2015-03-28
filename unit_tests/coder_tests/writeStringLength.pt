@@ -4,5 +4,5 @@ var s: string
 
 s = "123456789"
 
-write(s)
+write(#s)
 writeln

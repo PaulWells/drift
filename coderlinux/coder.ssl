@@ -2401,15 +2401,18 @@ OperandLength:
     oOperandPushMode(mTrap)
     oOperandSetValue(trLength)
     oOperandSetLength(word)
-    oEmitSingle(iCall)  % call pttrap103
+    oEmitSingle(iCall)  % call pttrap105
     oOperandPop 
 
     % Pop Arguments
     oOperandPushMode(mStackReg)
     oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
     oOperandSetValue(four)
     oEmitDouble(iAdd)                                
     oOperandPop
+    oOperandPop 
 
     % Save result 
     @SaveResult % movl eax , esi
