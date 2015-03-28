@@ -1514,12 +1514,14 @@ OperandPushExpression:
         % Get the string literal's address
         oOperandPushString
         @EmitStringDescriptor       %   lea sNNN, %T
-    	| tSubstring:
-        	@OperandSubstringPopPop
+    | tSubstring:
+        @OperandSubstringPopPop
 	| tLiteralBoolean:
 	    oOperandPushBoolean
 	| tNegate:
 	    @OperandNegate
+    | tConcatenate:
+        @OperandConcatenatePop
 	| tAdd:
 	    @OperandAddPop
 	| tSubtract:
@@ -2349,6 +2351,48 @@ OperandAddRightToLeftPop:
 	    @EmitAdd				%	addl	y, x
 	    @OperandPopAndFreeTemp
     ];
+
+OperandConcatenatePop:
+    @SaveTempRegsToStack
+    @EmitStringDescriptor %lea s2, %T
+    @OperandForceToStack  %pushl %T
+    @OperandPopAndFreeTemp
+    @EmitStringDescriptor %lea s1,  %T
+    @OperandForceToStack %pushl, %T
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trConcatenate)
+    oOperandSetLength(word)
+    oEmitSingle(iCall)  % call pttrap103
+    oOperandPop    
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(eight)
+    oEmitDouble(iAdd)                   
+    oOperandPop                     
+    oOperandPop   
+
+    % Save result
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oOperandPushMode(mResultReg)        % ... %S1, %eax 
+    oOperandSetLength(word)
+    oEmitDouble(iMov)                   %       movl    %eax, %S1
+    oOperandPop 
+
+    @RestoreTempRegsFromStack
+
+    % Move result to temp
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oEmitDouble(iMov)
+    oOperandPop;
 
 
 OperandAddPop:
