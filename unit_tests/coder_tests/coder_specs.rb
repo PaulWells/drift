@@ -26,6 +26,10 @@ RSpec.describe "Coder Tests" do
 	it 'writes string parameters' do
 		compare_outputs('storeParmString')
 	end
+
+	it 'compares string equality' do
+		compare_outputs('stringEquality')
+	end
 end
 
 def actual_x86_code(test_case)
