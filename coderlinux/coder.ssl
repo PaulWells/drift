@@ -1522,6 +1522,8 @@ OperandPushExpression:
 	    @OperandNegate
     | tConcatenate:
         @OperandConcatenatePop
+    | tLength:
+        @OperandLength
 	| tAdd:
 	    @OperandAddPop
 	| tSubtract:
@@ -2379,12 +2381,7 @@ OperandConcatenatePop:
     oOperandPop   
 
     % Save result
-    oOperandPushMode(mScratchReg1)      % ... %S1       
-    oOperandSetLength(word)
-    oOperandPushMode(mResultReg)        % ... %S1, %eax 
-    oOperandSetLength(word)
-    oEmitDouble(iMov)                   %       movl    %eax, %S1
-    oOperandPop 
+    @SaveResult
 
     @RestoreTempRegsFromStack
 
@@ -2394,6 +2391,36 @@ OperandConcatenatePop:
     oEmitDouble(iMov)
     oOperandPop;
 
+OperandLength:
+    @SaveTempRegsToStack
+    @EmitStringDescriptor %lea s1, %T
+    @OperandForceToStack  %pushl %T
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trLength)
+    oOperandSetLength(word)
+    oEmitSingle(iCall)  % call pttrap103
+    oOperandPop 
+
+    % Pop Arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandSetValue(four)
+    oEmitDouble(iAdd)                                
+    oOperandPop
+
+    % Save result 
+    @SaveResult % movl eax , esi
+
+    @RestoreTempRegsFromStack
+
+    % Move result to temp
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oEmitDouble(iMov)
+    oOperandPop;
 
 OperandAddPop:
     % Add the right (top) operand's value to the left (second)
@@ -3147,12 +3174,7 @@ OperandSubstringPopPop:
     oOperandPop  
 
     % Save result
-    oOperandPushMode(mScratchReg1)      % ... %S1       
-    oOperandSetLength(word)
-    oOperandPushMode(mResultReg)        % ... %S1, %eax 
-    oOperandSetLength(word)
-    oEmitDouble(iMov)                   %       movl    %eax, %S1
-    oOperandPop 
+    @SaveResult
 
     @RestoreTempRegsFromStack
 
@@ -3518,6 +3540,7 @@ OperandForceToStack:
     oOperandPushMode(mStack);
 
 
+
 OperandAreLeftAndRightManifest >> Boolean:
     % Return yes if the top 2 operands have mode manifest,
     % otherwise return no.
@@ -3554,6 +3577,15 @@ OperandLeftOrRightIsTemp >> Boolean:
 		    >> no
 	    ]
     ];
+
+SaveResult: % movl %eax,%esi
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oOperandPushMode(mResultReg)        % ... %S1, %eax 
+    oOperandSetLength(word)
+    oEmitDouble(iMov)                   %       movl    %eax, %S1
+    oOperandPop;
+
 
 
 EmitAdd:
