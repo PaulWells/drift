@@ -1,0 +1,4 @@
+extern output
+var s: string
+s = ""
+write("abc" + s + "def")
