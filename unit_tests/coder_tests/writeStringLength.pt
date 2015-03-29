@@ -1,0 +1,8 @@
+extern output
+
+var s: string
+
+s = "123456789"
+
+write(#s)
+writeln

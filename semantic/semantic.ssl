@@ -142,7 +142,7 @@ Output : 	% corresponds to coder.ssl input
 	tLoopBegin
 	tLoopBreakIf
 	tCaseDefault
-
+	tCaseElse
 	% Compound T-codes are those that take operands
 	tLiteralAddress 
 	firstCompoundOutputToken = tLiteralAddress
@@ -156,7 +156,6 @@ Output : 	% corresponds to coder.ssl input
 	tCaseSelect
 	tCaseMerge
 	tCaseEnd
-	tCaseElse
 	tWhileTest
 	tWhileEnd
 	tRepeatTest
@@ -1668,7 +1667,6 @@ AssignmentStmt :
 
 	@Expression	% Push symbol and type stack entries for an expression
 
-	oTypeStkPrintContents
 	@CompareAndSwapTypes
 
 	% Emit code to perform the assignment

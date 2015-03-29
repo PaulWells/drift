@@ -1,0 +1,5 @@
+extern output
+var s: string
+var x: string
+s = ""
+write("b" + s + "a")

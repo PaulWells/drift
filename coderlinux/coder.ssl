@@ -29,7 +29,7 @@
 
 
 Input:		% corresponds to semantic.ssl output
-    tMultiply
+    tMultiply 
     firstInputToken = tMultiply
     tDivide
     tModulus
@@ -54,21 +54,17 @@ Input:		% corresponds to semantic.ssl output
     tVarParm
     tFetchAddress
     tFetchInteger
-    tFetchChar
     tFetchBoolean
     tAssignBegin
     tAssignAddress
     tAssignInteger
-    tAssignChar
     tAssignBoolean
     tStoreParmAddress
     tStoreParmInteger
-    tStoreParmChar
     tStoreParmBoolean
     tSubscriptBegin
     tSubscriptAddress
     tSubscriptInteger
-    tSubscriptChar
     tSubscriptBoolean
     tArrayDescriptor
     tFileDescriptor
@@ -86,12 +82,23 @@ Input:		% corresponds to semantic.ssl output
     tTrapBegin
     tWriteEnd
     tReadEnd
-
+    % Added non-compound T-Codes
+    tFetchString
+    tAssignString
+    tStoreParmString
+    tSubscriptString
+    tConcatenate
+    tSubstring
+    tLength
+    tStringEqual
+    tLoopBegin
+    tLoopBreakIf
+    tCaseDefault
+    tCaseElse
     % Compound T-codes are those that take operands
-    tLiteralAddress
+    tLiteralAddress 
     firstCompoundToken = tLiteralAddress
     tLiteralInteger
-    tLiteralChar
     tLiteralBoolean
     tLiteralString
     tStringDescriptor
@@ -107,6 +114,10 @@ Input:		% corresponds to semantic.ssl output
     tSkipProc
     tCallEnd
     tLineNumber
+    % Added Compound T-Codes
+    tLoopTest
+    tLoopEnd
+    %%
     tTrap
     lastCompoundToken = tTrap
 
@@ -145,20 +156,26 @@ type Integer:
     trReadln = 4
     trWrite = 5
     trWriteln = 6
-    trWriteString = 7
     trWriteInteger = 8
-    trWriteChar = 9
+    trWriteString = 108
     trReadInteger = 10
-    trReadChar = 11
+    trReadString = 107
     trAssign = 12
     trSubscriptAbort = 13
     trCaseAbort = 14
     trEoln = 15
     trEof = 16
+    trAssignString = 101
+    trChrString = 102
+    trConcatenate = 103
+    trSubstring = 104
+    trLength = 105
+    trStringEqual = 106
 
     % Data kinds
     byte = 1
-    word = 2;	% 4 bytes on x86
+    word = 2	% 4 bytes on x86
+    string =3;
 
 
 type Boolean:
@@ -257,11 +274,7 @@ mechanism OperandStack:
 
     oOperandPushInteger
 	% Push an entry with the value of the last accepted integer
-	% (tLiteralInteger tcode), length word and manifest addressing mode.
-
-    oOperandPushChar
-	% Push an entry with the value of the last accepted character
-	% (tLiteralChar tcode), length byte and manifest addressing mode.
+	% (tLiteralInteger tcode), length word and manifest addressing mode.x
 
     oOperandPushBoolean
 	% Push an entry with the value of the last accepted Boolean
@@ -274,7 +287,7 @@ mechanism OperandStack:
     oOperandChooseJumpCondition >> JumpCondition
 	% Return the top entry's jump condition (kind field)
 
-    oOperandPushStringDescriptor
+    oOperandPushString
 	% Push an entry with addressing mode manifest, length word and
 	% a value set to the data area address of the string referenced
 	% by the last accepted tStringDescriptor tcode.
@@ -713,12 +726,6 @@ Block:
     % array bounds and file descriptors which are emitted as assignment
     % statements, nested procedure definitions and finally statements.
     {[
-	| tSkipString:
-            % Emit a string constant to the data area
-            oEmitNone(iData)                    %       .data
-            tLiteralString
-            oEmitString                         % sNN:  .asciz  "SSSSS"
-            oEmitNone(iText)                    %       .text
 	| tLiteralInteger:
 	    % initialize an array or file descriptor
 	    oOperandPushInteger			% ... lower bound / file number
@@ -744,28 +751,42 @@ Block:
 	    ]
 	    oOperandPop				% ... desc
 	    oOperandPop				% ...
+    | tSkipProc:
+        % Branch around procedure definitions.
+        oEmitUnconditionalForwardBranch
+        oFixPushLastAddress
+
+        @Routine
+        {[
+        | tSkipProc:
+            @Routine
+        | *:
+            >
+        ]}
+
+        oFixForwardBranch   % Branch around procedure defn's
+        oFixPopAddress
+    | tAssignBegin:
+        @AssignStmt
+    | tCallBegin:
+        @CallStmt
+    | tIfBegin:
+        @IfStmt
+    | tWhileBegin:
+        @WhileStmt
+    | tLoopBegin:
+        @LoopStmt
+    | tCaseBegin:
+        @CaseStmt
+    | tWriteBegin:
+        @WriteProc
+    | tReadBegin:
+        @ReadProc
+    | tTrapBegin:
+        @TrapStmt
 	| *:
 	    >
-    ]}
-    [
-	| tSkipProc:
-	    % Branch around procedure definitions.
-	    oEmitUnconditionalForwardBranch
-	    oFixPushLastAddress
-
-	    @Routine
-	    {[
-		| tSkipProc:
-		    @Routine
-		| *:
-		    >
-	    ]}
-
-	    oFixForwardBranch	% Branch around procedure defn's
-	    oFixPopAddress
-	| *:
-    ]
-    @Statements;
+    ]};
 
 
 Routine:
@@ -799,7 +820,7 @@ Routine:
 		    @OperandPopAndFreeTemp	% ... 8(%ebp), formal
 		    @OperandPopAndFreeTemp	% ... 8(%ebp)
 
-		| tStoreParmChar, tStoreParmBoolean:
+		| tStoreParmBoolean:
 		    oOperandSwap		% ... formal, 8(%ebp)
 		    oOperandPushCopy		% ... formal, 8(%ebp), 8(%ebp)
 		    oOperandSwapLeftAndDest	% ... 8(%ebp), formal, 8(%ebp)
@@ -807,6 +828,13 @@ Routine:
 		    @EmitMove			%	movl	8(%ebp),formal
 		    @OperandPopAndFreeTemp	% ... 8(%ebp), formal
 		    @OperandPopAndFreeTemp	% ... 8(%ebp)
+         %removed tStoreParmChar from choice above and added tStoreParmString choice below
+        | tStoreParmString:
+		   oOperandSwap		% ... formal, 8(%ebp)
+		   oOperandPushCopy		% ... formal, 8(%ebp), 8(%ebp)
+		   oOperandSwapLeftAndDest	% ... 8(%ebp), formal, 8(%ebp)
+		   oOperandSetLength(string)
+		   @OperandAssignStringPopPop
 		| tParmEnd:	  
 		    >
 	    ]}
@@ -843,8 +871,8 @@ Statements:
 	    @IfStmt
 	| tWhileBegin:
 	    @WhileStmt
-	| tRepeatBegin:
-	    @RepeatStmt
+    | tLoopBegin:
+        @LoopStmt
 	| tCaseBegin:
 	    @CaseStmt
 	| tWriteBegin:
@@ -1061,6 +1089,55 @@ WhileStmt:
     oFixAndFreeShuntList			% fNNN:
     oOperandPop;
 
+LoopStmt:
+    % Save the target address for the top-of-loop branch
+    oFixPushAddress             % bNNN:
+    oEmitMergeSourceCoordinate
+
+    % Added Statements before break condition
+    @Statements
+
+    % Require break if
+    tLoopBreakIF
+
+    @OperandPushBooleanControlExpression    % ... cond
+    % Changed from tWhileTest to tLoopTest
+    tLoopTest
+    %oOperandComplementJumpCondition     % ... !cond
+
+    % Optimize if the condition is know at compile time
+    [ oOperandChooseJumpCondition
+    | iJnever:
+            % Exit condition is always false (while true) - an infinite loop.
+            % emit no conditional branch, just fall into loop body
+            oFixAndFreeFalseBranches
+
+    | iJalways:
+        % Exit condition is always true (while false) - a nop.
+        % flush the loop body
+        oFixAndFreeFalseBranches
+        @SkipToEndWhile
+        oFixPopAddress
+        oFixAndFreeShuntList            % fNN:, just in case
+        oOperandPop
+        >>
+
+    | *:
+        % Emit a conditional forward branch to exit the loop.
+        % True (inverted false) branches follow the conditional
+        % exit path, false branches fall through to the loop body.
+        @OperandInfixOr         %   j!cond  fNNN
+    ]
+
+    @Statements                 % loop body
+
+    % Changed from tWhileEnd to tLoopEnd
+    tLoopEnd
+
+    oEmitUnconditionalBackwardBranch        %   jmp bNNN
+    oFixPopAddress
+    oFixAndFreeShuntList            % fNNN:
+    oOperandPop;
 
 SkipToEndWhile:
     {[
@@ -1071,42 +1148,6 @@ SkipToEndWhile:
         | *:
             ?                          	% accept and ignore anything else
     ]};
-
-
-RepeatStmt:
-    % Save the target address for the top-of-loop branch
-    oFixPushAddress				% bNNN:
-    oEmitMergeSourceCoordinate
-    @Statements					% loop body
-    tRepeatControl
-    @OperandPushBooleanControlExpression 	% ... cond
-    tRepeatTest
-
-    % Optimize if loop condition is known at compile time
-    [ oOperandChooseJumpCondition
-	| iJnever:
-            % Exit condition is always false (until false) - an infinite loop.
-            % false branches fall through to top-of-loop backward branch
-            oFixAndFreeFalseBranches
-            oEmitUnconditionalBackwardBranch 	%  jmp      bNN
-
-        | iJalways:
-            % Exit condition is always true (until true) - loop never repeats.
-            % fall through without backward branch
-            oFixAndFreeFalseBranches
-
-	| *:
-	    % Emit a conditional forward branch to exit the loop.
-	    % True branches follow the conditional exit path, false
-	    % branches fall through to the top-of-loop branch.
-	    @OperandInfixOr			%	jcond	fNNN
-	    oEmitUnconditionalBackwardBranch	% 	jmp	bNNN
-    ]
-
-    oFixPopAddress
-    % Fix the true branches exiting the statement
-    oFixAndFreeShuntList			% fNNN:
-    oOperandPop;
 
 
 CaseStmt:
@@ -1180,24 +1221,32 @@ CaseEnd:
 
 
 EmitDefaultCaseAbort:
-    % Emit a case abort alternative to handle selector values
-    % which do not match a label.
-
-    oCaseEnterAbortAddress		% aNNN:
-    % Save the abort address for use by the selector out-of-range error
-    % checks in the EmitCaseSubscriptJump rule.
-    oFixPushAddress			% bNNN:		(label for abort)
-    oFixSwapAddresses			% (keep branch around case body on top)
-    oEmitMergeSourceCoordinate
-    oOperandPushMode(mLineNum)		% ... n
-    oOperandSetLength(word)
-    @OperandForceToStack		%	pushl	n
-    oOperandPop				% ...
-    oOperandPushMode(mTrap)
-    oOperandSetValue(trCaseAbort)
-    oEmitSingle(iCall)			% 	call  caseAbort
-    oOperandPop;
-
+    
+            % Emit a case abort alternative to handle selector values
+            % which do not match a label.
+            oCaseEnterAbortAddress          % aNNN:
+            % Save the abort address for use by the selector out-of-range error
+            % checks in the EmitCaseSubscriptJump rule.
+            oFixPushAddress                 % bNNN:     (label for abort)
+            oFixSwapAddresses               % (keep branch around case body on top)
+            oEmitMergeSourceCoordinate
+            oOperandPushMode(mLineNum)      % ... n
+            oOperandSetLength(word)
+            @OperandForceToStack            %   pushl   n
+            oOperandPop                     % ...
+            oOperandPushMode(mTrap)
+            oOperandSetValue(trCaseAbort)
+    % Emit code for else or case abort 
+    [
+        |tCaseElse:
+            @Statements
+            tCaseMerge
+            % Merge branch to exit the case statement
+            oEmitCaseMergeBranch      %   jmp mNNN
+        |*:
+            oEmitSingle(iCall)              %   call  caseAbort
+    ]
+    oOperandPop;   
 
 EmitCaseSubscriptJump:
     % Emit code to calculate the address of the selected alternative
@@ -1454,27 +1503,27 @@ OperandPushExpression:
 	    @OperandPushVariable
 	| tLiteralInteger:
 	    oOperandPushInteger
-	| tLiteralChar:
-	    oOperandPushChar
+    % Added choice for tLiteralString
+    | tLiteralString:
+        % Logic is the same except no tStringDescriptor accepted
+        % Emit string literal to data area
+        oEmitNone(iData)            %   .data
+        % Emit the string
+        oEmitString             % sNNN: .asciz  "SSSSS"
+        oEmitNone(iText)            %   .text
+        % Get the string literal's address
+        oOperandPushString
+        @EmitStringDescriptor       %   lea sNNN, %T
+    | tSubstring:
+        @OperandSubstringPopPop
 	| tLiteralBoolean:
 	    oOperandPushBoolean
-	| tStringDescriptor:
-	    oOperandPushStringDescriptor
-	    % Get a string literal's address
-	    @EmitStringDescriptor		%	lea	sNNN, %T
-	| tSkipString:
-	    % Emit string literal to data area
-	    oEmitNone(iData)			%	.data
-	    % Emit the string
-	    tLiteralString
-	    oEmitString				% sNNN:	.asciz	"SSSSS"
-	    oEmitNone(iText)			%	.text
-	    % Get the string literal's address
-	    tStringDescriptor
-	    oOperandPushStringDescriptor
-	    @EmitStringDescriptor		%	lea	sNNN, %T
 	| tNegate:
 	    @OperandNegate
+    | tConcatenate:
+        @OperandConcatenatePop
+    | tLength:
+        @OperandLength
 	| tAdd:
 	    @OperandAddPop
 	| tSubtract:
@@ -1500,6 +1549,8 @@ OperandPushExpression:
 	    @OperandInfixOr
 	| tEQ:
 	    @OperandEqualPop
+    | tStringEqual:
+        @OperandStringEqualPop
 	| tNE:
 	    @OperandEqualPop
 	    @OperandNot
@@ -1550,22 +1601,46 @@ OperandPushVariable:
 	    [
 		| tSubscriptInteger:
 		    @OperandSubscriptIntegerPop
-		| tSubscriptChar:
-		    @OperandSubscriptCharPop
 		| tSubscriptBoolean:
 		    @OperandSubscriptBooleanPop
+        | tSubscriptString:
+            @OperandSubscriptStringPop
 	    ]
 	| *:	
 	    % not a subscripted variable
     ]
     [
 	| tFetchInteger:
-	| tFetchChar, tFetchBoolean:
+	| tFetchBoolean:
  	    oOperandSetLength(byte)
+	| tFetchString:
+	    @EmitStringDescriptor
 	| *: 
 	    % Value is not to be loaded
     ] ;
 
+% TODO comment
+OperandSubscriptStringPop:
+    % if the subscript is manifest fold it out, 
+    % otherwise generate subscripting code 
+    [ oOperandChooseMode
+    | mManifest:
+        oOperandSwap
+        [ oOperandChooseMode
+        | mTempIndirect:
+            % var parameter subscripting cannot be folded
+            oOperandSwap
+            @OperandSubscriptNonManifestStringPop
+        | *:
+            oOperandSetLength(string)
+            oOperandSwap        % ... array, subscript
+            oOperandFoldManifestSubscript
+            oOperandPop         % ... array[subscript]
+        ]
+    | *:
+        @OperandSubscriptNonManifestStringPop
+    ]
+    oOperandSetLength(string);
 
 OperandSubscriptIntegerPop:
     % if the subscript is manifest fold it out, 
@@ -1621,6 +1696,14 @@ OperandSubscriptNonManifestIntegerPop:
 	    @OperandCheckedSubscriptNonManifestIntegerPop
 	| *:
 	    @OperandUncheckedSubscriptNonManifestIntegerPop
+    ];
+
+OperandSubscriptNonManifestStringPop:
+    [ oOptionTestChecking
+    | yes:
+        @OperandCheckedSubscriptNonManifestStringPop
+    | *:
+        @OperandUncheckedSubscriptNonManifestStringPop
     ];
 
 
@@ -1705,6 +1788,86 @@ OperandCheckedSubscriptNonManifestIntegerPop:
     oOperandSetMode(mTempIndirect)		% ... (%T)
     oOperandSetLength(word);
 
+OperandCheckedSubscriptNonManifestStringPop:
+    % Default bounds checking subscript operation
+
+    % Get subscript                         % ... arraydesc, subscript
+    @OperandForceIntoTemp                       % ... arraydesc, %T
+
+    % Check range if checking, otherwise don't bother
+    [ oOptionTestChecking
+        | yes:
+            oOperandSwap                        % ... %T, arraydesc
+            @OperandPushArrayUpperBound         % ... %T, arraydesc, upper
+            oOperandSwapLeftAndDest             % ... arraydesc, %T, upper
+            @EmitCmp                            %       cmpl    upper, %T
+        oOperandPushJumpCondition(iJle) % if subscript <= upper 
+        oEmitConditionalForwardBranch   %   jle fNN
+        oFixPushLastAddress
+        oOperandPop             % ... arraydesc, %T, upper
+        oOperandPop             % ... arraydesc, %T
+
+            oOperandSwap                        % ... %T, arraydesc
+            @OperandPushArrayLowerBound         % ... %T, arraydesc, lower
+            oOperandSwapLeftAndDest             % ... arraydesc, %T, lower
+            @EmitCmp                            %       cmpl    lower, %T
+        oOperandPushJumpCondition(iJge) % if subscript >= lower 
+        oEmitConditionalForwardBranch   %   jge fMM
+        oFixPushLastAddress
+        oOperandPop             % ... arraydesc, %T, lower
+        oOperandPop             % ... arraydesc, %T
+
+            @EmitSubscriptAbort                 %       call    subscriptAbort
+            oFixForwardBranch                   % fMM:
+            oFixPopAddress
+            oFixForwardBranch                   % fNM:
+            oFixPopAddress
+        | *:
+    ]
+
+    % Normalize subscript           % ... arraydesc, %T
+    oOperandSwap                % ... %T, arraydesc
+    @OperandPushArrayLowerBound         % ... %T, arraydesc, lower
+    oOperandSwapLeftAndDest         % ... arraydesc, %T, lower
+    @OperandSubtractPop             %   subl lower, %T
+
+    % Scale subscript by word size      % ... arraydesc, %T
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(two)           % ... arraydesc, %T, 2
+    oEmitDouble(iShl)               %   shll    $2, %T
+    oOperandPop                 % ... arraydesc, %T
+
+    % Add normalized and scaled subscript to array address
+    oOperandSwap                % ... %T, arraydesc
+    [ oOperandChooseMode
+    | mStatic:
+        % Optimize by folding array offset into array descriptor address 
+        oOperandPushMode(mManifest)
+        oOperandSetLength(string)
+        oOperandSetValue(eight)
+        oOperandAddManifestValues       % ... %T, arraydesc+8, 8
+        oOperandPop             % ... %T, arraydesc+8
+        @OperandForceAddressIntoTemp    %   mov $arraydesc+8, %T2
+                        % ... %T, %T2
+        % Add array address to normalized and scaled subscript
+        oEmitDouble(iAdd)           %   addl    %T2, %T
+        @OperandPopAndFreeTemp      % ... %T
+    | *:
+        % Can't optimize
+        @OperandForceAddressIntoTemp    % ... %T, %T2
+        oOperandPushMode(mManifest)
+        oOperandSetLength(string)
+        oOperandSetValue(eight)     % ... %T, %T2, 8
+        oEmitDouble(iAdd)           %   addl    $8, %T2
+        oOperandPop             % ... %T, %T2
+        oEmitDouble(iAdd)           %   addl    %T2, %T
+        @OperandPopAndFreeTemp      % ... %T
+    ]
+
+    % Result element address is in %T
+    oOperandSetMode(mTempIndirect)      % ... (%T)
+    oOperandSetLength(string);
 
 OperandPushArrayLowerBound:
     % Push the value of the lower bound on the operand stack
@@ -1799,6 +1962,61 @@ OperandUncheckedSubscriptNonManifestIntegerPop:
 	    % Element address is in %T
 	    oOperandSetMode(mTempIndirect)  	% ... (%T)
 	    oOperandSetLength(word)
+    ];
+
+    OperandUncheckedSubscriptNonManifestStringPop:
+    % Optimized non-bounds checking subscript operation
+    oOperandSwap                % ... subscript, arraydesc
+
+    [ oOperandChooseMode
+    | mTempIndirect:
+        % Var parameter array - don't know the characteristics
+        % until run time, so give up and use regular checked subscripting
+        oOperandSwap
+        @OperandCheckedSubscriptNonManifestStringPop
+
+    | mStatic:
+        % Any other array - know all the characteristics now,
+        % so optimize subscripting as best we can
+        oOperandSwap            % ... arraydesc, subscript
+
+        % Scale subscript by integer element size 
+        @OperandForceIntoTemp       %   movl    subscript, %T
+        oOperandPushMode(mManifest)
+        oOperandSetLength(string)
+        oOperandSetValue(two)
+        oEmitDouble(iShl)           %   shl     $2, %T
+        oOperandPop
+        oOperandSwap            % ... %T, arraydesc
+
+        % Fold lower bound into array address to avoid normalizing
+        % subscript at run time
+        oOperandPushArrayLowerBound     % ... %T, arraydesc, lower
+        oOperandSwap            % ... %T, lower, arraydesc
+        oOperandSetMode(mManifest)      % (eliminate indirection)
+        oOperandPushMode(mManifest)     % ... %T, lower, arraydesc, 8
+        oOperandSetLength(string)
+        oOperandSetValue(eight)
+        oOperandAddManifestValues       % ... %T, lower, arraydesc+8, 8
+        oOperandPop             % ... %T, lower, arraydesc+8
+        oOperandSwap            % ... %T, arraydesc+8, lower
+        oOperandPushCopy            % ... %T, arraydesc+8, lower, lower
+        oOperandAddManifestValues       % (scale lower bound by integer size)
+        oOperandPop
+        oOperandPushCopy
+        oOperandAddManifestValues       % ... %T, arraydesc+8, lower*4, lower
+        oOperandPop             % ... %T, arraydesc+8, lower*4
+        oOperandSubtractManifestValues      % ... %T, arraydesc+8-lower*4, lower*4 
+        oOperandPop             % ... %T, arraydesc+8-lower*4
+
+        % Add array base to subscript
+        oOperandSetMode(mStaticManifest)    % (u+normalizedArrayBase)
+        oEmitDouble(iAdd)           %   addl    $u+normalizedArrayBase, %T
+        oOperandPop             % ... %T
+
+        % Element address is in %T
+        oOperandSetMode(mTempIndirect)      % ... (%T)
+        oOperandSetLength(string)
     ];
 
 
@@ -1941,19 +2159,30 @@ OperandPushExpressionAssignPopPop:
 	    @OperandPushVariable
 	| tLiteralInteger:
 	    oOperandPushInteger
-	| tLiteralChar:
-	    oOperandPushChar
+
+    % Added choice for tLiteralString
+    | tLiteralString:
+        % Logic is the same except no tStringDescriptor accepted
+        % Emit string literal to data area
+        oEmitNone(iData)            %   .data
+        % Emit the string
+        oEmitString             % sNNN: .asciz  "SSSSS"
+        oEmitNone(iText)            %   .text
+        % Get the string literal's address
+        oOperandPushString
+        @EmitStringDescriptor       %   lea sNNN, %T
 	| tLiteralBoolean:
 	    oOperandPushBoolean
 	| tAssignInteger:
 	    @OperandAssignIntegerPopPop
 	    >
-	| tAssignChar:
-	    @OperandAssignCharPopPop
-	    >
 	| tAssignBoolean:
 	    @OperandAssignBooleanPopPop
 	    >
+    % Add tAssignString
+    | tAssignString:
+        @OperandAssignStringPopPop
+        >
 	| tNegate:
 	    [
 		| tAssignInteger:
@@ -2030,22 +2259,6 @@ OperandPushExpressionAssignPopPop:
 	| tLE:
 	    @OperandGreaterPop
 	    @OperandNot
-	| tChr:
-	    [
-		| tAssignChar:
-		    @OperandChrAssignPopPop
-		    >
-		| *:
-		    @OperandChr
-	    ]
-	| tOrd:
-	    [
-		| tAssignInteger:
-		    @OperandOrdAssignPopPop
-		    >
-		| *:
-		    @OperandOrd
-	    ]
 	| tEoln:
 	    @OperandEolnFunction
 	| tEOF:
@@ -2133,6 +2346,70 @@ OperandAddRightToLeftPop:
 	    @OperandPopAndFreeTemp
     ];
 
+OperandConcatenatePop:
+    @SaveTempRegsToStack
+    @EmitStringDescriptor %lea s2, %T
+    @OperandForceToStack  %pushl %T
+    @OperandPopAndFreeTemp
+    @EmitStringDescriptor %lea s1,  %T
+    @OperandForceToStack %pushl, %T
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trConcatenate)
+    oOperandSetLength(word)
+    oEmitSingle(iCall)  % call pttrap103
+    oOperandPop    
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(eight)
+    oEmitDouble(iAdd)                   
+    oOperandPop                     
+    oOperandPop   
+
+    % Save result
+    @SaveResult
+
+    @RestoreTempRegsFromStack
+
+    % Move result to temp
+    @ResultToTemp;
+
+OperandLength:
+    @SaveTempRegsToStack
+    @EmitStringDescriptor %lea s1, %T
+    @OperandForceToStack  %pushl %T
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trLength)
+    oOperandSetLength(word)
+    oEmitSingle(iCall)  % call pttrap105
+    oOperandPop 
+
+    % Pop Arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(four)
+    oEmitDouble(iAdd)                                
+    oOperandPop
+    oOperandPop 
+
+    % Save result 
+    @SaveResult % movl eax , esi
+
+    @RestoreTempRegsFromStack
+
+    % Move result to temp
+    @ResultToTemp;
 
 OperandAddPop:
     % Add the right (top) operand's value to the left (second)
@@ -2438,11 +2715,6 @@ OperandDividePop:
             % but we're using those for temps, so we have to spill them
 
             % begin by getting our dividend and divisor in scratch regs
-            oOperandPushMode(mScratchReg1)      % ... x, y, %S1
-            oOperandSetLength(word)
-            oOperandSwap                        % ... x, %S1, y
-            @EmitMove                           %       movl    y, %S1
-            @OperandPopAndFreeTemp              % ... x, %S1
             oOperandSwap                        % ... %S1, x
             oOperandPushMode(mScratchReg2)      % ... %S1, x, %S2
             oOperandSetLength(word)
@@ -2570,22 +2842,37 @@ OperandModPop:
     @OperandForceIntoTemp;              % ... %T
 
 
-OperandChrAssignPopPop:
-    % Assume operand's value is in range
-    % x := y;  x byte, y word
-    @OperandForceIntoTemp	%	movl	y, %T
-    oOperandSetLength(byte)	% (treat word in reg as byte to get
-				%  the low order byte of the word)
-    oEmitDouble(iMov)		% 	movb	%T, x
-    @OperandPopAndFreeTemp
-    @OperandPopAndFreeTemp;
-
-
 OperandChr:
-    % Assume operand's value is in range
-    @OperandForceIntoTemp	
-    oOperandSetLength(byte);	% see comments above
+    @SaveTempRegsToStack
 
+    @OperandForceToStack % pushl i1
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trChrString) % call pttrap102
+    oOperandSetLength(word)
+    oEmitSingle(iCall)
+    oOperandPop
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(four)   
+    oEmitDouble(iAdd)        % addl $4, %esp           
+    oOperandPop                     
+    oOperandPop
+
+    % Save Result 
+    @SaveResult
+
+    @RestoreTempRegsFromStack
+
+    % Force result into temp
+    @ResultToTemp
+    ;
 
 OperandOrdAssignPopPop:
     % x := y;  x word, y byte
@@ -2604,17 +2891,21 @@ OperandOrdAssignPopPop:
 
 
 OperandOrd:
-    % Byte operand is on top of operand stack
+    @EmitStringDescriptor %lea s1, %T
+
+    % Move false into temp
+    @OperandPushTempByte
     oOperandPushMode(mManifest)
     oOperandSetValue(zero)
     oOperandSetLength(word)
-    @OperandForceIntoTemp	% 	movl	$0, %T
-    oOperandSetLength(byte)
-    oOperandSwap
-    oEmitDouble(iMov)		% 	movb 	y, %T
-    @OperandPopAndFreeTemp
-    oOperandSetLength(word);
+    oEmitDouble(iMov)           %   movl    $0, %T
+    oOperandPop
 
+    % Move result into temp
+    oOperandPushMode(mTempIndirect)
+    oOperandSetLength(word)
+    oEmitDouble(iMov)
+    oOperandPop;
 
 OperandEolnFunction:
     % First save the temp registers, since we are called in an
@@ -2839,6 +3130,77 @@ OperandAssignBooleanPopPop:
     @OperandAssignCharPopPop;
 
 
+OperandAssignStringPopPop:
+    % Generate code to assign the right (top) operand's value to
+    % the left (second) operand and pop both operands.  For String
+    @SaveTempRegsToStack
+    @EmitStringDescriptor %lea s2, %T
+    @OperandForceToStack  %pushl %T
+    @OperandPopAndFreeTemp
+    @EmitStringDescriptor %lea s1,  %T
+    @OperandForceToStack %pushl, %T
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trAssignString)
+    oOperandSetLength(word)
+    oEmitSingle(iCall)
+    oOperandPop
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(eight)
+    oEmitDouble(iAdd)                   
+    oOperandPop                     
+    oOperandPop                     
+
+    @RestoreTempRegsFromStack;
+
+OperandSubstringPopPop:
+
+    % Grab indexes and string
+    @SaveTempRegsToStack
+
+    @OperandForceToStack
+    @OperandPopAndFreeTemp
+
+    @OperandForceToStack
+    @OperandPopAndFreeTemp
+
+    @EmitStringDescriptor
+    @OperandForceToStack
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trSubstring)
+    oOperandSetLength(word)
+    oEmitSingle(iCall)
+    oOperandPop
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(twelve)
+    oEmitDouble(iAdd)                   
+    oOperandPop                     
+    oOperandPop  
+
+    % Save result
+    @SaveResult
+
+    @RestoreTempRegsFromStack
+
+    @ResultToTemp
+    ;
+
+
 OperandPopAndFreeTemp:
     % If the top operand has a temporary in it, free it. 
     % Pop the top operand.
@@ -2964,6 +3326,42 @@ OperandEqualPop:
 	    ]
     ];
 
+OperandStringEqualPop:
+    % Generate code to compare string equality
+
+    @SaveTempRegsToStack
+    @EmitStringDescriptor %lea s2, %T
+    @OperandForceToStack  %pushl %T
+    @OperandPopAndFreeTemp
+    @EmitStringDescriptor %lea s1,  %T
+    @OperandForceToStack %pushl, %T
+    @OperandPopAndFreeTemp
+
+    % Make trap call
+    oOperandPushMode(mTrap)
+    oOperandSetValue(trStringEqual) % call pttrap106
+    oOperandSetLength(word)
+    oEmitSingle(iCall)
+    oOperandPop
+
+    % Pop arguments
+    oOperandPushMode(mStackReg)
+    oOperandSetLength(word)
+    oOperandPushMode(mManifest)
+    oOperandSetLength(word)
+    oOperandSetValue(eight)
+    oEmitDouble(iAdd)                   
+    oOperandPop                     
+    oOperandPop                 
+
+    % Save result
+    @SaveResult % movl eax, esi    
+
+    @RestoreTempRegsFromStack
+
+    % Move result into temp
+    @ResultToTemp;
+
 
 OperandGreaterPop:
     % Compare the top 2 operands to see if the left (second) operand
@@ -3057,6 +3455,8 @@ OperandForceIntoTemp:
 	    oOperandSwap
 	    oEmitDouble(iMov)		% mov (%rXx),%rXx
 	    oOperandPop			% DON'T free it!
+	| mString:
+	    @OperandForceAddressIntoTemp
 	| *:
 	    [ oOperandChooseLength
 		| byte:
@@ -3192,6 +3592,7 @@ OperandForceToStack:
     oOperandPushMode(mStack);
 
 
+
 OperandAreLeftAndRightManifest >> Boolean:
     % Return yes if the top 2 operands have mode manifest,
     % otherwise return no.
@@ -3229,6 +3630,19 @@ OperandLeftOrRightIsTemp >> Boolean:
 	    ]
     ];
 
+SaveResult: % movl %eax,%esi
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oOperandPushMode(mResultReg)        % ... %S1, %eax 
+    oOperandSetLength(word)
+    oEmitDouble(iMov)                   %       movl    %eax, %S1
+    oOperandPop;
+
+ResultToTemp:
+    oOperandPushMode(mScratchReg1)      % ... %S1       
+    oOperandSetLength(word)
+    oEmitDouble(iMov)
+    oOperandPop;
 
 EmitAdd:
     % On the x86, at least one operand must be a register.

@@ -1,0 +1,13 @@
+extern output
+
+var sarray : array [1 .. 3] of string
+
+sarray[1] = "Hello"
+sarray[2] = "World"
+sarray[3] = "!"
+
+write(sarray[1])
+writeln
+write(sarray[2])
+write(sarray[3])
+writeln

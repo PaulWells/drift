@@ -1,0 +1,8 @@
+extern output 
+var s: string
+func a(s: string)
+    write(s)
+    writeln
+end
+s = "in a procedure"
+a(s)
