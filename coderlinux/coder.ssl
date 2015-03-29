@@ -1973,7 +1973,7 @@ OperandUncheckedSubscriptNonManifestIntegerPop:
         % Var parameter array - don't know the characteristics
         % until run time, so give up and use regular checked subscripting
         oOperandSwap
-        @OperandCheckedSubscriptNonManifestIntegerPop
+        @OperandCheckedSubscriptNonManifestStringPop
 
     | mStatic:
         % Any other array - know all the characteristics now,
