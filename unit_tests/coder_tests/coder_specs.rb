@@ -34,6 +34,10 @@ RSpec.describe "Coder Tests" do
 	it 'compares string equality' do
 		compare_outputs('stringEquality')
 	end
+
+	it 'tests string subscripts' do
+		compare_outputs('stringSubscripts')
+	end
 end
 
 def actual_x86_code(test_case)
