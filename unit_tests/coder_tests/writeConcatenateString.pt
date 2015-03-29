@@ -11,14 +11,5 @@ write(h + " World")
 writeln
 write("Hello " + w)
 writeln
-write("Hello " + "World)
+write("Hello " + "World")
 writeln
-
-
-
-
-
-
-
-
-
