@@ -982,19 +982,20 @@ program Coder (output, coderSsl, tCode, object, options);
 	    write (object, '	.asciz	"');
 
 	    i := 1;
-	    repeat
-		if (compoundTokenText[i] = ord('"')) or
-			(compoundTokenText[i] = ord('\')) then
-		    begin
-			write (object, '\');
-			write (object, chr (compoundTokenText[i]));
-		    end
-		else if (compoundTokenText[i] = ord('	')) then
-		    write (object, '\t')
-		else
-		    write (object, chr (compoundTokenText[i]));
-		i := i + 1
-	    until i > compoundTokenLength;
+	    while i <= compoundTokenLength do
+		begin
+			if (compoundTokenText[i] = ord('"')) or
+				(compoundTokenText[i] = ord('\')) then
+			    begin
+				write (object, '\');
+				write (object, chr (compoundTokenText[i]));
+			    end
+			else if (compoundTokenText[i] = ord('	')) then
+			    write (object, '\t')
+			else
+			    write (object, chr (compoundTokenText[i]));
+			i := i + 1
+	    end;
 
 	    write (object, '"');
 	    writeln (object);
@@ -1892,13 +1893,13 @@ program Coder (output, coderSsl, tCode, object, options);
 			tLiteralString:
 			    begin
 				compoundTokenLength := compoundTokenValue;
-				Assert ( (compoundTokenLength >= 1), assert5);
 				compoundTokenValue := tCodeAddress;
 				i := 1;
-				repeat
+				while i <= compoundTokenLength do
+				    begin
 				    read (tCode, compoundTokenText[i]);
 				    i := i + 1;
-				until i > compoundTokenLength;
+				end;
 				nextTCodeAddress := nextTCodeAddress +
 					compoundTokenLength;
 				if compoundTokenLength mod 2 <> 0 then
