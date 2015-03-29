@@ -982,7 +982,8 @@ program Coder (output, coderSsl, tCode, object, options);
 	    write (object, '	.asciz	"');
 
 	    i := 1;
-	    while i <= compoundTokenLength
+	    while i <= compoundTokenLength do
+		begin
 			if (compoundTokenText[i] = ord('"')) or
 				(compoundTokenText[i] = ord('\')) then
 			    begin
@@ -1797,22 +1798,20 @@ program Coder (output, coderSsl, tCode, object, options);
 	    { The array must be found in the array table }
 	    Assert ( (i = arrayBoundsTop+1), assert31);
 	    if (subscript  < lowerBound) or
-	       (subscript  > upperBound) then
-	    begin
-		SubscriptError (subscript, lowerBound, upperBound)
-	    end
+	       (subscript  > upperBound) then 
+	       SubscriptError (subscript, lowerBound, upperBound)
 	    else
 		    subscript := subscript - lowerBound;
-		    if operandStkLength[operandStkTop-1] = word then
+		    if operandStkLength[operandStkTop-1] = word then subscript := subscript * wordSize
 					{ Convert a byte offset to a word offset }
-				subscript := subscript * wordSize
+				
 			else
 			begin
-				 if operandStkLength[operandStkTop-1] = string then
+				if operandStkLength[operandStkTop-1] = string then subscript := subscript * stringSize
 					{ Convert a byte offset to a string offset}
-					subscript := subscript * stringSize
+					
 
-				end;
+			end;
 		    { Set the subscripted varable's address.  Note that
 		      the array variable's address points to the base of
 		      a 2 word descriptor (lower, upper bounds).	}
@@ -1896,7 +1895,8 @@ program Coder (output, coderSsl, tCode, object, options);
 				compoundTokenLength := compoundTokenValue;
 				compoundTokenValue := tCodeAddress;
 				i := 1;
-				while i <= compoundTokenLength
+				while i <= compoundTokenLength do
+				    begin
 				    read (tCode, compoundTokenText[i]);
 				    i := i + 1;
 				end;

@@ -1,4 +1,5 @@
 extern output
 var s: string
+var x: string
 s = ""
-write("abc" + s + "def")
+write("b" + s + "a")

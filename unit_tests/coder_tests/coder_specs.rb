@@ -42,6 +42,20 @@ RSpec.describe "Coder Tests" do
 	it 'can create loops' do
 		compare_outputs('loopTest')
 	end
+
+	it 'tests string subscripted with a variable' do
+		compare_outputs('stringVariableSubscripts')
+	end
+
+	it 'tests long strings' do
+		compare_outputs('longString')
+	end
+
+	describe 'example programs' do
+		it 'can run the lunch program' do
+			compare_outputs('lunch')
+		end
+	end
 end
 
 def actual_x86_code(test_case)

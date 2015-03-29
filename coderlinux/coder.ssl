@@ -1831,10 +1831,10 @@ OperandCheckedSubscriptNonManifestStringPop:
     oOperandSwapLeftAndDest         % ... arraydesc, %T, lower
     @OperandSubtractPop             %   subl lower, %T
 
-    % Scale subscript by word size      % ... arraydesc, %T
+    % Scale subscript by string size      % ... arraydesc, %T
     oOperandPushMode(mManifest)
-    oOperandSetLength(word)
-    oOperandSetValue(two)           % ... arraydesc, %T, 2
+    oOperandSetLength(string)
+    oOperandSetValue(eight)           % ... arraydesc, %T, 2
     oEmitDouble(iShl)               %   shll    $2, %T
     oOperandPop                 % ... arraydesc, %T
 
@@ -1964,7 +1964,7 @@ OperandUncheckedSubscriptNonManifestIntegerPop:
 	    oOperandSetLength(word)
     ];
 
-    OperandUncheckedSubscriptNonManifestStringPop:
+OperandUncheckedSubscriptNonManifestStringPop:
     % Optimized non-bounds checking subscript operation
     oOperandSwap                % ... subscript, arraydesc
 
@@ -1980,11 +1980,11 @@ OperandUncheckedSubscriptNonManifestIntegerPop:
         % so optimize subscripting as best we can
         oOperandSwap            % ... arraydesc, subscript
 
-        % Scale subscript by integer element size 
+        % Scale subscript by string element size 
         @OperandForceIntoTemp       %   movl    subscript, %T
         oOperandPushMode(mManifest)
         oOperandSetLength(string)
-        oOperandSetValue(two)
+        oOperandSetValue(eight)
         oEmitDouble(iShl)           %   shl     $2, %T
         oOperandPop
         oOperandSwap            % ... %T, arraydesc
