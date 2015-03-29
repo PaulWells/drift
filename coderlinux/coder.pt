@@ -982,7 +982,8 @@ program Coder (output, coderSsl, tCode, object, options);
 	    write (object, '	.asciz	"');
 
 	    i := 1;
-	    while i <= compoundTokenLength
+	    while i <= compoundTokenLength do
+		begin
 			if (compoundTokenText[i] = ord('"')) or
 				(compoundTokenText[i] = ord('\')) then
 			    begin
@@ -1896,7 +1897,8 @@ program Coder (output, coderSsl, tCode, object, options);
 				compoundTokenLength := compoundTokenValue;
 				compoundTokenValue := tCodeAddress;
 				i := 1;
-				while i <= compoundTokenLength
+				while i <= compoundTokenLength do
+				    begin
 				    read (tCode, compoundTokenText[i]);
 				    i := i + 1;
 				end;
