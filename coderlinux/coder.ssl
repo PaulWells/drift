@@ -2874,38 +2874,31 @@ OperandChr:
     @ResultToTemp
     ;
 
-OperandOrdAssignPopPop:
-    % x := y;  x word, y byte
-    oOperandPushMode(mManifest)
-    oOperandSetValue(zero)
-    oOperandSetLength(word)
-    @OperandForceIntoTemp	% 	movl	$0, %T
-    oOperandSetLength(byte)
-    oOperandSwap
-    oEmitDouble(iMov)		% 	movb 	y, %T
-    @OperandPopAndFreeTemp
-    oOperandSetLength(word)
-    oEmitDouble(iMov)  		% 	movl 	%T, x
-    @OperandPopAndFreeTemp
-    @OperandPopAndFreeTemp;
-
 
 OperandOrd:
-    @EmitStringDescriptor %lea s1, %T
 
-    % Move false into temp
-    @OperandPushTempByte
+    % Push string descriptor onto stack
+    @EmitStringDescriptor %lea s1, %T
+                          %    %T
+
+    % Push temp on to stack
+    @OperandPushTempWord   %   %X %T
+
+    % Push zero on to stack
     oOperandPushMode(mManifest)
     oOperandSetValue(zero)
-    oOperandSetLength(word)
-    oEmitDouble(iMov)           %   movl    $0, %T
-    oOperandPop
+    oOperandSetLength(word)  %  0 %X %T
 
-    % Move result into temp
-    oOperandPushMode(mTempIndirect)
-    oOperandSetLength(word)
-    oEmitDouble(iMov)
-    oOperandPop;
+    % Set temp to zero
+    oEmitDouble(iMov)           %   movl    $0, %X
+    oOperandPop             %X=0 %T
+
+    % Mov first bye of word at [T] into temp
+    oOperandSwap    %T X=0
+    oOperandSetMode(mTempIndirect)
+    oOperandSetLength(byte)
+    oEmitDouble(iMov)   %movb (%T), %X
+    oOperandPop;    %X
 
 OperandEolnFunction:
     % First save the temp registers, since we are called in an
