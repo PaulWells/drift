@@ -3,7 +3,7 @@ extern output
 var x : integer
 var sarray : array [1 .. 10] of string
 
-x = 1 
+x = 1
 sarray[x] = "Hello "
 x = x + 1 
 sarray[x] = "World"

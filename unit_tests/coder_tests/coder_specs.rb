@@ -44,7 +44,7 @@ RSpec.describe "Coder Tests" do
 	end
 
 	it 'tests string subscripted with a variable' do
-		compare_outputs(stringVariableSubscripts)
+		compare_outputs('stringVariableSubscripts')
 	end
 end
 

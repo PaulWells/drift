@@ -11,6 +11,8 @@ write(h + " World")
 writeln
 write("Hello " + w)
 writeln
+write("Hello " + "World)
+writeln
 
 
 

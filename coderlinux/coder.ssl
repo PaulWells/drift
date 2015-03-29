@@ -1834,7 +1834,7 @@ OperandCheckedSubscriptNonManifestStringPop:
     % Scale subscript by word size      % ... arraydesc, %T
     oOperandPushMode(mManifest)
     oOperandSetLength(word)
-    oOperandSetValue(two)           % ... arraydesc, %T, 2
+    oOperandSetValue(eight)           % ... arraydesc, %T, 2
     oEmitDouble(iShl)               %   shll    $2, %T
     oOperandPop                 % ... arraydesc, %T
 
