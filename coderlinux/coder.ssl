@@ -2898,7 +2898,7 @@ OperandOrd:
     oOperandSetMode(mTempIndirect)
     oOperandSetLength(byte)
     oEmitDouble(iMov)   %movb (%T), %X
-    oOperandPop;    %X
+    @OperandPopAndFreeTemp;    %X
 
 OperandEolnFunction:
     % First save the temp registers, since we are called in an
