@@ -63,6 +63,10 @@ RSpec.describe "Coder Tests" do
 		it 'can run the lunch program' do
 			compare_outputs('lunch')
 		end
+
+		it 'can run the primes program' do
+			compare_outputs('primes')
+		end
 	end
 end
 
