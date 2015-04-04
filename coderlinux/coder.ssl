@@ -1632,7 +1632,7 @@ OperandSubscriptStringPop:
             oOperandSwap
             @OperandSubscriptNonManifestStringPop
         | *:
-            oOperandSetLength(string)
+	    oOperandSetLength(string)
 	    oOperandSwap        % ... array, subscript
             oOperandFoldManifestSubscript
             oOperandPop         % ... array[subscript]
@@ -1640,7 +1640,7 @@ OperandSubscriptStringPop:
     | *:
         @OperandSubscriptNonManifestStringPop
     ]
-    oOperandSetLength(string);
+    oOperandSetLength(word);
 
 OperandSubscriptIntegerPop:
     % if the subscript is manifest fold it out, 
@@ -1867,7 +1867,7 @@ OperandCheckedSubscriptNonManifestStringPop:
 
     % Result element address is in %T
     oOperandSetMode(mTempIndirect)      % ... (%T)
-    oOperandSetLength(word);
+    oOperandSetLength(string);
 
 OperandPushArrayLowerBound:
     % Push the value of the lower bound on the operand stack
@@ -2016,7 +2016,7 @@ OperandUncheckedSubscriptNonManifestStringPop:
 
         % Element address is in %T
         oOperandSetMode(mTempIndirect)      % ... (%T)
-        oOperandSetLength(word)
+        oOperandSetLength(string)
     ];
 
 
@@ -2348,7 +2348,8 @@ OperandAddRightToLeftPop:
 
 OperandConcatenatePop:
     @SaveTempRegsToStack
-    @OperandForceToStack  %pushl %T
+    @EmitStringDescriptor %lea s1,  %T
+    @OperandForceToStack
     @OperandPopAndFreeTemp
     @EmitStringDescriptor %lea s1,  %T
     @OperandForceToStack %pushl, %T

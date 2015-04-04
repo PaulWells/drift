@@ -48,7 +48,7 @@ RSpec.describe "Coder Tests" do
 	end
 
 	it 'tests long strings' do
-		compare_outputs('longString')
+		compare_outputs('longStrings')
 	end
 
 	describe 'example programs' do
