@@ -51,6 +51,14 @@ RSpec.describe "Coder Tests" do
 		compare_outputs('longStrings')
 	end
 
+	it 'can ord strings' do
+		compare_outputs('stringOrd')
+	end
+
+	it 'can chr ints' do
+		compare_outputs('writeChar')
+	end
+
 	describe 'example programs' do
 		it 'can run the lunch program' do
 			compare_outputs('lunch')
