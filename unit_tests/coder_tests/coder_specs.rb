@@ -43,14 +43,6 @@ RSpec.describe "Coder Tests" do
 		compare_outputs('loopTest')
 	end
 
-	it 'tests string subscripted with a variable' do
-		compare_outputs('stringVariableSubscripts')
-	end
-
-	it 'tests long strings' do
-		compare_outputs('longStrings')
-	end
-
 	it 'can ord strings' do
 		compare_outputs('stringOrd')
 	end
