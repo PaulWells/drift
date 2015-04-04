@@ -1,0 +1,13 @@
+extern output
+
+func i : integer
+    return 42
+end
+
+func s : string
+    return "forty-two"
+end
+
+write (i); writeln
+
+write (s); writeln

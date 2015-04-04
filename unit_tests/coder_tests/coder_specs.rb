@@ -67,6 +67,10 @@ RSpec.describe "Coder Tests" do
 		it 'can run the primes program' do
 			compare_outputs('primes')
 		end
+
+		it 'can run the functions program' do
+			compare_outputs('functions')
+		end
 	end
 end
 
