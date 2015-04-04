@@ -1633,7 +1633,7 @@ OperandSubscriptStringPop:
             @OperandSubscriptNonManifestStringPop
         | *:
             oOperandSetLength(string)
-            oOperandSwap        % ... array, subscript
+	    oOperandSwap        % ... array, subscript
             oOperandFoldManifestSubscript
             oOperandPop         % ... array[subscript]
         ]
@@ -1833,7 +1833,7 @@ OperandCheckedSubscriptNonManifestStringPop:
 
     % Scale subscript by string size      % ... arraydesc, %T
     oOperandPushMode(mManifest)
-    oOperandSetLength(string)
+    oOperandSetLength(word)
     oOperandSetValue(eight)           % ... arraydesc, %T, 2
     oEmitDouble(iShl)               %   shll    $2, %T
     oOperandPop                 % ... arraydesc, %T
@@ -1844,7 +1844,7 @@ OperandCheckedSubscriptNonManifestStringPop:
     | mStatic:
         % Optimize by folding array offset into array descriptor address 
         oOperandPushMode(mManifest)
-        oOperandSetLength(string)
+        oOperandSetLength(word)
         oOperandSetValue(eight)
         oOperandAddManifestValues       % ... %T, arraydesc+8, 8
         oOperandPop             % ... %T, arraydesc+8
@@ -1857,7 +1857,7 @@ OperandCheckedSubscriptNonManifestStringPop:
         % Can't optimize
         @OperandForceAddressIntoTemp    % ... %T, %T2
         oOperandPushMode(mManifest)
-        oOperandSetLength(string)
+        oOperandSetLength(word)
         oOperandSetValue(eight)     % ... %T, %T2, 8
         oEmitDouble(iAdd)           %   addl    $8, %T2
         oOperandPop             % ... %T, %T2
@@ -1867,7 +1867,7 @@ OperandCheckedSubscriptNonManifestStringPop:
 
     % Result element address is in %T
     oOperandSetMode(mTempIndirect)      % ... (%T)
-    oOperandSetLength(string);
+    oOperandSetLength(word);
 
 OperandPushArrayLowerBound:
     % Push the value of the lower bound on the operand stack
@@ -1983,7 +1983,7 @@ OperandUncheckedSubscriptNonManifestStringPop:
         % Scale subscript by string element size 
         @OperandForceIntoTemp       %   movl    subscript, %T
         oOperandPushMode(mManifest)
-        oOperandSetLength(string)
+        oOperandSetLength(word)
         oOperandSetValue(eight)
         oEmitDouble(iShl)           %   shl     $2, %T
         oOperandPop
@@ -1995,7 +1995,7 @@ OperandUncheckedSubscriptNonManifestStringPop:
         oOperandSwap            % ... %T, lower, arraydesc
         oOperandSetMode(mManifest)      % (eliminate indirection)
         oOperandPushMode(mManifest)     % ... %T, lower, arraydesc, 8
-        oOperandSetLength(string)
+        oOperandSetLength(word)
         oOperandSetValue(eight)
         oOperandAddManifestValues       % ... %T, lower, arraydesc+8, 8
         oOperandPop             % ... %T, lower, arraydesc+8
@@ -2016,7 +2016,7 @@ OperandUncheckedSubscriptNonManifestStringPop:
 
         % Element address is in %T
         oOperandSetMode(mTempIndirect)      % ... (%T)
-        oOperandSetLength(string)
+        oOperandSetLength(word)
     ];
 
 
@@ -2348,7 +2348,6 @@ OperandAddRightToLeftPop:
 
 OperandConcatenatePop:
     @SaveTempRegsToStack
-    @EmitStringDescriptor %lea s2, %T
     @OperandForceToStack  %pushl %T
     @OperandPopAndFreeTemp
     @EmitStringDescriptor %lea s1,  %T
@@ -3632,10 +3631,7 @@ SaveResult: % movl %eax,%esi
     oOperandPop;
 
 ResultToTemp:
-    oOperandPushMode(mScratchReg1)      % ... %S1       
-    oOperandSetLength(word)
-    oEmitDouble(iMov)
-    oOperandPop;
+    @OperandForceIntoTemp;
 
 EmitAdd:
     % On the x86, at least one operand must be a register.
