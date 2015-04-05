@@ -1614,12 +1614,13 @@ OperandPushVariable:
 	| tFetchBoolean:
  	    oOperandSetLength(byte)
 	| tFetchString:
-	    @EmitStringDescriptor
+	    @EmitStringDescriptor % pushes operand address into temp reg
 	| *: 
 	    % Value is not to be loaded
     ] ;
 
-% TODO comment
+
+% Same as integer subscripts, but with modified string rules
 OperandSubscriptStringPop:
     % if the subscript is manifest fold it out, 
     % otherwise generate subscripting code 
@@ -1632,7 +1633,7 @@ OperandSubscriptStringPop:
             oOperandSwap
             @OperandSubscriptNonManifestStringPop
         | *:
-	    oOperandSetLength(string)
+	    oOperandSetLength(string) % Allows us to add a multiplier of stringSize in coder.pt
 	    oOperandSwap        % ... array, subscript
             oOperandFoldManifestSubscript
             oOperandPop         % ... array[subscript]
@@ -1867,7 +1868,7 @@ OperandCheckedSubscriptNonManifestStringPop:
 
     % Result element address is in %T
     oOperandSetMode(mTempIndirect)      % ... (%T)
-    oOperandSetLength(string);
+    oOperandSetLength(string); % Output is a string
 
 OperandPushArrayLowerBound:
     % Push the value of the lower bound on the operand stack
@@ -1984,7 +1985,7 @@ OperandUncheckedSubscriptNonManifestStringPop:
         @OperandForceIntoTemp       %   movl    subscript, %T
         oOperandPushMode(mManifest)
         oOperandSetLength(word)
-        oOperandSetValue(eight)
+        oOperandSetValue(eight) % Multiply by 256 for strings
         oEmitDouble(iShl)           %   shl     $2, %T
         oOperandPop
         oOperandSwap            % ... %T, arraydesc
@@ -2016,7 +2017,7 @@ OperandUncheckedSubscriptNonManifestStringPop:
 
         % Element address is in %T
         oOperandSetMode(mTempIndirect)      % ... (%T)
-        oOperandSetLength(string)
+        oOperandSetLength(string) % Output is a string
     ];
 
 
@@ -2354,9 +2355,14 @@ OperandAddRightToLeftPop:
 
 OperandConcatenatePop:
     @SaveTempRegsToStack
+
+    % String 1 to reg
     @EmitStringDescriptor %lea s1,  %T
     @OperandForceToStack
     @OperandPopAndFreeTemp
+    
+
+    % String 2 to reg
     @EmitStringDescriptor %lea s1,  %T
     @OperandForceToStack %pushl, %T
     @OperandPopAndFreeTemp
@@ -2365,7 +2371,7 @@ OperandConcatenatePop:
     oOperandPushMode(mTrap)
     oOperandSetValue(trConcatenate)
     oOperandSetLength(word)
-    oEmitSingle(iCall)  % call pttrap103
+    oEmitSingle(iCall)  % call pttrap103 - concatenate trap
     oOperandPop    
 
     % Pop arguments
@@ -2378,16 +2384,18 @@ OperandConcatenatePop:
     oOperandPop                     
     oOperandPop   
 
-    % Save result
+    % Save result - movl %eax, %esi
     @SaveResult
 
     @RestoreTempRegsFromStack
 
-    % Move result to temp
+    % Move %esi back into temp - movl %esi, %eax
     @ResultToTemp;
 
 OperandLength:
     @SaveTempRegsToStack
+
+    % String to retrieve length of into a temp
     @EmitStringDescriptor %lea s1, %T
     @OperandForceToStack  %pushl %T
     @OperandPopAndFreeTemp
@@ -2396,7 +2404,7 @@ OperandLength:
     oOperandPushMode(mTrap)
     oOperandSetValue(trLength)
     oOperandSetLength(word)
-    oEmitSingle(iCall)  % call pttrap105
+    oEmitSingle(iCall)  % call pttrap105 -length trap
     oOperandPop 
 
     % Pop Arguments
@@ -2414,7 +2422,7 @@ OperandLength:
 
     @RestoreTempRegsFromStack
 
-    % Move result to temp
+    % Move %esi back into temp - movl %esi, %eax
     @ResultToTemp;
 
 OperandAddPop:
@@ -2851,12 +2859,13 @@ OperandModPop:
 OperandChr:
     @SaveTempRegsToStack
 
+    % Push the integer
     @OperandForceToStack % pushl i1
     @OperandPopAndFreeTemp
 
     % Make trap call
     oOperandPushMode(mTrap)
-    oOperandSetValue(trChrString) % call pttrap102
+    oOperandSetValue(trChrString) % call pttrap102 - chr operation
     oOperandSetLength(word)
     oEmitSingle(iCall)
     oOperandPop
@@ -2871,12 +2880,12 @@ OperandChr:
     oOperandPop                     
     oOperandPop
 
-    % Save Result 
+    % Save result - movl %eax, %esi
     @SaveResult
 
     @RestoreTempRegsFromStack
 
-    % Force result into temp
+    % Move %esi back into temp - movl %esi, %eax
     @ResultToTemp
     ;
 
@@ -3164,17 +3173,17 @@ OperandSubstringPopPop:
     % Grab indexes and string
     @SaveTempRegsToStack
 
+    @OperandForceToStack % Index 1
+    @OperandPopAndFreeTemp
+
+    @OperandForceToStack % Index 2
+    @OperandPopAndFreeTemp
+
+    @EmitStringDescriptor % String
     @OperandForceToStack
     @OperandPopAndFreeTemp
 
-    @OperandForceToStack
-    @OperandPopAndFreeTemp
-
-    @EmitStringDescriptor
-    @OperandForceToStack
-    @OperandPopAndFreeTemp
-
-    % Make trap call
+    % Make trap call to substring operation
     oOperandPushMode(mTrap)
     oOperandSetValue(trSubstring)
     oOperandSetLength(word)
@@ -3191,11 +3200,12 @@ OperandSubstringPopPop:
     oOperandPop                     
     oOperandPop  
 
-    % Save result
+    % Save result - movl %eax, %esi
     @SaveResult
 
     @RestoreTempRegsFromStack
 
+    % Move %esi back into temp - movl %esi, %eax
     @ResultToTemp
     ;
 
@@ -3329,6 +3339,8 @@ OperandStringEqualPop:
     % Generate code to compare string equality
 
     @SaveTempRegsToStack
+
+    % Load two strings
     @EmitStringDescriptor %lea s2, %T
     @OperandForceToStack  %pushl %T
     @OperandPopAndFreeTemp
@@ -3336,7 +3348,7 @@ OperandStringEqualPop:
     @OperandForceToStack %pushl, %T
     @OperandPopAndFreeTemp
 
-    % Make trap call
+    % Make trap call - equality operation
     oOperandPushMode(mTrap)
     oOperandSetValue(trStringEqual) % call pttrap106
     oOperandSetLength(word)
@@ -3358,7 +3370,7 @@ OperandStringEqualPop:
 
     @RestoreTempRegsFromStack
 
-    % Move result into temp
+    % Move %esi back into temp - movl %esi, %eax
     @ResultToTemp;
 
 
@@ -3629,6 +3641,7 @@ OperandLeftOrRightIsTemp >> Boolean:
 	    ]
     ];
 
+% Saves result from temp register to the esi register
 SaveResult: % movl %eax,%esi
     oOperandPushMode(mScratchReg1)      % ... %S1       
     oOperandSetLength(word)
@@ -3637,6 +3650,7 @@ SaveResult: % movl %eax,%esi
     oEmitDouble(iMov)                   %       movl    %eax, %S1
     oOperandPop;
 
+% When called after save result, moves the contents of esi back into a temp.
 ResultToTemp:
     @OperandForceIntoTemp;
 

@@ -42,6 +42,10 @@ RSpec.describe "Coder Tests" do
 		it 'tests string subscripts' do
 			compare_outputs('stringSubscripts')
 		end
+
+		it 'can handle empty strings' do
+			compare_outputs('emptyString')
+		end
 	end
 
 	it 'can create loops' do
