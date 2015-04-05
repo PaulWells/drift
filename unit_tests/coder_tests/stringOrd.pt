@@ -1,6 +1,6 @@
 extern output
 
-write(ord('h'))
+write(ord("h"))
 writeln
-write(ord('i'))
+write(ord("i"))
 writeln

@@ -2199,6 +2199,8 @@ OperandPushExpressionAssignPopPop:
 		| *:
 		    @OperandAddPop
 	    ]
+        | tConcatenate:
+            @OperandConcatenatePop 
 	| tSubtract:
 	    [
 		| tAssignInteger:
