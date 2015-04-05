@@ -71,6 +71,10 @@ RSpec.describe "Coder Tests" do
 		it 'can run the pascal program' do
 			compare_outputs('pascal')
 		end
+
+		it 'can run the stars program' do
+			compare_outputs('stars')
+		end
 	end
 end
 
