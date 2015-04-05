@@ -2183,6 +2183,8 @@ OperandPushExpressionAssignPopPop:
     | tAssignString:
         @OperandAssignStringPopPop
         >
+    | tSubstring:
+        @OperandSubstringPopPop
 	| tNegate:
 	    [
 		| tAssignInteger:
@@ -2201,6 +2203,8 @@ OperandPushExpressionAssignPopPop:
 	    ]
         | tConcatenate:
             @OperandConcatenatePop 
+        | tLength:
+           @OperandLength
 	| tSubtract:
 	    [
 		| tAssignInteger:
