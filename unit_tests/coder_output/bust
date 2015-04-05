@@ -1,0 +1,78 @@
+Next player is harold.
+He stops at 1.
+(What a hamburger!)
+
+New game.
+The initial deal gives harold : 2 A
+  and the dealer : 9 J.
+harold stands with 13.
+Dealer stands with 19.
+House wins.
+
+New game.
+The initial deal gives harold : 2 6
+  and the dealer : J 8.
+harold stands with 8.
+Dealer stands with 18.
+House wins.
+
+New game.
+The initial deal gives harold : 2 K
+  and the dealer : 4 7.
+harold stands with 12.
+Dealer takes a card and now has  4 7 5.
+Dealer takes a card and now has  4 7 5 2.
+Dealer stands with 18.
+House wins.
+
+New game.
+The initial deal gives harold : A J
+  and the dealer : 8 5.
+harold calls blackjack.
+
+New game.
+The initial deal gives harold : 4 8
+  and the dealer : 7 8.
+harold stands with 12.
+Dealer takes a card and now has  7 8 K.
+Dealer goes bust.
+
+New game.
+The initial deal gives harold : J K
+  and the dealer : 7 A.
+harold stands with 20.
+Dealer stands with 18.
+harold wins.
+
+New game.
+The initial deal gives harold : Q 6
+  and the dealer : 6 7.
+harold stands with 16.
+Dealer takes a card and now has  6 7 K.
+Dealer goes bust.
+
+New game.
+The initial deal gives harold : 10 4
+  and the dealer : 6 A.
+harold stands with 14.
+Dealer stands with 17.
+House wins.
+
+New game.
+The initial deal gives harold : 3 10
+  and the dealer : 5 10.
+harold stands with 13.
+Dealer takes a card and now has  5 10 3.
+Dealer stands with 18.
+House wins.
+
+New game.
+The initial deal gives harold : Q 4
+  and the dealer : Q 9.
+harold stands with 14.
+Dealer stands with 19.
+House wins.
+
+Too few cards left for another game.
+Of 10 games, harold won 4, dealer won 6.
+House cleans up on harold this time.
