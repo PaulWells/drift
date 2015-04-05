@@ -60,6 +60,10 @@ RSpec.describe "Coder Tests" do
 	end
 
 	describe 'example programs' do
+		it 'can run the bubble program' do
+			compare_outputs('bubble')
+		end
+
 		it 'can run the lunch program' do
 			compare_outputs('lunch')
 		end
