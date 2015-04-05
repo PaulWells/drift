@@ -1,28 +1,16 @@
 ## Group Members
-Arthur Margulies	8am28	05876927
-Harold Treen		9hwt	06209677
-Paul Wells		9prw	06198312
+Arthur Margulies - 8am28 - 05876927
 
-## Project Information
+Harold Treen - 9hwt - 06209677
 
-PT Pascal v3.1 (c) 2011 Queen's University, (c) 1980 University of Toronto
-January 2011
+Paul Wells - 9prw - 06198312
 
-This directory contains the sources and build scripts for 
-PT Pascal version 3.1 as of January 2011.
-
-To make all passes of PT Pascal, use the command "make".
-
-To test the PT Pascal you have made, run the tests in 
-the test subdirectory using the ptc and pti command scripts 
-in that directory.
-
-For a more challenging test, run the example programs
-in the examples subdirectory using the ptc and pti command
-scripts in that directory.
 
 ## New Folders
-unit_tests - contains three folders which hold the inputs, -e outputs and -i outputs respectively
+**unit_tests** 
+- contains three folders which hold the inputs, -e outputs and -i outputs respectively
+
+
 
 ## Test Suite Setup
 
@@ -56,7 +44,20 @@ To run a test file:
 rspec/rspec-core-3.1.7/exe/rspec <path_to_test_file>
 ```
 
+## Project Information
 
+PT Pascal v3.1 (c) 2011 Queen's University, (c) 1980 University of Toronto
+January 2011
 
+This directory contains the sources and build scripts for 
+PT Pascal version 3.1 as of January 2011.
 
+To make all passes of PT Pascal, use the command "make".
 
+To test the PT Pascal you have made, run the tests in 
+the test subdirectory using the ptc and pti command scripts 
+in that directory.
+
+For a more challenging test, run the example programs
+in the examples subdirectory using the ptc and pti command
+scripts in that directory.
