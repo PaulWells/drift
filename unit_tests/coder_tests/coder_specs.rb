@@ -1,3 +1,6 @@
+require 'pty'
+require 'expect'
+
 RSpec.describe "Coder Tests" do
 	before :all do
 		Dir.chdir "#{ENV['HOME']}/Zdrive/cisc458/ptsrc"
@@ -43,14 +46,6 @@ RSpec.describe "Coder Tests" do
 		compare_outputs('loopTest')
 	end
 
-	it 'tests string subscripted with a variable' do
-		compare_outputs('stringVariableSubscripts')
-	end
-
-	it 'tests long strings' do
-		compare_outputs('longStrings')
-	end
-
 	it 'can ord strings' do
 		compare_outputs('stringOrd')
 	end
@@ -78,6 +73,22 @@ RSpec.describe "Coder Tests" do
 
 		it 'can run the stars program' do
 			compare_outputs('stars')
+		end
+	
+		it 'can run the bust program' do
+			output = ''
+			`ptc -L lib/pt unit_tests/coder_tests/bust.pt`
+			PTY.spawn("./bust.out") do |reader, writer|
+  				reader.expect(/Enter player name/, 5)
+  				writer.puts('UniqueName')
+				reader.expect(/What does/, 5)
+				writer.puts('1')
+				while msg = reader.gets do
+					output +=  msg
+					break if msg.match(/New shuffle/)
+				end
+			end	
+			expect(output).to match(/UniqueName/)
 		end
 	end
 end
