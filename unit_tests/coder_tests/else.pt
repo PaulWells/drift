@@ -1,0 +1,14 @@
+extern output
+
+var a: integer
+a = 5
+
+if a == 2
+	write("false")
+else if a == 3
+	write("false")
+else
+	write("true")
+end
+
+writeln

@@ -1,16 +1,15 @@
 extern output
 
 var a: integer
-a = 2
+a = 20
 
 switch a
     case 1:
 			write("false")
     case 2:
-			write("true")
-    default:
 			write("false")
+    default:
+			write("true")
 end
 
 writeln
-

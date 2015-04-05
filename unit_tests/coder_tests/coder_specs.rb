@@ -10,36 +10,38 @@ RSpec.describe "Coder Tests" do
 		Dir.foreach(Dir.pwd) { |file| File.delete(file) if File.extname(file) == ".out" }	
 	end
 
-	it 'writes substrings' do
-		compare_outputs('writeSubstring')
-	end
+	describe 'string type' do
+		it 'writes substrings' do
+			compare_outputs('writeSubstring')
+		end
 
-	it 'writes string variables' do
-		compare_outputs('writeStringVariable')
-	end
+		it 'writes string variables' do
+			compare_outputs('writeStringVariable')
+		end
 
-	it 'writes string literals' do
-		compare_outputs('writeStringLiteral')
-	end
+		it 'writes string literals' do
+			compare_outputs('writeStringLiteral')
+		end
 
-	it 'writes string length' do
-		compare_outputs('writeStringLength')
-	end
+		it 'writes string length' do
+			compare_outputs('writeStringLength')
+		end
 
-	it 'writes concatenated strings' do
-		compare_outputs('writeConcatenateString')
-	end
+		it 'writes concatenated strings' do
+			compare_outputs('writeConcatenateString')
+		end
 
-	it 'writes string parameters' do
-		compare_outputs('storeParmString')
-	end
+		it 'writes string parameters' do
+			compare_outputs('storeParmString')
+		end
 
-	it 'compares string equality' do
-		compare_outputs('stringEquality')
-	end
+		it 'compares string equality' do
+			compare_outputs('stringEquality')
+		end
 
-	it 'tests string subscripts' do
-		compare_outputs('stringSubscripts')
+		it 'tests string subscripts' do
+			compare_outputs('stringSubscripts')
+		end
 	end
 
 	it 'can create loops' do
@@ -52,6 +54,31 @@ RSpec.describe "Coder Tests" do
 
 	it 'can chr ints' do
 		compare_outputs('writeChar')
+	end
+
+
+	describe 'switch statements' do
+		it 'can handle switch' do
+			compare_outputs('switch')
+		end
+
+		it 'can hangle switch defaults' do
+			compare_outputs('switchDefault')
+		end
+	end
+
+	describe 'if statements' do
+		it 'can handle if' do
+			compare_outputs('if')
+		end
+
+		it 'can handle else if' do
+			compare_outputs('elseIf')
+		end
+
+		it 'can handle else' do
+			compare_outputs('else')
+		end
 	end
 
 	describe 'example programs' do
