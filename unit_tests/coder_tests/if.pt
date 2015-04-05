@@ -5,7 +5,7 @@ a = 2
 
 if a == 2
 	write("true")
-else if a == 3
+elsif a == 3
 	write("false")
 else
 	write("false")
