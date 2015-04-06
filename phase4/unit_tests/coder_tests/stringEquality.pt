@@ -1,0 +1,22 @@
+extern output
+
+var s: string
+
+s = "string"
+if s == "string"
+	write("true")
+	writeln
+else
+	write("false")
+	writeln
+end
+
+s = "not string"
+
+if s != "string"
+	write("true")
+	writeln
+else
+	write("false")
+	writeln
+end

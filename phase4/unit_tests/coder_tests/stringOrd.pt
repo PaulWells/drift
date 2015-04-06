@@ -1,0 +1,6 @@
+extern output
+
+write(ord("h"))
+writeln
+write(ord("i"))
+writeln

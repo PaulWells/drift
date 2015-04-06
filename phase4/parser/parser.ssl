@@ -1,0 +1,577 @@
+%  PT Parser.ssl	v1.01
+%
+% Date:  30 Jun 1980
+%	 (revised 7 December 2009)
+%
+% Author:  Alan Rosselet
+%
+% Abstract
+%
+%     This module parses the syntax token stream emitted by the scanner
+%   and emits a postfix stream of tokens to the semantic analyzer
+%   module.  The parser detects and repairs syntax errors so that the
+%   token stream emitted to the semantic analyzer is syntactically
+%   legal (except for the special case of declaration phase errors - see
+%   comment in the Block routine below).
+
+Input :
+	% Keywords must be first both here and in stdIdentifiers,
+	% and they must appear in the same order
+
+	pDiv			'div'
+	firstKeywordToken = pDiv 
+	pMod			'mod'
+	pOr			'or'
+	pAnd			'and'
+	pNot			'not'
+	pElse			'else'
+	pOf			'of'
+	pEnd			'end'
+	pArray			'array'
+	pFile			'file'
+	pPacked			'packed'
+	pVar			'var'
+	pType			'type'
+	pIf			'if'
+	pCase			'case'
+	pWhile			'while'
+	% Added Tokens
+	pLet 				'let'
+	pFunc 			'func'
+	pSwitch			'switch'
+	pDefault		'default'
+	pElsif			'elsif'
+	pLoop				'loop'
+	pBreak			'break'
+	pModule			'module'
+	pExtern			'extern'
+	lastKeywordToken = pExtern
+
+	pIdentifier 
+	firstCompoundInputToken = pIdentifier
+	pInteger
+	pLiteral
+	lastCompoundInputToken = pLiteral
+
+	pNewLine
+	pEndFile
+	pPlus			'+'
+	pMinus			'-'
+	pStar			'*'
+	pDot			'.'
+	pComma			','
+	pSemicolon		';'
+	pColon			':'
+	pEquals			'=='
+	pNotEqual		'!='
+	pLess			'<'
+	pLessEqual		'<='
+	pGreaterEqual		'>='
+	pGreater		'>'
+	pLeftParen		'('
+	pRightParen		')'
+	pLeftBracket		'['
+	pRightBracket		']'
+	% Added Tokens
+	pDotDot				'..'
+	pHash					'#'
+	pDoubleColon	'::'
+	pAssign				'='
+	lastSyntaxToken = pAssign;
+
+Output :
+	sIdentifier 
+	firstSemanticToken = sIdentifier
+	firstCompoundSemanticToken = sIdentifier
+	sInteger
+	sLiteral
+	lastCompoundSemanticToken = sLiteral
+
+	sParmBegin
+	sParmEnd
+	sConst
+	sType
+	sVar
+	sProcedure
+	sBegin
+	sEnd
+	sNegate
+	sArray
+	sPacked
+	sFile
+	sRange
+	sCaseStmt
+	sCaseEnd
+	sLabelEnd
+	sExpnEnd
+	sNullStmt
+	sAssignmentStmt
+	sSubscript
+	sCallStmt
+	sFieldWidth
+	sIfStmt
+	sThen
+	sElse
+	sWhileStmt
+	sEq
+	sNE
+	sLT
+	sLE
+	sGT
+	sGE
+	sAdd
+	sSubtract
+	sMultiply
+	sDivide
+	sModulus
+	sInfixOr
+	sOr
+	sInfixAnd
+	sAnd
+	sNot
+	sNewLine
+	% Added tokens
+	sPublic
+	sDefault
+	sExtern
+	sModule
+	sLoopStmt
+	sLoopBreakIf
+	sLoopEnd
+	sSubstring
+	sLength
+	lastSemanticToken = sLength;
+
+
+rules
+
+Program :
+  % Extern is parsed out at the start of the program
+  	'extern'
+        .sExtern
+	% extern parameters
+	{
+    	pIdentifier  .sIdentifier
+    	[
+		| ',':
+		| *:
+	    		>
+    	]
+	}
+	.sParmEnd
+  @Block;
+
+Block :
+	% Strictly speaking, standard Pascal requires that declarations
+	% appear only in the order consts, types, vars, procedures.
+	% We allow arbitrary intermixing of these instead to preserve
+	% programmer sanity.
+	@Declarations
+	@Statements;
+
+Declarations :
+	{[
+	    % Changed from const
+	    | 'let':
+				.sConst
+				@ConstantDefinition
+	    | 'type':
+				.sType
+				@TypeDefinition
+	    | 'var':
+				.sVar
+				@VariableDeclarations
+	    | 'func':
+				.sProcedure
+				% procedure name
+				pIdentifier  .sIdentifier
+				@ProcedureHeading
+				@Block
+				'end'
+	    % Added the module declaration
+	    | 'module':
+				.sModule
+				% Module name
+				pIdentifier .sIdentifier
+				% Block within module
+				@Block
+				'end'
+		| ';':
+			% null declaration
+	    | *:
+				>
+	]};
+
+
+ConstantDefinition :
+	% Accept a constant definition
+	pIdentifier  .sIdentifier
+	@ConstantValue;
+
+ConstantValue :
+	'='
+	[
+	    | pInteger:
+		.sInteger
+	    | pIdentifier:
+		.sIdentifier
+	    | '-':
+		@UnsignedIntegerConstant
+		.sNegate
+	    | '+':
+		@UnsignedIntegerConstant
+	    | pLiteral:
+		.sLiteral
+	];
+
+UnsignedIntegerConstant :
+	[
+	    | pIdentifier:
+		.sIdentifier
+	    | pInteger:
+		.sInteger
+	];
+
+TypeDefinition :
+	% Accept one or more named type definitions.
+	pIdentifier  .sIdentifier
+	':'  @TypeBody;
+
+TypeBody :
+	[
+	    | 'packed':
+		'array'  .sArray  .sPacked
+		'['  @SimpleType  ']'
+		'of'  @SimpleType
+	    | 'array':
+		.sArray
+		'['  @SimpleType  ']'
+		'of'  @SimpleType
+	    | 'file':
+		.sFile
+		'of'  @SimpleType
+	    | *:
+		@SimpleType
+	];
+
+SimpleType :
+	% A simple type is a named type (possibly predefined)
+	% or a subrange type specification
+	[
+	    | pIdentifier:
+		.sIdentifier
+		[
+		    | '..':
+			.sRange		%% this may be unnecessary
+			@OptionallySignedIntegerConstant
+		    | *:
+		]
+	    | *:
+		@OptionallySignedIntegerConstant
+		'..'  .sRange
+		@OptionallySignedIntegerConstant
+	];
+
+OptionallySignedIntegerConstant :
+	[
+	    | '-':
+		@UnsignedIntegerConstant
+		.sNegate
+	    | '+':
+		@UnsignedIntegerConstant
+	    | *:
+		@UnsignedIntegerConstant
+	];
+
+VariableDeclarations :
+	% Accept one or more variable declarations.
+	pIdentifier  .sIdentifier
+	{[ 
+	    % Adds parsing of comma delimited variable declarations
+	    | ',':
+		pIdentifier  .sVar .sIdentifier
+	    | *:
+			>
+	]}
+	':' @TypeBody ;
+
+ProcedureHeading :
+	% An optional * identifies public procedures
+	[  
+	    % Adds public methods using the star character
+	    | '*':
+			.sPublic
+	    | *:
+	]
+	% Accept zero or more procedure formal parameter declarations.
+	[
+	    | '(':
+		{
+		    % formal parameter identifier
+		    [
+				| 'var':
+				    pIdentifier  .sIdentifier
+				    .sVar
+				| *:
+				    pIdentifier  .sIdentifier
+		    ]
+		    ':'
+		    % type identifier
+		    pIdentifier  .sIdentifier
+		    [
+				% Comma delimited identifiers
+				| ',':
+				| *:
+			    	>
+		    ]
+		}
+		')'
+	    | *:
+	]
+	.sParmEnd;
+
+Statements :
+    .sBegin
+    {[
+        | pIdentifier:
+            @AssignmentOrCallStmt
+        | 'if':
+            @IfStmt
+        | 'switch':
+            @CaseStmt
+        | 'while':
+            @WhileStmt
+        | 'loop':
+            @LoopStmt
+        | ';':
+            .sNullStmt
+        | *:
+            >
+    ]}
+    .sEnd;
+
+
+
+
+AssignmentOrCallStmt :
+	[
+	    % Updates equals syntax to not have a colon
+	    | '=':
+		.sAssignmentStmt
+		.sIdentifier	% identifier accepted in the Statement rule
+		@Expression
+		.sExpnEnd
+	    | '[':
+		.sAssignmentStmt
+		.sIdentifier
+		.sSubscript
+		@Expression
+		.sExpnEnd
+		% No colon on equals
+		']'  '='
+		@Expression
+		.sExpnEnd
+	    | *:
+		@CallStmt
+	];
+
+CallStmt :
+	.sCallStmt
+	.sIdentifier	% procedure identifier accepted in the Statement rule
+	% accept zero or more actual parameters
+	[
+	    | '(':
+		{
+		    @Expression
+		    .sExpnEnd
+		    % allow a field width specification to occur in calls
+		    % to the standard procedures write and writeln
+		    [
+			| ':':
+			    .sFieldWidth
+			    @Expression
+			    .sExpnEnd
+			| *:
+		    ]
+		    [
+			| ',':
+			| *:
+			    >
+		    ]
+		}
+		')'
+	    | *:	% no actual parameters
+	]
+	.sParmEnd;
+
+IfStmt :
+	% Parse the if statement and it's expression
+	.sIfStmt
+	@Expression
+	.sExpnEnd
+	.sThen
+	@Statements
+	[
+	     |'elsif':
+	         .sElse
+		@IfStmt
+	      |'else':
+	         .sElse
+	         @Statements
+	         'end'
+	      | *:
+	      	 'end'
+	];
+
+CaseStmt :
+	.sCaseStmt
+	@Expression
+	.sExpnEnd
+	{[
+		| 'case':
+			@CaseAlternative
+		| *:
+			>
+	]}
+	[
+		| 'default':
+			':'
+			.sDefault
+			@Statements
+		| *:
+	]
+	'end'
+	.sCaseEnd;
+
+CaseAlternative :
+	% A case alternative is a statement labelled by
+	% one or more optionally signed integer constants
+
+	{
+	    @OptionallySignedIntegerConstant
+	    [
+			| ',':
+			| *:
+			    >
+	    ]
+	}
+	.sLabelEnd
+	':'
+	@Statements;
+
+WhileStmt :
+	.sWhileStmt
+	@Expression
+	.sExpnEnd
+	@Statements
+	'end';
+
+LoopStmt :
+	.sLoopStmt
+	@Statements
+	'break' 'if' .sLoopBreakIf @Expression .sExpnEnd
+	@Statements
+	.sLoopEnd
+	'end';
+
+Expression :
+	@SimpleExpression
+	[
+	    % Change = to ==
+	    | '==':
+		@SimpleExpression  .sEq
+	    % Change <> to !=
+	    | '!=':
+		@SimpleExpression  .sNE
+	    | '<':
+		@SimpleExpression  .sLT
+	    | '<=':
+		@SimpleExpression  .sLE
+	    | '>':
+		@SimpleExpression  .sGT
+	    | '>=':
+		@SimpleExpression  .sGE
+	    | *:
+	];
+
+SimpleExpression :
+	[
+	    | '+':
+		@Term
+	    | '-':
+		@Term  .sNegate
+	    | *:
+		@Term
+	]
+	{[
+	    | '+':
+		@Term  .sAdd
+	    | '-':
+		@Term  .sSubtract
+	    | 'or':
+		.sInfixOr  @Term  .sOr
+	    | *:
+		>
+	]};
+
+Term :
+	@Factor
+	{[
+	    | '*':
+		@Factor  .sMultiply
+	    | 'div':		@Factor  .sDivide
+	    | 'mod':
+		@Factor  .sModulus
+	    | 'and':
+		.sInfixAnd  @Factor  .sAnd
+	    | *:
+		>
+	]};
+
+Factor :
+	@SubFactor
+	{[
+		| '::':
+			@SubFactor '..' @SubFactor .sSubstring
+		| *:
+			>
+	]};
+
+SubFactor :
+	[
+	    | pIdentifier:
+			.sIdentifier
+			@IdentifierExtension
+	    | pInteger:
+			.sInteger
+	    | '(':
+			@Expression  ')'
+	    | 'not':
+			@SubFactor
+			.sNot
+	    | '#':
+			@SubFactor
+			.sLength
+	    | pLiteral:
+			.sLiteral
+	    | 'file':
+			.sFile '(' @Expression ')'
+			.sExpnEnd
+	];
+
+IdentifierExtension :
+	% Handle subscripts and function actual parameter lists
+	[
+	    | '[':
+		.sSubscript
+		@Expression  ']'
+		.sExpnEnd
+	    | '(':
+		.sParmBegin
+		@Expression  ')'
+		.sExpnEnd
+		.sParmEnd
+	    | *:
+	];
+
+end

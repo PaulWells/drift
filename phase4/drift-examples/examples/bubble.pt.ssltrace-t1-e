@@ -1,0 +1,325 @@
+  .pNewLine
+  .pIdentifier (screened to pExtern)
+  .pIdentifier
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pLet)
+  .pIdentifier
+ .pEquals
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pLet)
+  .pIdentifier
+ .pEquals
+  .pInteger
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pModule)
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pVar)
+  .pIdentifier
+ .pColon
+  .pIdentifier (screened to pArray)
+ .pLeftBracket
+  .pInteger
+ .pDotDot
+  .pIdentifier
+ .pRightBracket
+  .pIdentifier (screened to pOf)
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pVar)
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pFunc)
+  .pIdentifier
+ .pStar
+ .pLeftParen
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pComma
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pComma
+  .pIdentifier (screened to pVar)
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pRightParen
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pRightBracket
+ .pLess
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pRightBracket
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pFunc)
+  .pIdentifier
+ .pStar
+ .pLeftParen
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pComma
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pRightParen
+ .pNewLine
+  .pIdentifier (screened to pVar)
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pRightBracket
+ .pNewLine
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pRightBracket
+ .pEquals
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pRightBracket
+ .pNewLine
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pRightBracket
+ .pEquals
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pFunc)
+  .pIdentifier
+ .pStar
+ .pNewLine
+  .pIdentifier (screened to pVar)
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pLoop)
+ .pNewLine
+  .pIdentifier
+ .pLeftParen
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pRightBracket
+ .pColon
+  .pInteger
+ .pRightParen
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pPlus
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pBreak)
+  .pIdentifier (screened to pIf)
+  .pIdentifier
+ .pGreater
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pVar)
+  .pIdentifier
+ .pComma
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pNewLine
+ .pNewLine
+  .pIdentifier
+ .pLeftBracket
+  .pInteger
+ .pRightBracket
+ .pEquals
+  .pInteger
+ .pNewLine
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pLoop)
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pPlus
+  .pInteger
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pMinus
+  .pInteger
+ .pRightBracket
+ .pStar
+  .pInteger
+ .pNewLine
+  .pIdentifier
+ .pLeftBracket
+  .pIdentifier
+ .pRightBracket
+ .pEquals
+  .pIdentifier
+  .pIdentifier (screened to pMod)
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pBreak)
+  .pIdentifier (screened to pIf)
+  .pIdentifier
+ .pGreaterEqual
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+ .pNewLine
+  .pIdentifier (screened to pFunc)
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pVar)
+  .pIdentifier
+ .pComma
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pNewLine
+  .pIdentifier (screened to pVar)
+  .pIdentifier
+ .pColon
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pMinus
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pLoop)
+ .pNewLine
+  .pIdentifier (screened to pBreak)
+  .pIdentifier (screened to pIf)
+  .pIdentifier
+ .pLessEqual
+  .pInteger
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pLoop)
+ .pNewLine
+  .pIdentifier (screened to pBreak)
+  .pIdentifier (screened to pIf)
+  .pIdentifier
+ .pGreaterEqual
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pLeftParen
+  .pIdentifier
+ .pComma
+  .pIdentifier
+ .pPlus
+  .pInteger
+ .pComma
+  .pIdentifier
+ .pRightParen
+ .pNewLine
+  .pIdentifier (screened to pIf)
+  .pIdentifier (screened to pNot)
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pLeftParen
+  .pIdentifier
+ .pComma
+  .pIdentifier
+ .pPlus
+  .pInteger
+ .pRightParen
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pPlus
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+  .pIdentifier
+ .pEquals
+  .pIdentifier
+ .pMinus
+  .pInteger
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+  .pIdentifier (screened to pEnd)
+ .pNewLine
+ .pNewLine
+  .pNewLine
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pNewLine
+  .pIdentifier
+ .pNewLine
+ .pEndFile

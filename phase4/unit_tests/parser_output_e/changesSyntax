@@ -1,0 +1,17 @@
+.sExtern
+.sIdentifier
+.sParmEnd
+.sBegin
+.sAssignmentStmt
+.sIdentifier
+.sIdentifier
+.sIdentifier
+.sNE
+.sExpnEnd
+.sAssignmentStmt
+.sIdentifier
+.sIdentifier
+.sIdentifier
+.sEq
+.sExpnEnd
+.sEnd

@@ -1,0 +1,8 @@
+#!/bin/csh
+foreach i (*.pt)
+    echo "=== $i ==="
+    ssltrace "ptc -t2 -o2 $i" ../parser/parser.def -e > $i.ssltrace-t2-e
+    # ${i:r}.out
+    ## /bin/rm -f ${i:r}.out
+end
+echo "=== ==="

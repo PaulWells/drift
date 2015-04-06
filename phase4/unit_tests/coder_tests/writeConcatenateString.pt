@@ -1,0 +1,15 @@
+extern output
+
+var h : string
+var w : string
+h = "Hello"
+w = "World"
+
+write(h + w)
+writeln
+write(h + " World")
+writeln
+write("Hello " + w)
+writeln
+write("Hello " + "World")
+writeln

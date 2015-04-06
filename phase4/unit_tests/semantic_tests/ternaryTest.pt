@@ -1,0 +1,5 @@
+extern input
+var s: string
+var d: string
+s = "hello"
+d = "abc " + s::1..2

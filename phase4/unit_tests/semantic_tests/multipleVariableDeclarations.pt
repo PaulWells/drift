@@ -1,0 +1,5 @@
+extern input
+var a,b,c: integer
+a = 1
+b = 2
+c = a + b
