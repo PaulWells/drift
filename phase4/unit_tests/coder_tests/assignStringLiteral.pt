@@ -1,0 +1,3 @@
+extern input
+var s: string
+s = "abc"

@@ -1,0 +1,9 @@
+// Program to conjugate regular French verbs
+extern input, output
+
+var infinitive, root : string
+var letter : boolean
+
+infinitive = "hello"
+root = infinitive :: 1..(#infinitive-2)
+letter = (root::1..1 == "a")

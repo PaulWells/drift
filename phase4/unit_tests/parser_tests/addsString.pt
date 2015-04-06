@@ -1,0 +1,5 @@
+extern a
+var str : string
+var strLength : int
+str = "foobar" :: 1..3
+strLength = # str

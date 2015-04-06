@@ -1,0 +1,15 @@
+extern output
+
+var a: integer
+a = 20
+
+switch a
+    case 1:
+			write("false")
+    case 2:
+			write("false")
+    default:
+			write("true")
+end
+
+writeln

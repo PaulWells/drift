@@ -1,0 +1,13 @@
+// Blackjack Simulation Program                 
+extern input, output
+module m
+  func randint * (var reslt : integer, modulus : integer) 
+  	reslt = reslt + 1
+  end
+end
+	func doit 
+			
+		var x:integer
+		x = 1
+	    			randint (x, 13)
+	end

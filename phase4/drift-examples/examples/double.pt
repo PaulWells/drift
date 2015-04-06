@@ -1,0 +1,10 @@
+extern input, output
+var word : string
+
+write ("Anything you can say, I can say twice (end with 'bye'):"); writeln
+loop
+    read (word)
+    write (word + " " + word); writeln
+    break if word == "bye"
+    readln
+end

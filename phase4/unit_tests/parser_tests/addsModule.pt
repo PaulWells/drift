@@ -1,0 +1,7 @@
+extern a
+module aModule
+	let c = 20
+	if c == 20
+		a = 10
+	end
+end

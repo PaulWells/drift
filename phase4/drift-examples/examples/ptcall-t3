@@ -1,0 +1,8 @@
+#!/bin/csh
+foreach i (*.pt)
+    echo "=== $i ==="
+    ssltrace "ptc -t3 -o3 $i" ../semantic/semantic.def -e > $i.ssltrace-t3-e
+    # ${i:r}.out
+    ## /bin/rm -f ${i:r}.out
+end
+echo "=== ==="

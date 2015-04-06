@@ -1,0 +1,73 @@
+// this program determines the primes up to maxprimes using the sieve method 
+extern output
+
+let maxprimes = 100
+let maxfactor = 50;	// maxprimes div 2
+
+let prime = true
+let notprime = false
+
+module flags
+    var flagvector : array [1 .. maxprimes] of boolean
+
+    func flagset * (f : integer, tf : boolean)
+	flagvector [f] = tf
+    end
+
+    func flag * (f : integer, var set : boolean)
+	set = flagvector [f]
+    end
+
+    // everything begins as prime
+    var i : integer
+    i = 1
+    loop
+	break if i > maxprimes
+	flagvector [i] = prime
+	i = i + 1
+    end
+end
+
+
+// pick out multiples of each prime factor and set these to notprime 
+var nextfactor : integer
+var multiple, factor : integer
+var isprime : boolean
+
+multiple = 2
+factor = 2
+
+loop
+    break if factor > maxfactor
+
+    // set multiples of factor to notprime 
+    multiple = factor + factor
+    loop
+	break if multiple > maxprimes
+	flagset (multiple, notprime)
+	multiple = multiple + factor
+    end
+
+    // set factor = next prime 
+    nextfactor = factor + 1
+    flag (nextfactor, isprime)
+    loop
+	break if (nextfactor > maxprimes) or isprime
+	nextfactor = nextfactor + 1
+	flag (nextfactor, isprime)
+    end
+    factor = nextfactor
+end
+
+// now report the results
+write ("The primes up to ", maxprimes:1, " are:"); writeln
+nextfactor = 2
+loop
+    break if nextfactor > maxprimes
+    flag (nextfactor, isprime)
+    if isprime 
+	write (nextfactor:5)
+    end
+    nextfactor = nextfactor + 1
+end
+writeln
